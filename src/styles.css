@@ -201,7 +201,7 @@ h1, h2, h3 { font-family: var(--font-heading); font-weight: 800; }
 .handwriting { font-family: var(--font-hand); font-size: 18px; font-weight: 400; }
 .hero-cta-note { color: var(--pencil); margin-top: 14px; font-size: 14px; transform: rotate(-2deg); }
 .hero-art { position: relative; height: 440px; }
-.mascot { mix-blend-mode: multiply; object-fit: contain; }
+.mascot { mix-blend-mode: multiply; object-fit: contain; filter: grayscale(1) contrast(1.8) brightness(1.15); }
 .hero-mascot { width: 440px; max-width: 100%; height: 370px; position: absolute; inset-inline-start: 0; top: 41px; }
 .art-top-note { position: absolute; top: 4px; inset-inline-start: 17%; transform: rotate(-7deg); z-index: 1; font-size: 23px; }
 .art-top-note svg { position: absolute; top: 18px; inset-inline-start: 110px; width: 78px; height: 66px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
