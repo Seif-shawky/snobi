@@ -1,4 +1,6 @@
 # Snobi homepage
+- [x] Build Page 3 as Snobi’s Phase 0 story with English and Arabic copy.
+- [x] Verify story page, language switching and navigation.
 - [x] Build Page 2 Shop with uploaded clothing mockups and an enlarged image view.
 - [x] Keep mockups separate from real purchasable inventory; prices and sizes await the user.
 - [x] Verify Shop in English/Arabic and narrow screens.

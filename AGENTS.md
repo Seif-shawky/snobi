@@ -13,3 +13,4 @@
 - Load catalog data from Shopify Storefront API through TanStack Query; never substitute invented products or purchase activity for missing store data.
 - Display unconfirmed clothing mockups in a separate design-preview gallery, never as Shopify inventory, so missing prices and variants cannot be mistaken for purchasable products.
 - Keep visual styling and semantic color tokens in src/styles.css, so the paper-and-ink system remains consistent across pages.
+- Keep the full story in the /story leaf route and homepage story content as a teaser, so each page has a distinct purpose without duplicating the full narrative.
