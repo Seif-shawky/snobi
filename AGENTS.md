@@ -11,4 +11,5 @@
 
 - Keep shared storefront chrome and English/Arabic state in the Snobi shell around the root Outlet, so all pages share navigation and mirrored layouts.
 - Load catalog data from Shopify Storefront API through TanStack Query; never substitute invented products or purchase activity for missing store data.
+- Display unconfirmed clothing mockups in a separate design-preview gallery, never as Shopify inventory, so missing prices and variants cannot be mistaken for purchasable products.
 - Keep visual styling and semantic color tokens in src/styles.css, so the paper-and-ink system remains consistent across pages.
