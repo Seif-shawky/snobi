@@ -1,11 +1,13 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { Link, useHydrated } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUpRight, Menu, ShoppingBag, X, Heart, Shirt, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import mascot from '@/assets/snobi-original.png.asset.json';
 import { productsQuery } from '@/lib/shopify';
+import { useCartStore } from '@/stores/cart';
+import { CartPanel } from '@/components/cart-panel';
 
 const LanguageContext = createContext({ ar: false, toggle: () => {} });
 export const useLanguage = () => useContext(LanguageContext);
@@ -14,6 +16,17 @@ export function SnobiShell({ children }: { children: ReactNode }) {
   const [ar, setAr] = useState(false);
   const [menu, setMenu] = useState(false);
   const [bag, setBag] = useState(false);
+  const hydrated = useHydrated();
+  const quantity = useCartStore(s => s.cart?.totalQuantity ?? 0);
+  const syncCart = useCartStore(s => s.syncCart);
+  useEffect(() => {
+    let mounted = true;
+    void Promise.resolve(useCartStore.persist.rehydrate()).then(() => { if (mounted) void syncCart(); }).catch(() => {});
+    const onVisible = () => { if (document.visibilityState === 'visible') void syncCart(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { mounted = false; document.removeEventListener('visibilitychange', onVisible); };
+  }, [syncCart]);
+  const count = hydrated ? quantity : 0;
   return <LanguageContext.Provider value={{ ar, toggle: () => setAr(v => !v) }}>
     <div className="snobi-site" dir={ar ? 'rtl' : 'ltr'} lang={ar ? 'ar' : 'en'}>
       <div className="announcement">{ar ? 'المرحلة ٠: لسه مفلس. للأسف.' : 'PHASE 0: STILL BROKE. UNFORTUNATELY.'}<span className="announcement-dot" />{ar ? 'صُنع في مصر' : 'MADE IN EGYPT'}</div>
@@ -27,14 +40,14 @@ export function SnobiShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="header-actions">
           <Button variant="ghost" className="language-button" onClick={() => setAr(v => !v)} aria-label={ar ? 'Switch to English' : 'التبديل للعربية'}><span className={!ar ? 'language-active' : ''}>EN</span><span className="language-divider">/</span><span className={ar ? 'language-active' : ''}>AR</span></Button>
-          <Button variant="ghost" className="bag-button" onClick={() => setBag(true)} aria-label={ar ? 'افتح الشنطة، ٠ منتجات' : 'Open bag, 0 items'}><ShoppingBag /><span>0</span></Button>
+          <Button variant="ghost" className="bag-button" onClick={() => { setBag(true); void syncCart(); }} aria-label={ar ? `افتح الشنطة، ${count} منتجات` : `Open bag, ${count} items`}><ShoppingBag /><span>{count}</span></Button>
           <Button variant="ghost" size="icon" className="mobile-menu-button" onClick={() => setMenu(v => !v)} aria-label="Toggle menu" aria-expanded={menu}>{menu ? <X /> : <Menu />}</Button>
         </div>
       </header>
       {menu && <nav className="mobile-nav page-width" aria-label="Mobile navigation" onClick={() => setMenu(false)}><Link to="/">{ar ? 'الرئيسية' : 'Home'}</Link><Link to="/shop">{ar ? 'التيشيرتات' : 'Shop'}</Link><Link to="/story">{ar ? 'حكاية سنوبي' : "Snobi’s story"}</Link><Link to="/supporters">{ar ? 'الداعمين' : 'Supporters'}</Link></nav>}
       <main>{children}</main>
       <footer className="site-footer page-width"><div><Link to="/" className="wordmark">snobi.</Link><p className="handwriting">{ar ? 'ارجع تاني. أرجوك.' : 'please come back.'}</p></div><div className="footer-links"><Link to="/shop">{ar ? 'التيشيرتات' : 'Shop'}</Link><Link to="/story">{ar ? 'عن سنوبي' : 'About Snobi'}</Link><Link to="/supporters">{ar ? 'الداعمين' : 'Supporters'}</Link></div><div className="footer-fine">{ar ? 'سنوبي © ٢٠٢٦ · صُنع في مصر' : '© 2026 SNOBI. MADE IN EGYPT.'}<p>{ar ? 'كل ده عشان كلب مرسوم.' : 'all this for a doodle of a dog.'}</p></div></footer>
-      <Dialog open={bag} onOpenChange={setBag}><DialogContent className="snobi-dialog" dir={ar ? 'rtl' : 'ltr'}><DialogTitle>{ar ? 'الشنطة فاضية.' : 'YOU LEFT SNOBI WITH NOTHING.'}</DialogTitle><Mascot className="empty-bag-mascot" /><DialogDescription>{ar ? 'مفيش تيشيرتات في شنطتك لسه.' : 'No shirts in your bag. Not even one.'}</DialogDescription><Button variant="ink" asChild onClick={() => setBag(false)}><Link to="/shop">{ar ? 'اديله فرصة تانية' : 'GIVE HIM ANOTHER CHANCE'}<ArrowUpRight /></Link></Button></DialogContent></Dialog>
+      <Dialog open={bag} onOpenChange={setBag}><DialogContent className="cart-dialog" dir={ar ? 'rtl' : 'ltr'}><DialogTitle>{ar ? 'شنطتك.' : 'YOUR BAG.'}</DialogTitle><DialogDescription>{ar ? `${count} منتجات. سنوبي بيستنى.` : `${count} items. Snobi is waiting.`}</DialogDescription><CartPanel ar={ar} compact onNavigate={() => setBag(false)} /><Button variant="note" asChild onClick={() => setBag(false)}><Link to="/cart">{ar ? 'افتح صفحة الشنطة' : 'VIEW FULL BAG'}<ArrowUpRight /></Link></Button></DialogContent></Dialog>
     </div>
   </LanguageContext.Provider>;
 }

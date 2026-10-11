@@ -7,6 +7,7 @@ export interface Product {
   description: string;
   images: { nodes: { url: string; altText: string | null }[] };
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
+  variants?: { nodes: { id: string; title: string; availableForSale: boolean; price: { amount: string; currencyCode: string }; selectedOptions: { name: string; value: string }[] }[] };
 }
 
 export async function storefrontApiRequest<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
@@ -15,9 +16,9 @@ export async function storefrontApiRequest<T>(query: string, variables: Record<s
     headers: { 'Content-Type': 'application/json', 'X-Shopify-Storefront-Access-Token': 'bab9571107806dd8545dfca4246cb548' },
     body: JSON.stringify({ query, variables }),
   });
-  if (!response.ok) throw new Error('The shirts could not be loaded. Please try again.');
+  if (!response.ok) throw new Error('The store could not be reached. Please try again.');
   const result = await response.json() as { data: T; errors?: { message: string }[] };
-  if (result.errors?.length) throw new Error('The shirts could not be loaded. Please try again.');
+  if (result.errors?.length) throw new Error('The store could not be reached. Please try again.');
   return result.data;
 }
 
