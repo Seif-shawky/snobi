@@ -22,6 +22,7 @@ export async function changeShopifyCart(kind: 'cartCreate' | 'cartLinesAdd' | 'c
   const [signature, args] = signatures[kind];
   const data = await storefrontApiRequest<Record<string, MutationResult>>(`mutation(${signature}) { ${kind}(${args}) { cart { ${fields} } userErrors { message } } }`, variables);
   const result = data[kind];
+  if (!result) throw new Error('cart-update-failed');
   if (result.userErrors.length) {
     if (result.userErrors.some(e => /cart.*(not found|does not exist|invalid|expired)/i.test(e.message))) throw new Error('cart-expired');
     throw new Error('cart-update-failed');
