@@ -1,4 +1,7 @@
 # Snobi homepage
+- [ ] Build Page 4 cart with shared bag navigation and English/Arabic empty and populated states.
+- [ ] Connect real Shopify cart updates and checkout; keep mockups non-purchasable.
+- [ ] Verify cart rendering, navigation, errors and persistence.
 - [x] Build Page 3 as Snobi’s Phase 0 story with English and Arabic copy.
 - [x] Verify story page, language switching and navigation.
 - [x] Build Page 2 Shop with uploaded clothing mockups and an enlarged image view.
