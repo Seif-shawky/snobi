@@ -1,4 +1,7 @@
 # Snobi homepage
+- [ ] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.
+- [ ] Add real-product add-to-bag controls in the collection; keep mockups non-purchasable.
+- [ ] Test checkout navigation, cart actions, and empty checkout; live purchase checks need confirmed Shopify products.
 - [x] Build Page 4 cart with shared bag navigation and English/Arabic empty and populated states.
 - [x] Connect real Shopify cart updates and checkout; keep mockups non-purchasable.
 - [x] Verify cart rendering and navigation in the browser; test cart updates and errors (8 tests passed). Live purchase verification awaits confirmed store products; store count is zero.
