@@ -1,6 +1,6 @@
 # Snobi homepage
-- [ ] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.
-- [ ] Add real-product add-to-bag controls in the collection; keep mockups non-purchasable.
+- [x] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.
+- [x] Add real-product add-to-bag controls in the collection; keep mockups non-purchasable.
 - [ ] Test checkout navigation, cart actions, and empty checkout; live purchase checks need confirmed Shopify products.
 - [x] Build Page 4 cart with shared bag navigation and English/Arabic empty and populated states.
 - [x] Connect real Shopify cart updates and checkout; keep mockups non-purchasable.
@@ -13,4 +13,4 @@
 - [x] Create Phase 0 paper-and-ink homepage using the original mascot.
 - [x] Connect collection to real Shopify products; show honest empty states.
 - [x] Add English/Arabic layouts and working navigation/bag controls.
-- [x] Verify page rendering and interactions.
+- [x] Verify page rendering and interactions.- [x] Build Page 6 order confirmation.
