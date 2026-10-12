@@ -24,7 +24,7 @@ export async function storefrontApiRequest<T>(query: string, variables: Record<s
 
 export const productsQuery = queryOptions({
   queryKey: ['snobi', 'products'],
-  queryFn: () => storefrontApiRequest<{ products: { nodes: Product[] } }>(`query { products(first: 3) { nodes { id title handle description images(first: 1) { nodes { url altText } } priceRange { minVariantPrice { amount currencyCode } } } } }`),
+  queryFn: () => storefrontApiRequest<{ products: { nodes: Product[] } }>(`query { products(first: 3) { nodes { id title handle description images(first: 1) { nodes { url altText } } priceRange { minVariantPrice { amount currencyCode } } variants(first: 1) { nodes { id title availableForSale price { amount currencyCode } selectedOptions { name value } } } } } }`),
   staleTime: 60_000,
   retry: 1,
 });
