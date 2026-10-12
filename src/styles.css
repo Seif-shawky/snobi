@@ -454,7 +454,7 @@ h2 { font-size: 46px; line-height: 1.06; white-space: pre-line; }
 .story-topline .phase-label { font-size: 9px; }
 .story-opening-title { text-align: center; margin-top: 30px; }
 .story-opening-title .section-kicker { justify-content: center; }
-.story-opening-title h1 { font-size: 100px; line-height: 1; margin-block: 15px 10px; }
+.story-opening-title h1 { font-size: 82px; line-height: 1; margin-block: 15px 10px; overflow-wrap: anywhere; }
 .story-opening-title > p { color: var(--pencil); transform: rotate(-2deg); }
 .story-portrait { position: relative; width: min(650px, 100%); margin: 16px auto 0; min-height: 255px; display: flex; align-items: center; justify-content: center; }
 .story-page-mascot { width: 290px; height: 240px; }
@@ -479,6 +479,19 @@ h2 { font-size: 46px; line-height: 1.06; white-space: pre-line; }
 .story-ledger dl > div { border-top: 1px dashed var(--paper-line); padding-block: 14px; display: flex; justify-content: space-between; gap: 20px; font-family: var(--font-hand); font-size: 18px; }
 .story-ledger dd { text-align: end; }
 .ledger-disclaimer { font-size: 10px; line-height: 1.7; color: var(--pencil); margin-top: 12px; }
+.story-history { padding-block: 0 55px; }
+.story-history h2 { font-size: 44px; margin-block: 18px 28px; }
+.story-timeline { list-style: none; margin-inline-start: 8px; padding-inline-start: 30px; border-inline-start: 2px solid var(--paper-line); }
+.story-timeline li { position: relative; max-width: 650px; }
+.story-timeline li::before { content: ''; position: absolute; inset-inline-start: -37px; top: 5px; width: 12px; height: 12px; border: 2px solid var(--ink); background: var(--paper); border-radius: 50%; }
+.story-timeline h3 { font-size: 30px; margin-block: 16px 10px; }
+.story-timeline p, .story-history-note, .story-real-finances p { font-size: 13px; line-height: 1.9; color: var(--pencil); }
+.story-timeline .handwriting { display: block; margin-top: 18px; font-size: 17px; }
+.story-timeline s { text-decoration-color: var(--red-ink); text-decoration-thickness: 2px; }
+.story-history-note { margin-top: 28px; max-width: 680px; }
+.story-real-finances { margin-top: 35px; padding-top: 25px; border-top: 1px dashed var(--paper-line); }
+.story-real-finances h3 { font-size: 24px; margin-bottom: 12px; }
+.story-real-finances p { max-width: 760px; }
 .story-outro { text-align: center; padding-block: 60px; }
 .story-outro .section-kicker { justify-content: center; }
 .story-outro h2 { margin-block: 20px 15px; }
@@ -494,7 +507,7 @@ h2 { font-size: 46px; line-height: 1.06; white-space: pre-line; }
 @media (max-width: 700px) {
   .story-opening { padding-top: 22px; }
   .story-opening-title { margin-top: 28px; }
-  .story-opening-title h1 { font-size: 62px; }
+  .story-opening-title h1 { font-size: 48px; }
   .story-opening-title > p { font-size: 16px; }
   .story-portrait { min-height: 225px; margin-top: 22px; }
   .story-page-mascot { width: 240px; height: 200px; }
@@ -510,6 +523,8 @@ h2 { font-size: 46px; line-height: 1.06; white-space: pre-line; }
   .story-ledger-band { padding-block: 35px; }
   .story-ledger-layout { grid-template-columns: 1fr; gap: 30px; }
   .story-ledger-layout h2 { font-size: 35px; }
+  .story-history { padding-bottom: 35px; }
+  .story-history h2 { font-size: 33px; }
   .ledger-heading { font-size: 20px; }
   .story-ledger dl > div { font-size: 16px; }
   .story-outro { padding-block: 40px; }
