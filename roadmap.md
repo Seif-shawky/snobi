@@ -1,6 +1,6 @@
 # Snobi homepage
 - [x] Align Page 7 at /story with the original document: title, Phase 0 chronology and fictional-versus-real finances.
-- [ ] Verify Page 7 in English/Arabic and its clothing-gallery link.
+- [x] Verify Page 7 in English/Arabic and its clothing-gallery link.
 - [x] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.
 - [x] Add real-product add-to-bag controls in the collection; keep mockups non-purchasable.
 - [ ] Test checkout navigation, cart actions, and empty checkout; live purchase checks need confirmed Shopify products.
