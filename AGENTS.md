@@ -14,5 +14,6 @@
 - Display unconfirmed clothing mockups in a separate design-preview gallery, never as Shopify inventory, so missing prices and variants cannot be mistaken for purchasable products.
 - Keep visual styling and semantic color tokens in src/styles.css, so the paper-and-ink system remains consistent across pages.
 - Keep the full story in the /story leaf route and homepage story content as a teaser, so each page has a distinct purpose without duplicating the full narrative.
+- Keep the full supporters experience in /supporters and its homepage section as a teaser; until verified activity and consent storage exist, profile edits are session-only previews and never imply publication.
 - Keep the bag dialog and /cart page on one persistent Zustand cart, hydrated after mount and updated from Shopify cart snapshots, so totals and line IDs stay authoritative without SSR hydration mismatches.
 - Create checkout only through Shopify Cart API and open its returned HTTPS URL in a new tab with channel=online_store, so checkout never relies on constructed store permalinks.
