@@ -1,4 +1,6 @@
 # Snobi homepage
+- [ ] Build Page 8 Supporters from the original brief, with verified-only empty states, ranking rules and a private profile preview.
+- [ ] Verify Page 8 in English/Arabic, profile controls and narrow layouts.
 - [x] Align Page 7 at /story with the original document: title, Phase 0 chronology and fictional-versus-real finances.
 - [x] Verify Page 7 in English/Arabic and its clothing-gallery link.
 - [x] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.

@@ -1,6 +1,39 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { Supporters } from '@/components/snobi';
+import { useState } from 'react';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ArrowUpRight, Heart, ShieldCheck, Trophy, EyeOff, Pencil } from 'lucide-react';
+import { Mascot, useLanguage } from '@/components/snobi';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 export const Route = createFileRoute('/supporters')({
   head: () => ({ meta: [{ title: 'Snobi’s Biggest Enablers' }, { name: 'description', content: 'The community helping a broke dog. Only verified, opt-in support belongs here.' }, { property: 'og:title', content: 'Snobi’s Biggest Enablers' }, { property: 'og:description', content: 'Good people. Questionable decisions.' }, { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' }] }),
-  component: () => <Supporters standalone />,
+  component: SupportersPage,
 });
+
+function SupportersPage() {
+  const { ar } = useLanguage();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [visibility, setVisibility] = useState('private');
+  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
+  const suggestedTitles = ar ? ['مستشار سنوبي المالي', 'متواطئ الشهر', 'راعي القرارات المشكوك فيها'] : ["Snobi’s Financial Advisor", 'Enabler of the Month', 'Sponsor of Questionable Decisions'];
+  return <>
+    <section className="enablers-intro page-width">
+      <div className="story-topline"><span className="shop-breadcrumb"><Link to="/">{ar ? 'الرئيسية' : 'HOME'}</Link> / {ar ? 'الداعمين' : 'SUPPORTERS'}</span><span className="phase-label">{ar ? 'المرحلة ٠' : 'PHASE 0'}</span></div>
+      <div className="enablers-title"><span className="section-kicker">{ar ? 'ناس كويسة. قرارات مشكوك فيها.' : 'GOOD PEOPLE. QUESTIONABLE DECISIONS.'}</span><h1>{ar ? <>أكبر المتواطئين<br />مع سنوبي.</> : <>SNOBI’S BIGGEST<br />ENABLERS.</>}</h1><p className="handwriting">{ar ? 'هو مش مفلس لوحده. هو بس لسه لوحده.' : 'a support group. for his lack of money.'}</p></div>
+      <div className="enablers-intro-bottom"><p>{ar ? 'الناس اللي بتدي حكاية كلب مفلس فرصة تكمل. مجتمع صغير، مش مسابقة مالية.' : 'The people giving a broke dog’s story a chance. A little community, not a financial competition.'}</p><span><ShieldCheck aria-hidden="true" />{ar ? 'دعم مؤكد فقط · الظهور باختيارك' : 'VERIFIED ONLY · PUBLIC BY CHOICE'}</span></div>
+    </section>
+    <section className="enablers-activity page-width" aria-labelledby="recent-support-title">
+      <div className="enablers-section-heading"><div><Heart aria-hidden="true" /><h2 id="recent-support-title">{ar ? 'آخر المتواطئين.' : 'RECENT ENABLERS.'}</h2></div><span className="handwriting">{ar ? 'سنوبي بيستنى.' : 'he is refreshing this page.'}</span></div>
+      <div className="enablers-waiting"><Mascot className="waiting-mascot" /><p className="handwriting">{ar ? 'محدش ساعده لسه.' : 'nobody has enabled him yet.'}</p><p>{ar ? 'مفيش نشاط مؤكد متاح للعرض لسه. مش هنخترع أصحاب لسنوبي.' : 'No verified activity is available to display yet. We’re not making up friends for him.'}</p><Button variant="note" asChild><Link to="/shop">{ar ? 'شوف التصميمات' : 'SEE THE DESIGNS'}<ArrowUpRight /></Link></Button></div>
+    </section>
+    <section className="enablers-ranking-band"><div className="page-width enablers-ranking"><div><span className="section-kicker">{ar ? 'التقدير. مش الاستثمار.' : 'RECOGNITION. NOT AN INVESTMENT.'}</span><h2><Trophy aria-hidden="true" />{ar ? 'قائمة الشرف.' : 'THE HONOUR ROLL.'}</h2><p>{ar ? 'القائمة الاختيارية مش متاحة لسه. مفيش ترتيب من غير سجلات مؤكدة وقواعد منشورة.' : 'The optional leaderboard is not available yet. No rankings without verified records and published rules.'}</p><span className="handwriting">{ar ? 'المركز الأول: لسه فاضي.' : 'first place: still vacant.'}</span></div><div className="enablers-rules"><h3>{ar ? 'من غير حسابات مشكوك فيها.' : 'NO QUESTIONABLE MATH.'}</h3><ul><li>{ar ? 'أي ترتيب مستقبلي هيعتمد بس على عمليات شراء أو مساهمات مؤهلة ومكتملة ومؤكدة.' : 'Any future ranking will use only verified, completed, eligible purchases or contributions.'}</li><li>{ar ? 'طريقة الحساب والفترة ومعاملة الاستردادات والتعادل لازم تتنشر قبل بدء الترتيب.' : 'The calculation, time period, refund handling and tie rules must be published before rankings open.'}</li><li>{ar ? 'الظهور اختياري، ومفيش ترتيب للناس اللي اختاروا عدم الظهور.' : 'Public display is opt-in. People who opt out will not appear in the public rankings.'}</li><li>{ar ? 'مفيش ملكية أو عوائد استثمار أو مكافآت مالية. مجرد تقدير.' : 'No ownership, investment returns or financial rewards. Just a little recognition.'}</li></ul></div></div></section>
+    <section className="enablers-privacy page-width"><div><span className="section-kicker">{ar ? 'اسمك. اختيارك.' : 'YOUR NAME. YOUR CALL.'}</span><h2>{ar ? 'ساعده من غير أضواء.' : 'ENABLE HIM. NOT THE SPOTLIGHT.'}</h2><p>{ar ? 'اسم تختاره، أو ظهور مجهول، أو عدم الظهور تمامًا. الأسماء القانونية وأرقام التليفون والإيميلات والعناوين ومعلومات الدفع مش مكانها هنا.' : 'A name you choose, an anonymous appearance, or no public appearance at all. Legal names, phone numbers, emails, addresses and payment details do not belong here.'}</p><p>{ar ? 'الملفات العامة مش متاحة لسه. المعاينة مش بتسجل اختيارك ومش بتنشره.' : 'Public profiles are not open yet. This preview does not save your consent or publish anything.'}</p><Button variant="note" onClick={() => setProfileOpen(true)}><Pencil />{ar ? 'عاين ملفك' : 'PREVIEW YOUR PROFILE'}</Button></div><div className="enablers-title-note"><EyeOff aria-hidden="true" /><p className="handwriting">{ar ? '«مستشار سنوبي المالي»' : '“Snobi’s Financial Advisor”'}</p><span>{ar ? 'لقب ممكن تختاره. مش وظيفة حقيقية.' : 'A title you could choose. Not an actual job.'}</span></div></section>
+    <Dialog open={profileOpen} onOpenChange={setProfileOpen}><DialogContent className="enablers-profile-dialog" dir={ar ? 'rtl' : 'ltr'}><DialogTitle>{ar ? 'ملفك. مجرد معاينة.' : 'YOUR PROFILE. JUST A PREVIEW.'}</DialogTitle><DialogDescription>{ar ? 'تغييرات مؤقتة بس. مش بتتسجل ومش بتتنشر.' : 'Temporary changes only. Nothing is saved or published.'}</DialogDescription>
+      <fieldset className="enablers-visibility"><legend>{ar ? 'الظهور العام' : 'Public display'}</legend>{[['private', ar ? 'عدم الظهور — خارج القائمة' : 'Private — leave me off the list'], ['anonymous', ar ? 'ظهور مجهول' : 'Anonymous'], ['named', ar ? 'اسم من اختياري' : 'A name I choose']].map(([value, label]) => <label key={value}><input type="radio" name="supporter-visibility" value={value} checked={visibility === value} onChange={() => setVisibility(value)} />{label}</label>)}</fieldset>
+      {visibility === 'named' && <label className="enablers-field">{ar ? 'الاسم المعروض' : 'Display name'}<input value={name} onChange={e => setName(e.target.value)} maxLength={40} placeholder={ar ? 'اسم مستعار، مش اسمك القانوني' : 'A nickname, not your legal name'} /></label>}
+      {visibility !== 'private' && <><label className="enablers-field">{ar ? 'لقبك' : 'Your title'}<input value={title} onChange={e => setTitle(e.target.value)} maxLength={60} placeholder={suggestedTitles[0]} /></label><div className="enablers-suggestions">{suggestedTitles.map(suggestion => <Button key={suggestion} variant="ghost" size="sm" onClick={() => setTitle(suggestion)}>{suggestion}</Button>)}</div></>}
+      <div className="enablers-profile-preview" aria-live="polite"><span className="section-kicker">{ar ? 'معاينة فقط' : 'PREVIEW ONLY'}</span>{visibility === 'private' ? <p><EyeOff aria-hidden="true" />{ar ? 'مش هتظهر في القائمة العامة.' : 'You would not appear on the public list.'}</p> : <><h3>{visibility === 'anonymous' ? (ar ? 'متواطئ مجهول' : 'Anonymous enabler') : name.trim() || (ar ? 'اسمك المختار' : 'Your chosen name')}</h3><p className="handwriting">{title.trim() || suggestedTitles[0]}</p></>}</div>
+      <Button variant="ink" onClick={() => setProfileOpen(false)}>{ar ? 'اقفل المعاينة' : 'CLOSE PREVIEW'}</Button>
+    </Dialog>
+  </>;
+}
