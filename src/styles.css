@@ -449,6 +449,43 @@ h2 { font-size: 46px; line-height: 1.06; white-space: pre-line; }
   .lookbook-heading { flex-wrap: wrap; }
 }
 
+.faq-intro { padding-block: 28px 32px; }
+.faq-title { margin-top: 32px; }
+.faq-title h1 { font-size: 76px; line-height: 1.02; margin-block: 18px; overflow-wrap: anywhere; }
+.faq-title > p { color: var(--pencil); font-size: 19px; }
+.faq-answers { padding-bottom: 50px; }
+.faq-topline { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-top: 2px solid var(--ink); padding-block: 20px; }
+.faq-topline > span { font-size: 9px; font-weight: 700; }
+.faq-topline > p { font-size: 12px; color: var(--pencil); }
+.faq-accordion > div { border-color: var(--paper-line); }
+.faq-question { text-align: start; padding-block: 23px; gap: 20px; font-size: 21px; font-family: var(--font-heading); font-weight: 600; line-height: 1.5; }
+.faq-question > span:nth-child(2) { flex: 1; }
+.faq-question > .faq-number { font-family: var(--font-hand); font-size: 16px; color: var(--pencil); width: 36px; flex-shrink: 0; font-weight: 400; }
+.faq-question > svg { width: 18px; height: 18px; color: var(--ink); }
+.faq-question:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.faq-answer { padding-inline-start: 56px; padding-bottom: 24px; font-size: 13px; line-height: 1.9; color: var(--pencil); max-width: 800px; }
+.faq-answer .note-button { margin-top: 14px; color: var(--ink); }
+.faq-outro-band { background: var(--paper-deep); border-block: 1px solid var(--paper-line); }
+.faq-outro { display: flex; align-items: center; gap: 35px; padding-block: 30px; }
+.faq-mascot { width: 140px; height: 130px; flex-shrink: 0; }
+.faq-outro h2 { font-size: 31px; }
+.faq-outro .handwriting { color: var(--pencil); font-size: 16px; margin-top: 12px; }
+.faq-outro .note-button { margin-top: 12px; }
+[dir=rtl] .faq-title h1 { font-size: 58px; line-height: 1.4; }
+@media (max-width: 700px) {
+  .faq-title h1 { font-size: 48px; }
+  .faq-title > p { font-size: 15px; }
+  .faq-topline { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .faq-question { font-size: 19px; gap: 12px; padding-block: 20px; }
+  .faq-question > .faq-number { width: 25px; font-size: 14px; }
+  .faq-answer { padding-inline-start: 37px; font-size: 12px; }
+  .faq-outro { gap: 18px; align-items: flex-start; }
+  .faq-mascot { width: 85px; height: 100px; }
+  .faq-outro h2 { font-size: 25px; }
+  [dir=rtl] .faq-title h1 { font-size: 38px; }
+  [dir=rtl] .faq-question { font-size: 16px; }
+}
+
 .enablers-intro { padding-block: 28px 30px; }
 .enablers-title { margin-block: 32px 25px; }
 .enablers-title h1 { font-size: 88px; line-height: .98; margin-block: 16px; overflow-wrap: anywhere; }
