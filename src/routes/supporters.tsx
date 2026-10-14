@@ -34,6 +34,6 @@ function SupportersPage() {
       {visibility !== 'private' && <><label className="enablers-field">{ar ? 'لقبك' : 'Your title'}<input value={title} onChange={e => setTitle(e.target.value)} maxLength={60} placeholder={suggestedTitles[0]} /></label><div className="enablers-suggestions">{suggestedTitles.map(suggestion => <Button key={suggestion} variant="ghost" size="sm" onClick={() => setTitle(suggestion)}>{suggestion}</Button>)}</div></>}
       <div className="enablers-profile-preview" aria-live="polite"><span className="section-kicker">{ar ? 'معاينة فقط' : 'PREVIEW ONLY'}</span>{visibility === 'private' ? <p><EyeOff aria-hidden="true" />{ar ? 'مش هتظهر في القائمة العامة.' : 'You would not appear on the public list.'}</p> : <><h3>{visibility === 'anonymous' ? (ar ? 'متواطئ مجهول' : 'Anonymous enabler') : name.trim() || (ar ? 'اسمك المختار' : 'Your chosen name')}</h3><p className="handwriting">{title.trim() || suggestedTitles[0]}</p></>}</div>
       <Button variant="ink" onClick={() => setProfileOpen(false)}>{ar ? 'اقفل المعاينة' : 'CLOSE PREVIEW'}</Button>
-    </Dialog>
+    </DialogContent></Dialog>
   </>;
 }
