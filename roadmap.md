@@ -1,4 +1,6 @@
 # Snobi homepage
+- [ ] Build and verify Page 10 Contact: bilingual form, accessible validation, honest not-sent feedback and footer navigation.
+- [ ] Activate contact delivery and official email/Instagram links; blocked by missing confirmed business contact details and delivery setup.
 - [x] Build and verify Page 9 FAQ: twelve honest bilingual answers, accessible accordion and footer link.
 - [x] Build Page 8 Supporters from the original brief, with verified-only empty states, ranking safeguards and a private profile preview.
 - [x] Verify Page 8 in English/Arabic, profile controls and narrow layouts.
