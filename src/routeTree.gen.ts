@@ -15,6 +15,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as OrderConfirmationRouteImport } from './routes/order-confirmation'
+import { Route as ShippingRouteImport } from './routes/shipping'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as StoryRouteImport } from './routes/story'
 import { Route as SupportersRouteImport } from './routes/supporters'
@@ -50,6 +51,11 @@ const OrderConfirmationRoute = OrderConfirmationRouteImport.update({
   path: '/order-confirmation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShippingRoute = ShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/order-confirmation': typeof OrderConfirmationRoute
+  '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/story': typeof StoryRoute
   '/supporters': typeof SupportersRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/order-confirmation': typeof OrderConfirmationRoute
+  '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/story': typeof StoryRoute
   '/supporters': typeof SupportersRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/order-confirmation': typeof OrderConfirmationRoute
+  '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/story': typeof StoryRoute
   '/supporters': typeof SupportersRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/order-confirmation'
+    | '/shipping'
     | '/shop'
     | '/story'
     | '/supporters'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/order-confirmation'
+    | '/shipping'
     | '/shop'
     | '/story'
     | '/supporters'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/order-confirmation'
+    | '/shipping'
     | '/shop'
     | '/story'
     | '/supporters'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   OrderConfirmationRoute: typeof OrderConfirmationRoute
+  ShippingRoute: typeof ShippingRoute
   ShopRoute: typeof ShopRoute
   StoryRoute: typeof StoryRoute
   SupportersRoute: typeof SupportersRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/shipping': {
+      id: '/shipping'
+      path: '/shipping'
+      fullPath: '/shipping'
+      preLoaderRoute: typeof ShippingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   OrderConfirmationRoute: OrderConfirmationRoute,
+  ShippingRoute: ShippingRoute,
   ShopRoute: ShopRoute,
   StoryRoute: StoryRoute,
   SupportersRoute: SupportersRoute,
