@@ -1,5 +1,5 @@
 # Snobi homepage
-- [ ] Build and verify Page 9 FAQ: twelve honest bilingual answers, accessible accordion and footer link.
+- [x] Build and verify Page 9 FAQ: twelve honest bilingual answers, accessible accordion and footer link.
 - [x] Build Page 8 Supporters from the original brief, with verified-only empty states, ranking safeguards and a private profile preview.
 - [x] Verify Page 8 in English/Arabic, profile controls and narrow layouts.
 - [ ] Activate verified supporter feed, rankings and saved opt-out choices; blocked by missing verified purchases and public-profile consent service.
