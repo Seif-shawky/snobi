@@ -1,4 +1,5 @@
 # Snobi homepage
+- [x] Build Page 11 Shipping, Returns & Exchanges with all policies marked unconfirmed.
 - [x] Build and verify Page 10 Contact: bilingual form, accessible validation, honest not-sent feedback and footer navigation.
 - [ ] Activate contact delivery and official email/Instagram links; blocked by missing confirmed business contact details and delivery setup.
 - [x] Build and verify Page 9 FAQ: twelve honest bilingual answers, accessible accordion and footer link.
