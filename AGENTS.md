@@ -18,3 +18,4 @@
 - Keep FAQ answers in the bilingual /faq leaf route, linked from the shared footer, and explicitly label unconfirmed business policies instead of supplying defaults.
 - Keep the bag dialog and /cart page on one persistent Zustand cart, hydrated after mount and updated from Shopify cart snapshots, so totals and line IDs stay authoritative without SSR hydration mismatches.
 - Create checkout only through Shopify Cart API and open its returned HTTPS URL in a new tab with channel=online_store, so checkout never relies on constructed store permalinks.
+- Keep the bilingual contact form in /contact with client-side validation and explicit not-sent feedback until actual message delivery is connected, so previews never imply receipt or storage.
