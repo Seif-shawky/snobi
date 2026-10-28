@@ -1,0 +1,5 @@
+# Local secrets for `npm run dev` (copy to .dev.vars). In production set them with
+# `npx wrangler secret put ADMIN_PASSWORD` and `npx wrangler secret put SESSION_SECRET`.
+ADMIN_PASSWORD="choose-a-long-password"
+# At least 32 random characters, e.g. `openssl rand -base64 32`.
+SESSION_SECRET=""

@@ -11,8 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SnobiShell } from '@/components/snobi';
+import { SnobiShell } from "@/components/snobi";
 
 function NotFoundComponent() {
   return (
@@ -37,10 +36,9 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    console.error(error);
   }, [error]);
 
   return (
@@ -83,7 +81,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=Kalam:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;800&display=swap' },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=Kalam:wght@400;700&family=Noto+Sans+Arabic:wght@400;600;800&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -117,7 +118,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <SnobiShell><Outlet /></SnobiShell>
+      <SnobiShell>
+        <Outlet />
+      </SnobiShell>
     </QueryClientProvider>
   );
 }

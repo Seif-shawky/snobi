@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "snobi",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./src/server.ts",
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "snobi",
+      // Replace with the id printed by `npx wrangler d1 create snobi` before deploying.
+      // Local dev (`npm run dev`) works with any value.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "drizzle",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      // Create with `npx wrangler r2 bucket create snobi-images` before deploying.
+      "bucket_name": "snobi-images",
+    },
+  ],
+}

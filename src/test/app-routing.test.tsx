@@ -7,21 +7,30 @@ import { routeTree } from "@/routeTree.gen";
 // Match routes without running loaders or rendering: loaders may need a server or
 // network the test run lacks, and jsdom never loads the stylesheets React waits on.
 describe("App routing", () => {
-  it('matches the dedicated contact page', () => {
+  it("matches the dedicated contact page", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes('/contact').at(-1)?.routeId).toBe('/contact');
+    expect(router.matchRoutes("/contact").at(-1)?.routeId).toBe("/contact");
   });
-  it('matches the dedicated FAQ page', () => {
+  it("matches the dedicated FAQ page", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes('/faq').at(-1)?.routeId).toBe('/faq');
+    expect(router.matchRoutes("/faq").at(-1)?.routeId).toBe("/faq");
   });
-  it('matches the dedicated supporters page', () => {
+  it("matches the dedicated supporters page", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes('/supporters').at(-1)?.routeId).toBe('/supporters');
+    expect(router.matchRoutes("/supporters").at(-1)?.routeId).toBe("/supporters");
   });
-  it('matches the dedicated cart page', () => {
+  it("matches the dedicated cart page", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
-    expect(router.matchRoutes('/cart').at(-1)?.routeId).toBe('/cart');
+    expect(router.matchRoutes("/cart").at(-1)?.routeId).toBe("/cart");
+  });
+  it("matches the checkout and order confirmation pages", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/checkout").at(-1)?.routeId).toBe("/checkout");
+    expect(router.matchRoutes("/order-confirmation").at(-1)?.routeId).toBe("/order-confirmation");
+  });
+  it("matches product pages by handle", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/product/some-shirt").at(-1)?.routeId).toBe("/product/$handle");
   });
   it("matches a page for / instead of falling back to not found", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });

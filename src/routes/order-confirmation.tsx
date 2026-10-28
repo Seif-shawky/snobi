@@ -1,52 +1,245 @@
-import { useEffect, useState } from 'react';
-import { createFileRoute, Link, useHydrated } from '@tanstack/react-router';
-import { ArrowUpRight, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/components/snobi';
-import { useCartStore } from '@/stores/cart';
-import mascot from '@/assets/snobi-original.png';
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowUpRight } from "lucide-react";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/snobi";
+import type { OrderView } from "@/lib/cart-types";
+import { formatMoney } from "@/lib/money";
+import { governorateLabel } from "@/lib/order-schema";
+import { orderLookupSchema, orderQuery } from "@/lib/orders";
+import mascot from "@/assets/snobi-original.jpg";
 
-export const Route = createFileRoute('/order-confirmation')({
-  head: () => ({ meta: [
-    { title: 'Order Confirmation — Snobi' },
-    { name: 'description', content: 'Thanks for giving Snobi a chance. Your Shopify receipt arrives by email.' },
-    { property: 'og:title', content: 'Order Confirmation — Snobi' },
-    { property: 'og:description', content: 'Snobi got a sale. He is pretending to be calm about it.' },
-    { property: 'og:type', content: 'website' }, { name: 'twitter:card', content: 'summary_large_image' },
-  ] }),
+const searchSchema = z.object({
+  ref: z.string().max(20).catch(""),
+  token: z.string().max(128).catch(""),
+});
+
+export const Route = createFileRoute("/order-confirmation")({
+  validateSearch: (search) => searchSchema.parse(search),
+  loaderDeps: ({ search }) => ({ ref: search.ref, token: search.token }),
+  loader: async ({ context, deps }) => {
+    if (!orderLookupSchema.safeParse({ reference: deps.ref, token: deps.token }).success) return;
+    await context.queryClient.ensureQueryData(orderQuery(deps.ref, deps.token));
+  },
+  head: () => ({
+    meta: [
+      { title: "Order Confirmation — Snobi" },
+      {
+        name: "description",
+        content: "Your Snobi order, paid cash on delivery. We confirm the delivery fee by phone.",
+      },
+      // The URL carries a private access token: keep it out of search engines and referrers.
+      { name: "robots", content: "noindex, nofollow" },
+      { name: "referrer", content: "no-referrer" },
+      { property: "og:title", content: "Order Confirmation — Snobi" },
+      {
+        property: "og:description",
+        content: "Snobi got an order. He is pretending to be calm about it.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ConfirmationPage,
 });
 
 function ConfirmationPage() {
+  const { ref, token } = Route.useSearch();
+  const valid = orderLookupSchema.safeParse({ reference: ref, token }).success;
+  return (
+    <section className="cart-page page-width confirm-page">
+      {valid ? <OrderLookup reference={ref} token={token} /> : <OrderNotFound />}
+    </section>
+  );
+}
+
+function OrderLookup({ reference, token }: { reference: string; token: string }) {
+  const { data } = useSuspenseQuery(orderQuery(reference, token));
+  return data ? <OrderDetails order={data} /> : <OrderNotFound />;
+}
+
+function OrderNotFound() {
   const { ar } = useLanguage();
-  const hydrated = useHydrated();
-  const { cart, busy, syncCart } = useCartStore();
-  const [checked, setChecked] = useState(false);
-  const check = () => { void syncCart().finally(() => setChecked(true)); };
-  useEffect(() => {
-    check();
-    const onVisible = () => { if (document.visibilityState === 'visible') check(); };
-    document.addEventListener('visibilitychange', onVisible);
-    return () => document.removeEventListener('visibilitychange', onVisible);
-  }, []);
-  const pending = !hydrated || !checked;
-  const done = !pending && !cart;
-  return <section className="cart-page page-width confirm-page">
+  return (
     <div className="cart-empty">
-      <span className="section-kicker">{ar ? 'تأكيد الطلب' : 'ORDER CONFIRMATION'}</span>
-      <img className="mascot cart-mascot" src={mascot} alt={ar ? 'سنوبي، كلب مرسوم' : 'Snobi, the original doodle of a dog'} />
-      {pending ? <p><Loader2 className="animate-spin" aria-hidden="true" /> {ar ? 'بنتأكد من طلبك…' : 'Checking your order…'}</p>
-      : done ? <>
-        <h1>{ar ? 'شكرًا.\nسنوبي مصدّقش.' : 'THANK YOU.\nSNOBI CAN’T BELIEVE IT.'}</h1>
-        <p>{ar ? 'لو كملت الدفع، Shopify هيبعتلك إيميل فيه رقم الطلب والإيصال وتفاصيل الشحن.' : 'If you completed payment, Shopify will email your order number, receipt and shipping details.'}</p>
-        <Button variant="ink" asChild><Link to="/story">{ar ? 'اقرا حكايته' : 'READ HIS STORY'}<ArrowUpRight /></Link></Button>
-        <span className="handwriting">{ar ? 'أول بيعة. هيتبروز.' : 'first sale. he’s getting it framed.'}</span>
-      </> : <>
-        <h1>{ar ? 'الدفع لسه ما خلصش.' : 'PAYMENT NOT FINISHED YET.'}</h1>
-        <p>{ar ? 'شنطتك لسه موجودة. كمّل الدفع في تاب Shopify، وارجع هنا.' : 'Your bag is still here. Finish paying in the Shopify tab, then come back.'}</p>
-        <Button variant="ink" disabled={busy} onClick={check}>{ar ? 'اتأكد تاني' : 'CHECK AGAIN'}</Button>
-        <Button variant="note" asChild><Link to="/checkout">{ar ? 'ارجع للدفع' : 'BACK TO CHECKOUT'}<ArrowUpRight /></Link></Button>
-      </>}
+      <span className="section-kicker">{ar ? "تأكيد الطلب" : "ORDER CONFIRMATION"}</span>
+      <img className="mascot cart-mascot" src={mascot} alt="" />
+      <h1>{ar ? "مش لاقيين الطلب ده." : "WE CAN’T FIND THAT ORDER."}</h1>
+      <p>
+        {ar
+          ? "اللينك ناقص أو غلط. استخدم اللينك الكامل اللي ظهرلك بعد ما أكدت الطلب."
+          : "The link is incomplete or wrong. Use the full link shown after you placed your order."}
+      </p>
+      <Button variant="ink" asChild>
+        <Link to="/shop">
+          {ar ? "ارجع للمحل" : "BACK TO THE SHOP"}
+          <ArrowUpRight />
+        </Link>
+      </Button>
     </div>
-  </section>;
+  );
+}
+
+function statusCopy(status: OrderView["status"], phone: string, ar: boolean) {
+  switch (status) {
+    case "pending":
+      return ar
+        ? `استلمنا الطلب. هنكلمك أو نبعتلك واتساب على ${phone} نأكد الطلب ومصاريف التوصيل قبل الشحن.`
+        : `We’ve received it. We’ll call or WhatsApp you on ${phone} to confirm your order and the delivery fee before shipping.`;
+    case "confirmed":
+      return ar ? "الطلب اتأكد وبنجهّزه." : "Your order is confirmed and being prepared.";
+    case "shipped":
+      return ar ? "الطلب في الطريق." : "Your order is on its way.";
+    case "delivered":
+      return ar ? "الطلب اتسلّم." : "Your order was delivered.";
+    case "cancelled":
+      return ar
+        ? "الطلب اتلغى. مفيش حاجة مطلوبة منك."
+        : "This order was cancelled. Nothing to pay.";
+  }
+}
+
+function OrderDetails({ order }: { order: OrderView }) {
+  const { ar } = useLanguage();
+  const statusLabel = {
+    pending: ar ? "مستني التأكيد" : "AWAITING CONFIRMATION",
+    confirmed: ar ? "اتأكد" : "CONFIRMED",
+    shipped: ar ? "اتشحن" : "SHIPPED",
+    delivered: ar ? "اتسلّم" : "DELIVERED",
+    cancelled: ar ? "اتلغى" : "CANCELLED",
+  }[order.status];
+  const payment =
+    order.status === "cancelled"
+      ? ar
+        ? "كاش عند الاستلام — مفيش حاجة تتدفع"
+        : "Cash on delivery — nothing to pay"
+      : order.status === "delivered"
+        ? ar
+          ? "كاش عند الاستلام"
+          : "Cash on delivery"
+        : ar
+          ? "كاش عند الاستلام — لسه مدفعتش حاجة"
+          : "Cash on delivery — nothing paid yet";
+  return (
+    <div className="order-confirmation">
+      <div className="order-confirmation-head">
+        <img className="mascot cart-mascot" src={mascot} alt="" />
+        <div>
+          <span className="section-kicker">{ar ? "رقم الطلب" : "ORDER REFERENCE"}</span>
+          <p className="order-reference" dir="ltr">
+            {order.reference}
+          </p>
+          <h1>
+            {order.status === "pending"
+              ? ar
+                ? "شكرًا.\nسنوبي مصدّقش."
+                : "THANK YOU.\nSNOBI CAN’T BELIEVE IT."
+              : ar
+                ? "طلبك."
+                : "YOUR ORDER."}
+          </h1>
+          <p className="order-status">
+            <span className="policy-status">{statusLabel}</span>{" "}
+            {statusCopy(order.status, order.phone, ar)}
+          </p>
+          <p className="handwriting">
+            {ar ? "احتفظ باللينك ده عشان ترجع للطلب." : "keep this link to check your order later."}
+          </p>
+        </div>
+      </div>
+
+      <div className="checkout-layout">
+        <section className="checkout-summary" aria-labelledby="order-items-title">
+          <h2 id="order-items-title">{ar ? "الهدوم" : "THE CLOTHES"}</h2>
+          <ul className="checkout-items">
+            {order.items.map((item, i) => (
+              <li key={i}>
+                <div>
+                  <strong>{ar ? item.nameAr : item.nameEn}</strong>
+                  <span>
+                    {ar ? "المقاس" : "Size"} {item.size} × {item.quantity} ·{" "}
+                    {formatMoney(item.unitPriceCents, ar, order.currency)}
+                  </span>
+                </div>
+                <span>{formatMoney(item.lineTotalCents, ar, order.currency)}</span>
+              </li>
+            ))}
+          </ul>
+          <dl className="checkout-totals">
+            <div>
+              <dt>{ar ? "المجموع الفرعي" : "Subtotal"}</dt>
+              <dd>{formatMoney(order.subtotalCents, ar, order.currency)}</dd>
+            </div>
+            <div>
+              <dt>{ar ? "التوصيل" : "Delivery fee"}</dt>
+              <dd>
+                {order.shippingCents === null
+                  ? ar
+                    ? "هيتأكد معاك"
+                    : "To be confirmed"
+                  : formatMoney(order.shippingCents, ar, order.currency)}
+              </dd>
+            </div>
+            <div>
+              <dt>{ar ? "الإجمالي" : "Total"}</dt>
+              <dd>
+                {order.shippingCents === null
+                  ? ar
+                    ? "المجموع + التوصيل (هيتأكد)"
+                    : "Subtotal + delivery (to be confirmed)"
+                  : formatMoney(order.subtotalCents + order.shippingCents, ar, order.currency)}
+              </dd>
+            </div>
+            <div>
+              <dt>{ar ? "الدفع" : "Payment"}</dt>
+              <dd>{payment}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="checkout-summary" aria-labelledby="order-delivery-title">
+          <h2 id="order-delivery-title">{ar ? "هنوصّل لـ" : "DELIVERING TO"}</h2>
+          <dl className="order-delivery">
+            <div>
+              <dt>{ar ? "الاسم" : "Name"}</dt>
+              <dd>{order.customerName}</dd>
+            </div>
+            <div>
+              <dt>{ar ? "الموبايل" : "Mobile"}</dt>
+              <dd dir="ltr">{order.phone}</dd>
+            </div>
+            {order.email && (
+              <div>
+                <dt>{ar ? "الإيميل" : "Email"}</dt>
+                <dd dir="ltr">{order.email}</dd>
+              </div>
+            )}
+            <div>
+              <dt>{ar ? "العنوان" : "Address"}</dt>
+              <dd>
+                {order.addressLine}
+                <br />
+                {order.city}
+                {ar ? "، " : ", "}
+                {governorateLabel(order.governorate, ar)}
+              </dd>
+            </div>
+            {order.notes && (
+              <div>
+                <dt>{ar ? "ملاحظات" : "Notes"}</dt>
+                <dd>{order.notes}</dd>
+              </div>
+            )}
+          </dl>
+          <Button variant="note" asChild>
+            <Link to="/story">
+              {ar ? "اقرا حكايته وإنت مستني" : "READ HIS STORY WHILE YOU WAIT"}
+              <ArrowUpRight />
+            </Link>
+          </Button>
+        </section>
+      </div>
+    </div>
+  );
 }
