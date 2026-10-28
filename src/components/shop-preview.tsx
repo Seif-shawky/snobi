@@ -3,14 +3,14 @@ import { ArrowUpRight, Plus, Asterisk } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useLanguage } from '@/components/snobi';
-import knit from '@/assets/snobi-knit-mockup.jpg.asset.json';
-import dayOne from '@/assets/snobi-day-one-mockup.jpg.asset.json';
-import backPrint from '@/assets/snobi-back-print-mockup.jpg.asset.json';
+import knit from '@/assets/snobi-knit-mockup.jpg';
+import dayOne from '@/assets/snobi-day-one-mockup.jpg';
+import backPrint from '@/assets/snobi-back-print-mockup.jpg';
 
 const looks = [
-  { image: backPrint.url, title: 'THE BIG SNOBI', arabic: 'سنوبي الكبير', detail: 'The back-print idea.', arabicDetail: 'فكرة الرسمة على الضهر.', note: 'a big dog. a small bank balance.', arabicNote: 'كلب كبير. رصيد صغير.', alt: 'Clothing mockup: dark oversized sweatshirt with a large gold Snobi back print' },
-  { image: dayOne.url, title: 'DAY ONE', arabic: 'أول يوم', detail: 'The blue sweatshirt idea.', arabicDetail: 'فكرة السويت شيرت الأزرق.', note: 'you were here before he had anything.', arabicNote: 'إنت هنا من قبل ما يبقى عنده حاجة.', alt: 'Clothing mockup: blue sweatshirt with white Snobi day one lettering across the back and sleeves' },
-  { image: knit.url, title: 'SNOBI IN KNIT', arabic: 'سنوبي تريكو', detail: 'The knitted mascot idea.', arabicDetail: 'فكرة سنوبي على التريكو.', note: 'at least one of you will be warm.', arabicNote: 'على الأقل واحد فيكم هيدفى.', alt: 'Clothing mockup: dark knit sweater with a large cream Snobi mascot on the front' },
+  { image: backPrint, title: 'THE BIG SNOBI', arabic: 'سنوبي الكبير', detail: 'The back-print idea.', arabicDetail: 'فكرة الرسمة على الضهر.', note: 'a big dog. a small bank balance.', arabicNote: 'كلب كبير. رصيد صغير.', alt: 'Clothing mockup: dark oversized sweatshirt with a large gold Snobi back print' },
+  { image: dayOne, title: 'DAY ONE', arabic: 'أول يوم', detail: 'The blue sweatshirt idea.', arabicDetail: 'فكرة السويت شيرت الأزرق.', note: 'you were here before he had anything.', arabicNote: 'إنت هنا من قبل ما يبقى عنده حاجة.', alt: 'Clothing mockup: blue sweatshirt with white Snobi day one lettering across the back and sleeves' },
+  { image: knit, title: 'SNOBI IN KNIT', arabic: 'سنوبي تريكو', detail: 'The knitted mascot idea.', arabicDetail: 'فكرة سنوبي على التريكو.', note: 'at least one of you will be warm.', arabicNote: 'على الأقل واحد فيكم هيدفى.', alt: 'Clothing mockup: dark knit sweater with a large cream Snobi mascot on the front' },
 ];
 
 export function ShopPreview() {

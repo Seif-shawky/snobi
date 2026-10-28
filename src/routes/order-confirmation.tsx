@@ -4,7 +4,7 @@ import { ArrowUpRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/components/snobi';
 import { useCartStore } from '@/stores/cart';
-import mascot from '@/assets/snobi-original.png.asset.json';
+import mascot from '@/assets/snobi-original.png';
 
 export const Route = createFileRoute('/order-confirmation')({
   head: () => ({ meta: [
@@ -34,7 +34,7 @@ function ConfirmationPage() {
   return <section className="cart-page page-width confirm-page">
     <div className="cart-empty">
       <span className="section-kicker">{ar ? 'تأكيد الطلب' : 'ORDER CONFIRMATION'}</span>
-      <img className="mascot cart-mascot" src={mascot.url} alt={ar ? 'سنوبي، كلب مرسوم' : 'Snobi, the original doodle of a dog'} />
+      <img className="mascot cart-mascot" src={mascot} alt={ar ? 'سنوبي، كلب مرسوم' : 'Snobi, the original doodle of a dog'} />
       {pending ? <p><Loader2 className="animate-spin" aria-hidden="true" /> {ar ? 'بنتأكد من طلبك…' : 'Checking your order…'}</p>
       : done ? <>
         <h1>{ar ? 'شكرًا.\nسنوبي مصدّقش.' : 'THANK YOU.\nSNOBI CAN’T BELIEVE IT.'}</h1>

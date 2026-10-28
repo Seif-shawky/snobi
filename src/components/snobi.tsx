@@ -4,7 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUpRight, Menu, ShoppingBag, X, Heart, Shirt, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import mascot from '@/assets/snobi-original.png.asset.json';
+import mascot from '@/assets/snobi-original.png';
 import { productsQuery } from '@/lib/shopify';
 import { useCartStore } from '@/stores/cart';
 import { CartPanel } from '@/components/cart-panel';
@@ -53,7 +53,7 @@ export function SnobiShell({ children }: { children: ReactNode }) {
 }
 
 export function Mascot({ className = '' }: { className?: string }) {
-  return <img className={`mascot ${className}`} src={mascot.url} alt="Snobi, the original hand-drawn dog with absolutely no money" />;
+  return <img className={`mascot ${className}`} src={mascot} alt="Snobi, the original hand-drawn dog with absolutely no money" />;
 }
 
 export function Collection({ standalone = false }: { standalone?: boolean }) {
