@@ -26,7 +26,10 @@ describe("admin session cookie", () => {
     const token = await signSession(secret, expires);
     const [, sig] = token.split(".");
     expect(await verifySession(secret, `${expires + SESSION_TTL_MS}.${sig}`)).toBe(false);
-    const flipped = token.slice(0, -1) + (token.endsWith("A") ? "B" : "A");
+    // Flip a middle character: the last base64url char carries 2 padding bits, so changing
+    // it (e.g. A<->B) can leave the decoded signature identical.
+    const i = token.length - 10;
+    const flipped = token.slice(0, i) + (token[i] === "A" ? "B" : "A") + token.slice(i + 1);
     expect(await verifySession(secret, flipped)).toBe(false);
   });
 
