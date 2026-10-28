@@ -38,6 +38,7 @@ export default defineConfig({
           "zustand",
           "zustand/middleware",
           "@tanstack/react-query",
+          "@tanstack/react-router-ssr-query",
           "drizzle-orm",
           "drizzle-orm/d1",
           "drizzle-orm/sqlite-core",

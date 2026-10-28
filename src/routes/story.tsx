@@ -196,19 +196,19 @@ function StoryPage() {
         <h2>{ar ? "خليك جزء من البداية." : "BE PART OF THE BEGINNING."}</h2>
         <p>
           {ar
-            ? "شوف تصميمات الهدوم اللي ممكن تدي سنوبي فرصة."
-            : "Meet the clothing designs that could give Snobi a chance."}
+            ? "شوف الهدوم اللي ممكن تدي سنوبي فرصة."
+            : "Meet the clothes that could give Snobi a chance."}
         </p>
         <Button variant="ink" asChild>
           <Link to="/shop">
-            {ar ? "شوف التصميمات" : "SEE THE DESIGNS"}
+            {ar ? "شوف الهدوم" : "SEE THE CLOTHES"}
             <ArrowUpRight />
           </Link>
         </Button>
         <p className="story-outro-fine">
           {ar
-            ? "الأسعار والمقاسات والطلب لسه مش مؤكدة. مش تبرع خيري معفى من الضرائب."
-            : "Prices, sizes and ordering are not confirmed yet. Not a tax-deductible charity donation."}
+            ? "إنت بتشتري هدوم بالسعر الموضح، والدفع عند الاستلام. مش تبرع خيري."
+            : "You’re buying clothes at the displayed price, paid cash on delivery. Not a charity donation."}
         </p>
       </section>
     </>

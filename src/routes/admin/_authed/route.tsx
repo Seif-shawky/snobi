@@ -1,6 +1,6 @@
 import { Link, Outlet, createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { LayoutDashboard, LogOut, Package, ReceiptText } from "lucide-react";
+import { Image, Inbox, LayoutDashboard, LogOut, Package, ReceiptText, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { adminLogoutFn, getAdminStatusFn } from "@/lib/admin-auth";
@@ -36,6 +36,15 @@ function AdminLayout() {
         </Link>
         <Link to="/admin/orders" activeProps={{ "aria-current": "page" }}>
           <ReceiptText aria-hidden /> Orders
+        </Link>
+        <Link to="/admin/delivery" activeProps={{ "aria-current": "page" }}>
+          <Truck aria-hidden /> Delivery fees
+        </Link>
+        <Link to="/admin/messages" activeProps={{ "aria-current": "page" }}>
+          <Inbox aria-hidden /> Messages
+        </Link>
+        <Link to="/admin/site" activeProps={{ "aria-current": "page" }}>
+          <Image aria-hidden /> Site
         </Link>
         <Button type="button" variant="ghost" size="sm" onClick={onLogout}>
           <LogOut aria-hidden /> Sign out

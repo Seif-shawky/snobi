@@ -246,8 +246,8 @@ function ProductDetail({ product }: { product: CatalogProduct }) {
           </div>
           <p className="product-cod-note">
             {ar
-              ? "الدفع كاش عند الاستلام. مصاريف التوصيل بتتأكد معاك قبل الشحن."
-              : "Cash on delivery. The delivery fee is confirmed with you before shipping."}
+              ? "الدفع كاش عند الاستلام. مصاريف التوصيل حسب المحافظة وبتظهرلك قبل ما تأكد الطلب."
+              : "Cash on delivery. The delivery fee depends on your governorate and is shown before you order."}
           </p>
         </div>
       </div>

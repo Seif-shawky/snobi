@@ -128,3 +128,26 @@ export function priceOrder(
     subtotalCents: items.reduce((sum, i) => sum + i.unitPriceCents * i.quantity, 0),
   };
 }
+
+export interface DeliveryRateRow {
+  feeCents: number;
+  active: boolean;
+}
+
+export type DeliveryDecision =
+  | { ok: true; shippingCents: number }
+  | { ok: false; error: "no_delivery" }
+  | { ok: false; error: "delivery_fee_changed"; shippingCents: number };
+
+// The customer must have seen the fee they are charged: a missing or switched-off rate blocks the
+// order, and a fee that changed since checkout loaded is sent back for confirmation.
+export function resolveDelivery(
+  rate: DeliveryRateRow | null | undefined,
+  expectedShippingCents: number,
+): DeliveryDecision {
+  if (!rate || !rate.active) return { ok: false, error: "no_delivery" };
+  if (rate.feeCents !== expectedShippingCents) {
+    return { ok: false, error: "delivery_fee_changed", shippingCents: rate.feeCents };
+  }
+  return { ok: true, shippingCents: rate.feeCents };
+}

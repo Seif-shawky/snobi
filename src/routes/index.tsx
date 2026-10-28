@@ -1,15 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Asterisk } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Collection,
-  HowItWorks,
-  Mascot,
-  StoryTeaser,
-  Supporters,
-  useLanguage,
-} from "@/components/snobi";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Collection, HowItWorks, StoryTeaser, Supporters, useLanguage } from "@/components/snobi";
+import roadside from "@/assets/snobi-phase-0-roadside.jpg";
 import { productsQuery } from "@/lib/catalog";
+import { siteContentQuery } from "@/lib/site";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -28,13 +24,17 @@ export const Route = createFileRoute("/")({
     ],
   }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(productsQuery);
+    await Promise.all([
+      context.queryClient.ensureQueryData(productsQuery),
+      context.queryClient.ensureQueryData(siteContentQuery),
+    ]);
   },
   component: Index,
 });
 
 function Index() {
   const { ar } = useLanguage();
+  const { data: site } = useSuspenseQuery(siteContentQuery);
   const [wiggle, setWiggle] = useState(false);
   const seeShirts = () => {
     setWiggle(true);
@@ -97,7 +97,7 @@ function Index() {
               {ar ? "قرار مالي مشكوك فيه." : "this is probably a bad financial decision."}
             </p>
           </div>
-          <div
+          <figure
             className={`hero-art ${wiggle ? "mascot-wiggle" : ""}`}
             onAnimationEnd={() => setWiggle(false)}
           >
@@ -107,13 +107,22 @@ function Index() {
                 <path d="M12 5 Q78 7 62 57 M48 42 L62 59 L77 44" />
               </svg>
             </span>
-            <Mascot className="hero-mascot" />
-            <span className="handwriting please-note">{ar ? "أرجوك." : "please."}</span>
+            <div className="hero-frame">
+              <img
+                className="hero-picture"
+                src={site.heroImageUrl ?? roadside}
+                alt={ar ? site.heroAltAr : site.heroAltEn}
+                width={1024}
+                height={859}
+                fetchPriority="high"
+              />
+            </div>
             <span className="handwriting art-bottom-note">
               {ar ? "معندوش أي حاجة." : "he has nothing."}
             </span>
+            <span className="handwriting please-note">{ar ? "أرجوك." : "please."}</span>
             <Asterisk className="art-star" strokeWidth={1.6} aria-hidden="true" />
-          </div>
+          </figure>
         </div>
         <div className="hero-bottom">
           <div className="support-counter">

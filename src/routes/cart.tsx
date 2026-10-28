@@ -44,8 +44,8 @@ function CartPage() {
       <div className="cart-page-note">
         <p>
           {ar
-            ? "تصميمات الهدوم المعروضة لسه مش متاحة للطلب. الأسعار والمقاسات لسه مش مؤكدة."
-            : "Clothing design previews aren’t available to order yet. Prices and sizes are still to be confirmed."}
+            ? "الأسعار والمخزون بيتأكدوا تاني وقت الطلب. مصاريف الشحن حسب محافظتك وبتظهر في صفحة الدفع."
+            : "Prices and stock are checked again when you order. Delivery fee depends on your governorate and is shown at checkout."}
         </p>
         <p>
           {ar

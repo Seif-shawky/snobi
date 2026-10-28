@@ -37,7 +37,7 @@ function readConfig() {
   return { ok: true as const, password, secret };
 }
 
-function clientIp() {
+export function clientIp() {
   return getRequest().headers.get("cf-connecting-ip") ?? getRequestIP() ?? "unknown";
 }
 

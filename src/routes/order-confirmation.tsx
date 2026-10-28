@@ -27,7 +27,7 @@ export const Route = createFileRoute("/order-confirmation")({
       { title: "Order Confirmation — Snobi" },
       {
         name: "description",
-        content: "Your Snobi order, paid cash on delivery. We confirm the delivery fee by phone.",
+        content: "Your Snobi order: items, delivery fee and the total to pay cash on delivery.",
       },
       // The URL carries a private access token: keep it out of search engines and referrers.
       { name: "robots", content: "noindex, nofollow" },
@@ -81,12 +81,18 @@ function OrderNotFound() {
   );
 }
 
-function statusCopy(status: OrderView["status"], phone: string, ar: boolean) {
+function statusCopy(status: OrderView["status"], phone: string, feeKnown: boolean, ar: boolean) {
   switch (status) {
     case "pending":
+      if (!feeKnown) {
+        // Orders placed before delivery fees were set per governorate.
+        return ar
+          ? `استلمنا الطلب. هنكلمك أو نبعتلك واتساب على ${phone} نأكد الطلب ومصاريف التوصيل قبل الشحن.`
+          : `We’ve received it. We’ll call or WhatsApp you on ${phone} to confirm your order and the delivery fee before shipping.`;
+      }
       return ar
-        ? `استلمنا الطلب. هنكلمك أو نبعتلك واتساب على ${phone} نأكد الطلب ومصاريف التوصيل قبل الشحن.`
-        : `We’ve received it. We’ll call or WhatsApp you on ${phone} to confirm your order and the delivery fee before shipping.`;
+        ? `استلمنا الطلب. هنكلمك أو نبعتلك واتساب على ${phone} نأكد الطلب قبل الشحن.`
+        : `We’ve received it. We’ll call or WhatsApp you on ${phone} to confirm your order before shipping.`;
     case "confirmed":
       return ar ? "الطلب اتأكد وبنجهّزه." : "Your order is confirmed and being prepared.";
     case "shipped":
@@ -141,7 +147,7 @@ function OrderDetails({ order }: { order: OrderView }) {
           </h1>
           <p className="order-status">
             <span className="policy-status">{statusLabel}</span>{" "}
-            {statusCopy(order.status, order.phone, ar)}
+            {statusCopy(order.status, order.phone, order.shippingCents !== null, ar)}
           </p>
           <p className="handwriting">
             {ar ? "احتفظ باللينك ده عشان ترجع للطلب." : "keep this link to check your order later."}
@@ -172,17 +178,29 @@ function OrderDetails({ order }: { order: OrderView }) {
               <dd>{formatMoney(order.subtotalCents, ar, order.currency)}</dd>
             </div>
             <div>
-              <dt>{ar ? "التوصيل" : "Delivery fee"}</dt>
+              <dt>{ar ? "مصاريف التوصيل" : "Delivery fee"}</dt>
               <dd>
                 {order.shippingCents === null
                   ? ar
                     ? "هيتأكد معاك"
                     : "To be confirmed"
-                  : formatMoney(order.shippingCents, ar, order.currency)}
+                  : order.shippingCents === 0
+                    ? ar
+                      ? "توصيل مجاني"
+                      : "Free delivery"
+                    : formatMoney(order.shippingCents, ar, order.currency)}
               </dd>
             </div>
-            <div>
-              <dt>{ar ? "الإجمالي" : "Total"}</dt>
+            <div className="checkout-total">
+              <dt>
+                {order.status === "cancelled"
+                  ? ar
+                    ? "الإجمالي"
+                    : "Total"
+                  : ar
+                    ? "الإجمالي اللي هتدفعه عند الاستلام"
+                    : "Total to pay on delivery"}
+              </dt>
               <dd>
                 {order.shippingCents === null
                   ? ar
@@ -196,6 +214,12 @@ function OrderDetails({ order }: { order: OrderView }) {
               <dd>{payment}</dd>
             </div>
           </dl>
+          <p className="checkout-summary-note">
+            {ar
+              ? "مصاريف التوصيل مش بترجع لو رجّعت حاجة. "
+              : "Delivery fees aren’t refunded if you return something. "}
+            <Link to="/shipping">{ar ? "سياسة الاسترجاع" : "Returns policy"}</Link>
+          </p>
         </section>
 
         <section className="checkout-summary" aria-labelledby="order-delivery-title">

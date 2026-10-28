@@ -24,6 +24,7 @@ export async function adminListOrders(status: AdminOrderStatus | null) {
       phone: orders.phone,
       governorate: orders.governorate,
       subtotalCents: orders.subtotalCents,
+      shippingCents: orders.shippingCents,
       status: orders.status,
       // Drizzle renders columns unqualified inside sql``, so the correlated subquery is spelled out.
       itemCount: sql<number>`coalesce((select sum(oi.quantity) from order_items oi where oi.order_id = "orders"."id"), 0)`,

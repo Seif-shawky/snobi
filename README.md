@@ -49,12 +49,23 @@ its sizes and photos for good (past orders still keep their details).
 
 - Customers order without paying online; they pay cash when the parcel arrives.
 - Stock goes down as soon as an order is placed, so the shop never sells more than you have.
+- Before launch, set delivery fees in **/admin → Delivery fees**: switch on each governorate you
+  deliver to, enter its fee (0 = free) and, optionally, the expected days. Governorates that are
+  off can't be chosen at checkout; with none switched on, checkout is paused.
+- Customers see the fee for their governorate at checkout, and it is saved on the order.
 - New orders appear under **/admin → Orders** as **pending**. Open one, then call or WhatsApp
-  the customer to confirm.
-- Enter the agreed **delivery fee** and save it; the page shows the total to collect.
+  the customer to confirm. You can still adjust the delivery fee there; the page shows the total
+  to collect.
 - Move the order along: pending → confirmed → shipped → delivered.
 - **Cancel** (possible while pending or confirmed) puts the items back into stock. Cancelling
   twice never adds the stock back twice.
+
+## Messages and the homepage picture
+
+- Contact-form messages land in **/admin → Messages**. Reply with the email link there (the site
+  doesn't send email itself), then delete messages you no longer need.
+- **/admin → Site** changes the homepage picture of Snobi for each story phase. Upload a new
+  drawing (JPEG, PNG or WebP, up to 5 MB) or reset to the default Phase 0 roadside drawing.
 
 ## Scripts
 

@@ -107,12 +107,16 @@ export const placeOrderSchema = z.object({
   customer: checkoutSchema,
   lines: cartLinesSchema.min(1),
   idempotencyKey: z.string().uuid(),
+  // The delivery fee the customer saw; the server refuses the order if it no longer matches.
+  expectedShippingCents: z.number().int().min(0).max(1_000_000),
 });
 export type PlaceOrderInput = z.output<typeof placeOrderSchema>;
 export type PlaceOrderPayload = z.input<typeof placeOrderSchema>;
 
 export type PlaceOrderResult =
   | { ok: true; reference: string; accessToken: string }
-  | { ok: false; error: "out_of_stock" | "unavailable"; variantIds: string[] };
+  | { ok: false; error: "out_of_stock" | "unavailable"; variantIds: string[] }
+  | { ok: false; error: "no_delivery" }
+  | { ok: false; error: "delivery_fee_changed"; shippingCents: number };
 
 export const REFERENCE_PATTERN = /^SNB-[A-Z0-9]{6}$/;

@@ -8,6 +8,8 @@ import {
   ShoppingBag,
   X,
   Heart,
+  Instagram,
+  Mail,
   Shirt,
   Sparkles,
 } from "lucide-react";
@@ -16,6 +18,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import mascot from "@/assets/snobi-original.jpg";
 import { productsQuery } from "@/lib/catalog";
 import { formatMoney } from "@/lib/money";
+import { SNOBI_EMAIL, SNOBI_INSTAGRAM_HANDLE, SNOBI_INSTAGRAM_URL } from "@/lib/contact-details";
 import { cartQuoteKey } from "@/lib/cart";
 import { CART_STORAGE_KEY, cartCount, useCartStore } from "@/stores/cart";
 import { CartPanel } from "@/components/cart-panel";
@@ -129,6 +132,18 @@ export function SnobiShell({ children }: { children: ReactNode }) {
             <Link to="/faq">{ar ? "الأسئلة الشائعة" : "FAQ"}</Link>
             <Link to="/shipping">{ar ? "الشحن والاسترجاع" : "Shipping & returns"}</Link>
             <Link to="/contact">{ar ? "تواصل معانا" : "Contact"}</Link>
+            <Link to="/privacy">{ar ? "سياسة الخصوصية" : "Privacy"}</Link>
+            <Link to="/terms">{ar ? "الشروط والأحكام" : "Terms"}</Link>
+          </div>
+          <div className="footer-social">
+            <a href={SNOBI_INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <Instagram aria-hidden="true" />
+              <span dir="ltr">{SNOBI_INSTAGRAM_HANDLE}</span>
+            </a>
+            <a href={`mailto:${SNOBI_EMAIL}`}>
+              <Mail aria-hidden="true" />
+              <span dir="ltr">{SNOBI_EMAIL}</span>
+            </a>
           </div>
           <div className="footer-fine">
             {ar ? "سنوبي © ٢٠٢٦ · صُنع في مصر" : "© 2026 SNOBI. MADE IN EGYPT."}

@@ -5,8 +5,9 @@ import type { PlaceOrderInput, PlaceOrderResult } from "@/lib/order-schema";
 import { loadVariantRows } from "./cart";
 import { getDb } from "./db/client";
 import { orderItems, orders, variants } from "./db/schema";
+import { getDeliveryRate } from "./delivery";
 import { constantTimeEqual, generateAccessToken, generateReference } from "./order-codes";
-import { mergeLines, priceOrder } from "./pricing";
+import { mergeLines, priceOrder, resolveDelivery } from "./pricing";
 
 // Walks an error and its causes (Drizzle wraps D1 errors) into one searchable string.
 function errorText(error: unknown): string {
@@ -35,6 +36,8 @@ async function findByIdempotencyKey(key: string) {
 
 // Creates a cash-on-delivery order. Stock is decremented in the same atomic D1 batch as the
 // order insert; the variants_stock_nonnegative CHECK makes an oversell roll back everything.
+// The delivery fee is checked the same way: the order is stored with the fee the customer saw,
+// and a fee changed or switched off before the batch runs also rolls it back.
 // Contract with /admin: cancelling an order restores its stock.
 export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrderResult> {
   const existing = await findByIdempotencyKey(input.idempotencyKey);
@@ -44,8 +47,15 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
   const priced = priceOrder(lines, await loadVariantRows(lines.map((l) => l.variantId)));
   if (!priced.ok) return priced;
 
-  const db = getDb();
   const { customer } = input;
+  const delivery = resolveDelivery(
+    await getDeliveryRate(customer.governorate),
+    input.expectedShippingCents,
+  );
+  if (!delivery.ok) return delivery;
+  const { shippingCents } = delivery;
+
+  const db = getDb();
   const now = Date.now();
 
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -68,7 +78,7 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
         addressLine: customer.addressLine,
         notes: customer.notes ?? null,
         subtotalCents: priced.subtotalCents,
-        shippingCents: null,
+        shippingCents,
         currency: "EGP",
         createdAt: now,
         updatedAt: now,
@@ -79,12 +89,15 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
       ...priced.items.map((item) =>
         db
           .update(variants)
-          // If the size was deactivated, its product hidden, or its price changed since we read
-          // it, write -1 so the stock CHECK fails and the whole batch rolls back.
+          // If the size was deactivated, its product hidden, its price changed, or the delivery
+          // fee changed since we read them, write -1 so the stock CHECK fails and the whole
+          // batch rolls back.
           .set({
             stock: sql`CASE WHEN ${variants.active} = 1
               AND ${variants.priceCents} = ${item.unitPriceCents}
               AND (SELECT status FROM products WHERE products.id = ${variants.productId}) = 'active'
+              AND EXISTS (SELECT 1 FROM delivery_rates WHERE governorate = ${customer.governorate}
+                AND active = 1 AND fee_cents = ${shippingCents})
               THEN ${variants.stock} - ${item.quantity} ELSE -1 END`,
             updatedAt: now,
           })
@@ -97,7 +110,13 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
     } catch (error) {
       const text = errorText(error);
       if (/CHECK constraint failed|variants_stock_nonnegative/i.test(text)) {
-        // Someone else bought the last ones between our read and the batch. Nothing was written.
+        // Someone else bought the last ones, or the owner changed the delivery fee, between our
+        // read and the batch. Nothing was written.
+        const freshDelivery = resolveDelivery(
+          await getDeliveryRate(customer.governorate),
+          input.expectedShippingCents,
+        );
+        if (!freshDelivery.ok) return freshDelivery;
         const fresh = priceOrder(lines, await loadVariantRows(lines.map((l) => l.variantId)));
         return fresh.ok
           ? { ok: false, error: "out_of_stock", variantIds: [] }

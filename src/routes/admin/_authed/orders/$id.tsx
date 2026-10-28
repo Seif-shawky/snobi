@@ -27,6 +27,7 @@ import {
   type AdminOrderStatus,
 } from "@/lib/admin-shared";
 import { formatMoney, poundsToCents } from "@/lib/money";
+import { governorateLabel } from "@/lib/order-schema";
 
 export const Route = createFileRoute("/admin/_authed/orders/$id")({
   loader: async ({ params }) => {
@@ -83,7 +84,7 @@ function AdminOrder() {
     event.preventDefault();
     const cents = fee.trim() === "" ? null : poundsToCents(fee);
     if (fee.trim() !== "" && cents === null) {
-      setFeeError("Enter the fee in EGP, e.g. 60 or 60.50 (leave empty if not agreed yet)");
+      setFeeError("Enter the fee in EGP, e.g. 60 or 60.50");
       return;
     }
     setFeeError(null);
@@ -131,7 +132,7 @@ function AdminOrder() {
         <address className="admin-address">
           {order.addressLine}
           <br />
-          {order.city}, {order.governorate}
+          {order.city}, {governorateLabel(order.governorate, false)}
         </address>
         {order.notes && (
           <p className="admin-notes">
@@ -161,20 +162,20 @@ function AdminOrder() {
         <dl className="admin-totals">
           <dt>Subtotal</dt>
           <dd>{formatMoney(order.subtotalCents, false)}</dd>
-          <dt>Delivery</dt>
+          <dt>Delivery fee</dt>
           <dd>
             {order.shippingCents === null ? "Not set yet" : formatMoney(order.shippingCents, false)}
           </dd>
           <dt>To collect</dt>
           <dd>
             <strong>{formatMoney(total, false)}</strong>
-            {order.shippingCents === null && " + delivery"}
+            {order.shippingCents === null && " + delivery (not set)"}
           </dd>
         </dl>
         {editable && (
           <form onSubmit={onSaveFee} noValidate className="admin-inline-form">
             <div className="admin-field">
-              <Label htmlFor="fee">Delivery fee (EGP)</Label>
+              <Label htmlFor="fee">Change delivery fee (EGP)</Label>
               <Input
                 id="fee"
                 inputMode="decimal"

@@ -8,6 +8,7 @@ import {
   type AdminOrderStatus,
 } from "@/lib/admin-shared";
 import { formatMoney } from "@/lib/money";
+import { governorateLabel } from "@/lib/order-schema";
 
 export const Route = createFileRoute("/admin/_authed/orders/")({
   validateSearch: (search: Record<string, unknown>): { status?: AdminOrderStatus } => {
@@ -52,11 +53,14 @@ function AdminOrders() {
                     {o.reference} · {o.customerName}
                   </span>
                   <span className="admin-muted">
-                    {dateFormat.format(o.createdAt)} · {o.governorate} · {o.phone}
+                    {dateFormat.format(o.createdAt)} · {governorateLabel(o.governorate, false)} ·{" "}
+                    {o.phone}
                   </span>
                   <span className="admin-muted">
                     {o.itemCount} {o.itemCount === 1 ? "item" : "items"} ·{" "}
-                    {formatMoney(o.subtotalCents, false)}
+                    {o.shippingCents === null
+                      ? `${formatMoney(o.subtotalCents, false)} + delivery (not set)`
+                      : `${formatMoney(o.subtotalCents + o.shippingCents, false)} to collect`}
                   </span>
                 </span>
                 <Badge variant={o.status === "pending" ? "default" : "outline"}>{o.status}</Badge>

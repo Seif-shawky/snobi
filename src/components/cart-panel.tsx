@@ -225,8 +225,8 @@ export function CartPanel({
           </div>
           <p>
             {ar
-              ? "الدفع كاش عند الاستلام. مصاريف التوصيل لسه متحددتش؛ هنكلمك نأكدها قبل الشحن."
-              : "Pay cash on delivery. The delivery fee isn’t set yet; we’ll confirm it with you before shipping."}
+              ? "الدفع كاش عند الاستلام. مصاريف التوصيل بتختلف حسب المحافظة وبتظهرلك في صفحة إتمام الطلب."
+              : "Pay cash on delivery. Delivery fee depends on your governorate and is shown at checkout."}
           </p>
           {blocked ? (
             <Button variant="ink" disabled aria-describedby={showReason ? reasonId : undefined}>

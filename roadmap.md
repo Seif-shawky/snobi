@@ -1,6 +1,21 @@
 # Snobi homepage
 
+## Phase 5: content, delivery fees and policies
+
+- [x] Per-governorate delivery fees managed in /admin/delivery; fee shown at checkout, re-checked by placeOrder and stored on the order; checkout pauses when no governorate is active.
+- [x] /shipping published: live fee table, 14-day returns from delivery, delivery fees non-refundable, return/exchange conditions.
+- [x] Contact form stores messages (honeypot, 5/IP/hour) with an /admin/messages inbox; official email and Instagram in footer and contact page.
+- [x] Privacy policy and terms (/privacy, /terms) in English and Arabic, linked from the footer.
+- [x] Homepage hero picture replaceable from /admin/site; default Phase 0 roadside drawing.
+- [x] Removed the static clothing mockups from the shop.
+- [ ] Owner: set real delivery fees per governorate in /admin/delivery before launch.
+- [ ] Publish a size guide; decide restock policy (still labelled undecided in the FAQ).
+- [ ] Auto-delete contact messages older than 12 months (privacy policy promise).
+- [ ] Order notifications to the owner (email/WhatsApp) and checkout spam protection.
+- [ ] Phase 6: deploy to Cloudflare (D1, R2, secrets), domain, one real test order.
+
 ## Own backend: cash-on-delivery purchase flow
+
 - [x] Product page from D1: image gallery with no-photo state, per-language copy, accessible size radios (sold-out disabled), low-stock note, explicit no-size error, quantity 1–10.
 - [x] Cart store stores only variant IDs/quantities ("snobi-cart-v1"); bag and /cart render from the server quoteCart (prices, stock flags, removed variants pruned with a notice).
 - [x] Checkout with COD delivery form (Egyptian mobile validation/normalisation, 27 governorates, shared zod schema client + server) and honest delivery-fee copy.
@@ -12,7 +27,6 @@
 - [ ] Rate-limit placeOrder and add bot protection before launch.
 - [ ] Send order notifications (WhatsApp/email) once contact channels are confirmed.
 - [ ] Online payment methods (not planned for launch).
-
 
 - [x] Build Page 11 Shipping, Returns & Exchanges with all policies marked unconfirmed.
 - [x] Build and verify Page 10 Contact: bilingual form, accessible validation, honest not-sent feedback and footer navigation.

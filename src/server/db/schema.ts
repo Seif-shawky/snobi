@@ -149,3 +149,42 @@ export const loginAttempts = sqliteTable(
   },
   (t) => [index("login_attempts_ip_idx").on(t.ip, t.attemptedAt)],
 );
+
+// Delivery fee per governorate, managed in /admin/delivery. Keys match GOVERNORATES values in
+// src/lib/order-schema.ts. A governorate without an active row cannot be ordered to.
+export const deliveryRates = sqliteTable(
+  "delivery_rates",
+  {
+    governorate: text("governorate").primaryKey(),
+    feeCents: integer("fee_cents").notNull(),
+    // Optional estimate shown to customers, in days after the order is confirmed.
+    minDays: integer("min_days"),
+    maxDays: integer("max_days"),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    updatedAt: timestamps.updatedAt,
+  },
+  (t) => [check("delivery_rates_fee_nonnegative", sql`${t.feeCents} >= 0`)],
+);
+
+// Small key/value store for owner-editable site content (e.g. the homepage hero image).
+export const siteSettings = sqliteTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamps.updatedAt,
+});
+
+export const contactMessages = sqliteTable(
+  "contact_messages",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    orderReference: text("order_reference"),
+    message: text("message").notNull(),
+    // Used only for rate limiting; cleared when the message is deleted.
+    ip: text("ip"),
+    readAt: integer("read_at", { mode: "number" }),
+    createdAt: timestamps.createdAt,
+  },
+  (t) => [index("contact_messages_created_idx").on(t.createdAt)],
+);

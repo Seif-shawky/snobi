@@ -6,6 +6,7 @@ import {
   IMAGE_EXTENSIONS,
   MAX_IMAGE_BYTES,
   sniffImageType,
+  type AllowedImageType,
 } from "@/lib/admin-shared";
 import { getDb } from "../db/client";
 import { productImages, products } from "../db/schema";
@@ -13,13 +14,12 @@ import { requireAdmin } from "./auth";
 
 export type UploadResult = { ok: true; id: string; r2Key: string } | { ok: false; error: string };
 
-export async function adminUploadImage(form: FormData): Promise<UploadResult> {
-  await requireAdmin();
-  const productId = form.get("productId");
-  const file = form.get("file");
-  if (typeof productId !== "string" || !/^[\w-]{1,64}$/.test(productId)) {
-    return { ok: false, error: "Missing product" };
-  }
+export type ValidatedImage =
+  | { ok: true; bytes: Uint8Array; type: AllowedImageType; extension: string }
+  | { ok: false; error: string };
+
+// Shared by every admin upload: size and type limits, and the real type from the file's bytes.
+export async function readUploadedImage(file: FormDataEntryValue | null): Promise<ValidatedImage> {
   if (!(file instanceof File)) return { ok: false, error: "Choose a photo to upload" };
   if (file.size === 0) return { ok: false, error: "That file is empty" };
   if (file.size > MAX_IMAGE_BYTES) return { ok: false, error: "Photos must be 5 MB or smaller" };
@@ -29,6 +29,18 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const type = sniffImageType(bytes);
   if (!type) return { ok: false, error: "This file is not a real JPEG, PNG or WebP image" };
+  return { ok: true, bytes, type, extension: IMAGE_EXTENSIONS[type] };
+}
+
+export async function adminUploadImage(form: FormData): Promise<UploadResult> {
+  await requireAdmin();
+  const productId = form.get("productId");
+  if (typeof productId !== "string" || !/^[\w-]{1,64}$/.test(productId)) {
+    return { ok: false, error: "Missing product" };
+  }
+  const image = await readUploadedImage(form.get("file"));
+  if (!image.ok) return image;
+  const { bytes, type } = image;
 
   const db = getDb();
   const [product] = await db
@@ -38,7 +50,7 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
   if (!product) return { ok: false, error: "This product no longer exists" };
 
   const id = crypto.randomUUID();
-  const r2Key = `products/${productId}/${id}.${IMAGE_EXTENSIONS[type]}`;
+  const r2Key = `products/${productId}/${id}.${image.extension}`;
   await env.IMAGES.put(r2Key, bytes, { httpMetadata: { contentType: type } });
   try {
     const [last] = await db

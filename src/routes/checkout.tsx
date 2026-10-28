@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, Loader2, Truck } from "lucide-react";
@@ -10,11 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCartQuote } from "@/hooks/use-cart-quote";
 import { cartQuoteKey } from "@/lib/cart";
+import { deliveryRatesKey, loadDeliveryRates, useDeliveryRates } from "@/lib/delivery";
+import { formatDeliveryEstimate, type PublicDeliveryRate } from "@/lib/delivery-rules";
 import { formatMoney } from "@/lib/money";
 import { placeOrder } from "@/lib/orders";
 import {
   GOVERNORATES,
   checkoutSchema,
+  governorateLabel,
   type CheckoutField,
   type PlaceOrderPayload,
   type PlaceOrderResult,
@@ -28,7 +31,7 @@ export const Route = createFileRoute("/checkout")({
       {
         name: "description",
         content:
-          "Check your Snobi bag and enter delivery details. Pay cash on delivery; we confirm the delivery fee with you before shipping.",
+          "Check your Snobi bag and enter delivery details. See the delivery fee for your governorate, then pay the total in cash on delivery.",
       },
       { property: "og:title", content: "Checkout — Snobi" },
       {
@@ -39,6 +42,7 @@ export const Route = createFileRoute("/checkout")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: () => loadDeliveryRates(),
   component: CheckoutPage,
 });
 
@@ -71,6 +75,10 @@ function errorText(code: string, ar: boolean): string {
     ],
     email_invalid: ["Enter a valid email, or leave it empty.", "اكتب إيميل صحيح، أو سيبه فاضي."],
     governorate_required: ["Choose your governorate.", "اختار المحافظة."],
+    governorate_unavailable: [
+      "We don’t deliver to this governorate yet. Choose another one.",
+      "لسه مش بنوصّل للمحافظة دي. اختار محافظة تانية.",
+    ],
     city_required: ["Enter your city or area.", "اكتب المدينة أو المنطقة."],
     address_required: [
       "Enter the street, building and apartment.",
@@ -82,6 +90,24 @@ function errorText(code: string, ar: boolean): string {
   return ar ? "الكلام ده أطول من اللازم." : "That’s too long.";
 }
 
+function feeText(cents: number, ar: boolean) {
+  return cents === 0 ? (ar ? "توصيل مجاني" : "Free delivery") : formatMoney(cents, ar);
+}
+
+function estimateText(rate: PublicDeliveryRate, ar: boolean) {
+  const estimate = formatDeliveryEstimate(rate.minDays, rate.maxDays, ar);
+  if (!estimate) return null;
+  return ar ? `${estimate} بعد ما نأكد الطلب` : `${estimate} after we confirm your order`;
+}
+
+function deliveryNote(rate: PublicDeliveryRate, ar: boolean) {
+  const fee = ar
+    ? `مصاريف التوصيل: ${feeText(rate.feeCents, ar)}.`
+    : `Delivery fee: ${feeText(rate.feeCents, ar)}.`;
+  const estimate = estimateText(rate, ar);
+  return estimate ? `${fee} ${ar ? "بيوصل عادةً في" : "Usually arrives in"} ${estimate}.` : fee;
+}
+
 function CheckoutPage() {
   const { ar } = useLanguage();
   const navigate = useNavigate();
@@ -91,6 +117,16 @@ function CheckoutPage() {
   const [values, setValues] = useState<Values>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<CheckoutField, string>>>({});
   const [result, setResult] = useState<Exclude<PlaceOrderResult, { ok: true }> | null>(null);
+  const [feeChange, setFeeChange] = useState<{ governorate: string; from: number } | null>(null);
+  const ratesQuery = useDeliveryRates(Route.useLoaderData());
+  const rates = ratesQuery.data;
+  const rateByGov = useMemo(
+    () => new Map((rates ?? []).map((r) => [r.governorate, r] as const)),
+    [rates],
+  );
+  const selectedRate = values.governorate ? rateByGov.get(values.governorate) : undefined;
+  const deliveryPaused = rates !== undefined && rates.length === 0;
+  const ratesUnavailable = rates === undefined;
   const formRef = useRef<HTMLFormElement>(null);
   // One key per checkout attempt: a retried submit (e.g. after a dropped connection) returns
   // the same order instead of creating a second one.
@@ -98,7 +134,7 @@ function CheckoutPage() {
 
   const mutation = useMutation({
     mutationFn: (data: PlaceOrderPayload) => placeOrder({ data }),
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       if (res.ok) {
         clearCart();
         queryClient.removeQueries({ queryKey: cartQuoteKey });
@@ -112,7 +148,21 @@ function CheckoutPage() {
       // A typed failure means nothing was written, so the next attempt gets a fresh key.
       idempotencyKey.current = null;
       setResult(res);
-      void queryClient.invalidateQueries({ queryKey: cartQuoteKey });
+      const governorate = variables.customer.governorate;
+      if (res.error === "delivery_fee_changed") {
+        // Show the new fee straight away; the customer confirms by placing the order again.
+        setFeeChange({ governorate, from: variables.expectedShippingCents });
+        queryClient.setQueryData(deliveryRatesKey, (old: PublicDeliveryRate[] | undefined) =>
+          old?.map((r) =>
+            r.governorate === governorate ? { ...r, feeCents: res.shippingCents } : r,
+          ),
+        );
+        void queryClient.invalidateQueries({ queryKey: deliveryRatesKey });
+      } else if (res.error === "no_delivery") {
+        void queryClient.invalidateQueries({ queryKey: deliveryRatesKey });
+      } else {
+        void queryClient.invalidateQueries({ queryKey: cartQuoteKey });
+      }
     },
   });
 
@@ -125,22 +175,31 @@ function CheckoutPage() {
     event.preventDefault();
     if (mutation.isPending) return;
     setResult(null);
+    setFeeChange(null);
     const parsed = checkoutSchema.safeParse(values);
+    const next: Partial<Record<CheckoutField, string>> = {};
     if (!parsed.success) {
-      const next: Partial<Record<CheckoutField, string>> = {};
       for (const issue of parsed.error.issues) {
         const field = issue.path[0] as CheckoutField;
         next[field] ??= issue.message;
       }
+    }
+    if (values.governorate && rates && !selectedRate) next.governorate = "governorate_unavailable";
+    if (!parsed.success || next.governorate) {
       setErrors(next);
       const first = FIELD_ORDER.find((f) => next[f]);
       if (first) formRef.current?.querySelector<HTMLElement>(`#checkout-${first}`)?.focus();
       return;
     }
     setErrors({});
-    if (!quote?.orderable || updating) return;
+    if (!quote?.orderable || updating || !selectedRate) return;
     idempotencyKey.current ??= crypto.randomUUID();
-    mutation.mutate({ customer: parsed.data, lines, idempotencyKey: idempotencyKey.current });
+    mutation.mutate({
+      customer: parsed.data,
+      lines,
+      idempotencyKey: idempotencyKey.current,
+      expectedShippingCents: selectedRate.feeCents,
+    });
   }
 
   const field = (
@@ -227,8 +286,8 @@ function CheckoutPage() {
                 <strong>{ar ? "الدفع كاش عند الاستلام" : "CASH ON DELIVERY"}</strong>
                 <p>
                   {ar
-                    ? "مش هتدفع حاجة دلوقتي. مصاريف التوصيل لسه متحددتش: هنكلمك أو نبعتلك واتساب نأكد الطلب ومصاريف التوصيل قبل ما نشحن."
-                    : "You pay nothing now. The delivery fee isn’t decided yet: we’ll call or WhatsApp you to confirm your order and the delivery fee before shipping."}
+                    ? "مش هتدفع حاجة دلوقتي. هتدفع الإجمالي (الهدوم + مصاريف التوصيل) كاش لما الطلب يوصلك. هنكلمك أو نبعتلك واتساب نأكد الطلب قبل ما نشحن."
+                    : "You pay nothing now. You pay the total (clothes + delivery fee) in cash when it arrives. We’ll call or WhatsApp you to confirm your order before shipping."}
                 </p>
               </div>
             </div>
@@ -266,15 +325,39 @@ function CheckoutPage() {
                   value={values.governorate}
                   onChange={(e) => update("governorate", e.target.value)}
                   aria-invalid={Boolean(errors.governorate)}
-                  aria-describedby={errors.governorate ? "checkout-governorate-error" : undefined}
+                  aria-describedby={
+                    [
+                      errors.governorate && "checkout-governorate-error",
+                      selectedRate && "checkout-governorate-note",
+                    ]
+                      .filter(Boolean)
+                      .join(" ") || undefined
+                  }
                 >
                   <option value="">{ar ? "اختار…" : "Choose…"}</option>
-                  {GOVERNORATES.map((g) => (
-                    <option key={g.value} value={g.value}>
-                      {ar ? `${g.ar} — ${g.en}` : `${g.en} — ${g.ar}`}
-                    </option>
-                  ))}
+                  {GOVERNORATES.map((g) => {
+                    const rate = rateByGov.get(g.value);
+                    const name = ar ? g.ar : g.en;
+                    const suffix =
+                      rates === undefined
+                        ? ""
+                        : rate
+                          ? feeText(rate.feeCents, ar)
+                          : ar
+                            ? "لسه مش بنوصّل"
+                            : "no delivery yet";
+                    return (
+                      <option key={g.value} value={g.value} disabled={rates !== undefined && !rate}>
+                        {suffix ? `${name} — ${suffix}` : name}
+                      </option>
+                    );
+                  })}
                 </select>
+                {selectedRate && (
+                  <p className="contact-field-note" id="checkout-governorate-note">
+                    {deliveryNote(selectedRate, ar)}
+                  </p>
+                )}
                 {errors.governorate && (
                   <p className="contact-error" id="checkout-governorate-error">
                     {errorText(errors.governorate, ar)}
@@ -312,7 +395,56 @@ function CheckoutPage() {
               </div>
             </div>
             <div aria-live="assertive" className="checkout-feedback">
-              {result && (
+              {deliveryPaused && (
+                <div className="contact-feedback" role="status">
+                  <strong>{ar ? "الطلبات واقفة مؤقتًا." : "ORDERS ARE PAUSED FOR NOW."}</strong>
+                  <p>
+                    {ar
+                      ? "التوصيل لسه متظبطش، فمش بنستقبل طلبات دلوقتي. شنطتك محفوظة؛ ارجع بعدين."
+                      : "Delivery isn’t set up yet, so orders are paused. Your bag is saved — check back soon."}
+                  </p>
+                </div>
+              )}
+              {ratesQuery.isError && !rates && (
+                <div className="contact-feedback" role="alert">
+                  <strong>
+                    {ar ? "مش قادرين نجيب مصاريف التوصيل." : "WE COULDN’T LOAD DELIVERY FEES."}
+                  </strong>
+                  <p>
+                    {ar
+                      ? "محتاجينها عشان نوريك الإجمالي قبل ما تطلب."
+                      : "We need them to show your total before you order."}
+                  </p>
+                  <Button type="button" variant="note" onClick={() => void ratesQuery.refetch()}>
+                    {ar ? "حاول تاني" : "TRY AGAIN"}
+                  </Button>
+                </div>
+              )}
+              {result?.error === "delivery_fee_changed" && feeChange && (
+                <div className="contact-feedback" role="alert">
+                  <strong>
+                    {ar
+                      ? "مصاريف التوصيل اتغيرت. الطلب ما اتعملش لسه."
+                      : "THE DELIVERY FEE CHANGED. YOUR ORDER WAS NOT PLACED YET."}
+                  </strong>
+                  <p>
+                    {ar
+                      ? `مصاريف التوصيل لـ${governorateLabel(feeChange.governorate, ar)} بقت ${formatMoney(result.shippingCents, ar)} بدل ${formatMoney(feeChange.from, ar)}. راجع الإجمالي، ولو موافق اضغط "أكّد الطلب" تاني.`
+                      : `The delivery fee for ${governorateLabel(feeChange.governorate, ar)} is now ${formatMoney(result.shippingCents, ar)} (was ${formatMoney(feeChange.from, ar)}). Check the new total and place your order again to confirm.`}
+                  </p>
+                </div>
+              )}
+              {result?.error === "no_delivery" && (
+                <div className="contact-feedback" role="alert">
+                  <strong>{ar ? "الطلب ما اتعملش." : "YOUR ORDER WAS NOT PLACED."}</strong>
+                  <p>
+                    {ar
+                      ? "وقفنا التوصيل للمحافظة دي من شوية. اختار محافظة تانية لو ينفع، أو ارجع بعدين."
+                      : "We just stopped delivering to this governorate. Choose another one if you can, or check back later."}
+                  </p>
+                </div>
+              )}
+              {(result?.error === "out_of_stock" || result?.error === "unavailable") && (
                 <div className="contact-feedback" role="alert">
                   <strong>{ar ? "الطلب ما اتعملش." : "YOUR ORDER WAS NOT PLACED."}</strong>
                   <p>
@@ -341,7 +473,14 @@ function CheckoutPage() {
               variant="ink"
               type="submit"
               className="checkout-submit"
-              disabled={mutation.isPending || updating || failed || !quote.orderable}
+              disabled={
+                mutation.isPending ||
+                updating ||
+                failed ||
+                !quote.orderable ||
+                ratesUnavailable ||
+                deliveryPaused
+              }
             >
               {mutation.isPending ? (
                 <>
@@ -384,14 +523,44 @@ function CheckoutPage() {
                 );
               })}
             </ul>
-            <dl className="checkout-totals">
+            <dl className="checkout-totals" aria-live="polite">
               <div>
                 <dt>{ar ? "المجموع الفرعي" : "Subtotal"}</dt>
                 <dd>{updating ? "…" : formatMoney(quote.subtotalCents, ar)}</dd>
               </div>
               <div>
-                <dt>{ar ? "التوصيل" : "Delivery"}</dt>
-                <dd>{ar ? "هيتأكد معاك" : "To be confirmed"}</dd>
+                <dt>{ar ? "مصاريف التوصيل" : "Delivery fee"}</dt>
+                <dd>
+                  {ratesUnavailable
+                    ? "…"
+                    : deliveryPaused
+                      ? ar
+                        ? "متوقف مؤقتًا"
+                        : "Paused"
+                      : selectedRate
+                        ? feeText(selectedRate.feeCents, ar)
+                        : values.governorate
+                          ? ar
+                            ? "مش بنوصّل هناك لسه"
+                            : "No delivery there yet"
+                          : ar
+                            ? "اختار المحافظة"
+                            : "Choose your governorate"}
+                </dd>
+              </div>
+              {selectedRate && estimateText(selectedRate, ar) && (
+                <div>
+                  <dt>{ar ? "مدة التوصيل المتوقعة" : "Estimated delivery"}</dt>
+                  <dd>{estimateText(selectedRate, ar)}</dd>
+                </div>
+              )}
+              <div className="checkout-total">
+                <dt>{ar ? "الإجمالي اللي هتدفعه عند الاستلام" : "Total to pay on delivery"}</dt>
+                <dd>
+                  {selectedRate && !updating
+                    ? formatMoney(quote.subtotalCents + selectedRate.feeCents, ar)
+                    : "—"}
+                </dd>
               </div>
               <div>
                 <dt>{ar ? "الدفع" : "Payment"}</dt>
@@ -400,8 +569,9 @@ function CheckoutPage() {
             </dl>
             <p className="checkout-summary-note">
               {ar
-                ? "الإجمالي = المجموع الفرعي + مصاريف التوصيل اللي هنأكدها معاك بالتليفون."
-                : "Total = subtotal + the delivery fee we confirm with you by phone."}
+                ? "مصاريف التوصيل مش بترجع لو رجّعت حاجة. "
+                : "Delivery fees aren’t refunded if you return something. "}
+              <Link to="/shipping">{ar ? "سياسة الاسترجاع" : "Returns policy"}</Link>
             </p>
             <Button variant="note" asChild>
               <Link to="/cart">

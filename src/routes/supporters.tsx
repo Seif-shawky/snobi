@@ -94,7 +94,7 @@ function SupportersPage() {
           </p>
           <Button variant="note" asChild>
             <Link to="/shop">
-              {ar ? "شوف التصميمات" : "SEE THE DESIGNS"}
+              {ar ? "شوف الهدوم" : "SEE THE CLOTHES"}
               <ArrowUpRight />
             </Link>
           </Button>
