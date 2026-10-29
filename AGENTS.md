@@ -1,15 +1,9 @@
-<!-- LOVABLE:BEGIN -->
-
 > [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-
-<!-- LOVABLE:END -->
+> This repository (github.com/Seif-shawky/snobi) is no longer connected to Lovable; the old
+> Lovable project lives in Seif-shawky/welcome-home (remote `origin`) — never push this code there.
+> Production runs on Cloudflare Workers (worker "snobi", D1 "snobi", R2 "snobi-images");
+> secrets ADMIN_PASSWORD and SESSION_SECRET are set with `wrangler secret put`, never committed.
+> Apply schema changes with `npm run db:generate` then `npm run db:migrate:remote` before deploying.
 
 - Keep shared storefront chrome and English/Arabic state in the Snobi shell around the root Outlet, so all pages share navigation and mirrored layouts.
 - Load catalog data from D1 through server functions (src/lib/_.ts wrapping src/server/_) and TanStack Query; never substitute invented products or purchase activity for missing store data.
