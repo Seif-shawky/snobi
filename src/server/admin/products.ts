@@ -1,10 +1,10 @@
-import { env } from "cloudflare:workers";
 import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { LOW_STOCK_THRESHOLD, type FieldErrors, type ProductFormOutput } from "@/lib/admin-shared";
 import { getDb } from "../db/client";
 import { orders, productImages, products, variants } from "../db/schema";
 import { requireAdmin } from "./auth";
+import { imagesBucket } from "../images-bucket";
 
 export type SaveProductResult = { ok: true; id: string } | { ok: false; fieldErrors: FieldErrors };
 
@@ -188,6 +188,6 @@ export async function adminDeleteProduct(id: string) {
     db.delete(variants).where(eq(variants.productId, id)),
     db.delete(products).where(eq(products.id, id)),
   ]);
-  if (images.length) await env.IMAGES.delete(images.map((i) => i.key));
+  if (images.length) await imagesBucket()?.delete(images.map((i) => i.key));
   return { ok: true as const };
 }

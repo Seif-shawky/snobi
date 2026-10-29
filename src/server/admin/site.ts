@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { inArray } from "drizzle-orm";
 import { HERO_KEY_PATTERN, SITE_SETTING_KEYS, resolveSiteContent } from "@/lib/site-content";
 import { getDb } from "../db/client";
@@ -6,6 +5,7 @@ import { siteSettings } from "../db/schema";
 import { readSiteSettings } from "../site";
 import { requireAdmin } from "./auth";
 import { readUploadedImage } from "./images";
+import { imagesBucket, PHOTO_STORAGE_MISSING } from "../images-bucket";
 
 export type HeroUploadResult = { ok: true } | { ok: false; error: string };
 
@@ -23,7 +23,7 @@ function upsertSettings(values: Record<string, string>) {
 }
 
 async function deleteHeroObject(key: string | undefined) {
-  if (key && HERO_KEY_PATTERN.test(key)) await env.IMAGES.delete(key);
+  if (key && HERO_KEY_PATTERN.test(key)) await imagesBucket()?.delete(key);
 }
 
 export async function adminGetSite() {
@@ -40,12 +40,14 @@ export async function adminGetSite() {
 
 export async function adminUploadHero(form: FormData): Promise<HeroUploadResult> {
   await requireAdmin();
+  const bucket = imagesBucket();
+  if (!bucket) return { ok: false, error: PHOTO_STORAGE_MISSING };
   const image = await readUploadedImage(form.get("file"));
   if (!image.ok) return image;
 
   const previous = (await readSiteSettings())[SITE_SETTING_KEYS.heroImage];
   const key = `site/hero/${crypto.randomUUID()}.${image.extension}`;
-  await env.IMAGES.put(key, image.bytes, { httpMetadata: { contentType: image.type } });
+  await bucket.put(key, image.bytes, { httpMetadata: { contentType: image.type } });
   try {
     const db = getDb();
     const now = Date.now();
@@ -62,7 +64,7 @@ export async function adminUploadHero(form: FormData): Promise<HeroUploadResult>
         ),
     ]);
   } catch (error) {
-    await env.IMAGES.delete(key);
+    await bucket.delete(key);
     throw error;
   }
   if (previous !== key) await deleteHeroObject(previous);

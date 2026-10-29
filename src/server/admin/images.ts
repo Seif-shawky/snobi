@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { and, eq, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import {
@@ -11,6 +10,7 @@ import {
 import { getDb } from "../db/client";
 import { productImages, products } from "../db/schema";
 import { requireAdmin } from "./auth";
+import { imagesBucket, PHOTO_STORAGE_MISSING } from "../images-bucket";
 
 export type UploadResult = { ok: true; id: string; r2Key: string } | { ok: false; error: string };
 
@@ -38,6 +38,8 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
   if (typeof productId !== "string" || !/^[\w-]{1,64}$/.test(productId)) {
     return { ok: false, error: "Missing product" };
   }
+  const bucket = imagesBucket();
+  if (!bucket) return { ok: false, error: PHOTO_STORAGE_MISSING };
   const image = await readUploadedImage(form.get("file"));
   if (!image.ok) return image;
   const { bytes, type } = image;
@@ -51,7 +53,7 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
 
   const id = crypto.randomUUID();
   const r2Key = `products/${productId}/${id}.${image.extension}`;
-  await env.IMAGES.put(r2Key, bytes, { httpMetadata: { contentType: type } });
+  await bucket.put(r2Key, bytes, { httpMetadata: { contentType: type } });
   try {
     const [last] = await db
       .select({ max: sql<number | null>`max(${productImages.sortOrder})` })
@@ -64,7 +66,7 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
       sortOrder: (last?.max ?? -1) + 1,
     });
   } catch (error) {
-    await env.IMAGES.delete(r2Key);
+    await bucket.delete(r2Key);
     throw error;
   }
   return { ok: true, id, r2Key };
@@ -94,6 +96,6 @@ export async function adminDeleteImage(id: string) {
     .delete(productImages)
     .where(eq(productImages.id, id))
     .returning({ r2Key: productImages.r2Key });
-  if (image) await env.IMAGES.delete(image.r2Key);
+  if (image) await imagesBucket()?.delete(image.r2Key);
   return { ok: true as const };
 }

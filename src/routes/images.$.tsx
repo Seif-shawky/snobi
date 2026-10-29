@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { env } from "cloudflare:workers";
 import { isPublicImageKey } from "@/lib/site-content";
+import { imagesBucket } from "@/server/images-bucket";
 
 // Streams product and homepage images uploaded through the admin from the IMAGES R2 bucket.
 export const Route = createFileRoute("/images/$")({
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/images/$")({
       GET: async ({ params }) => {
         const key = params._splat ?? "";
         if (!isPublicImageKey(key)) return new Response("Not found", { status: 404 });
-        const object = await env.IMAGES.get(key);
+        const object = await imagesBucket()?.get(key);
         if (!object) return new Response("Not found", { status: 404 });
         const headers = new Headers();
         object.writeHttpMetadata(headers);
