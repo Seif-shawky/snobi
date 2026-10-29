@@ -1,5 +1,6 @@
 import { Asterisk } from "lucide-react";
 import { useLanguage } from "@/components/snobi";
+import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
 
 export function ShopIntro() {
   const { ar } = useLanguage();
@@ -39,6 +40,23 @@ export function ShopIntro() {
             </svg>
           </div>
         </div>
+        <aside className="phase-explainer" aria-labelledby="phase-explainer-title">
+          <h2 id="phase-explainer-title">
+            {ar
+              ? `يعني إيه ${phaseLabel(CURRENT_PHASE, true)}؟`
+              : `WHAT’S ${phaseLabel(CURRENT_PHASE, false)}?`}
+          </h2>
+          <p>
+            {ar
+              ? "حياة سنوبي ماشية على مراحل. كل ما يوصل لمبلغ معين من الفلوس، بيطلع للمرحلة اللي بعدها: حكاية جديدة، حاجات جديدة، وهدوم جديدة."
+              : "Snobi’s life moves in phases. Every time he reaches a certain amount of money, he moves up to the next phase: new story, new stuff, new clothes."}
+          </p>
+          <p>
+            {ar
+              ? `هدوم ${phaseLabel(CURRENT_PHASE, true)} بتتباع بس طول المرحلة دي، ومش هترجع بعد ما تخلص. دلوقتي: معندوش أي حاجة.`
+              : `${phaseLabel(CURRENT_PHASE, false)} clothes are only sold during this phase and won’t come back after it ends. Right now: he has nothing.`}
+          </p>
+        </aside>
         <div className="shop-intro-bottom">
           <p>
             {ar

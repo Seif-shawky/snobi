@@ -370,12 +370,6 @@ h3 {
   font-size: 18px;
   font-weight: 400;
 }
-.hero-cta-note {
-  color: var(--pencil);
-  margin-top: 14px;
-  font-size: 14px;
-  transform: rotate(-2deg);
-}
 .mascot {
   mix-blend-mode: multiply;
   object-fit: contain;
@@ -394,10 +388,6 @@ h3 {
   display: flex;
   align-items: center;
   gap: 32px;
-}
-.counter-label {
-  font-size: 8px;
-  font-weight: 700;
 }
 .counter-value {
   font-family: var(--font-heading);
@@ -504,11 +494,6 @@ h2 {
   color: var(--pencil);
   transform: rotate(3deg);
   font-size: 16px;
-}
-.purchase-note {
-  font-size: 10px;
-  color: var(--pencil);
-  margin-top: 16px;
 }
 .product-grid {
   display: grid;
@@ -656,35 +641,6 @@ h2 {
   color: var(--pencil);
   margin-block: 18px;
 }
-.expense-art {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.expense-mascot {
-  width: 220px;
-  flex-shrink: 0;
-}
-.expense-note {
-  padding: 22px 17px;
-  border: 1px solid var(--ink);
-  transform: rotate(4deg);
-  width: 300px;
-  background: var(--paper-deep);
-}
-.expense-title {
-  font-size: 18px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--paper-line);
-}
-.expense-note > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-family: var(--font-hand);
-  font-size: 14px;
-  margin-top: 12px;
-}
 .note-red {
   color: var(--red-ink);
 }
@@ -785,12 +741,6 @@ h2 {
   .header-actions {
     gap: 14px;
   }
-  .expense-mascot {
-    width: 155px;
-  }
-  .expense-note {
-    width: 260px;
-  }
   .ink-strip {
     gap: 25px;
   }
@@ -838,18 +788,12 @@ h2 {
     gap: 22px;
     margin-top: 22px;
   }
-  .hero-cta-note {
-    font-size: 12px;
-  }
   .hero-bottom {
     margin-top: 20px;
     padding-top: 16px;
   }
   .support-counter {
     gap: 18px;
-  }
-  .counter-label {
-    font-size: 7px;
   }
   .counter-value {
     font-size: 34px;
@@ -917,10 +861,6 @@ h2 {
     text-align: end;
     font-size: 13px;
   }
-  .purchase-note {
-    font-size: 9px;
-    line-height: 1.7;
-  }
   .how-title {
     align-items: flex-start;
     flex-direction: column;
@@ -971,22 +911,6 @@ h2 {
   }
   .story-copy h2 {
     font-size: 41px;
-  }
-  .expense-art {
-    gap: 0;
-  }
-  .expense-mascot {
-    width: 125px;
-  }
-  .expense-note {
-    width: calc(100% - 120px);
-    padding: 16px 12px;
-  }
-  .expense-title {
-    font-size: 16px;
-  }
-  .expense-note > div {
-    font-size: 12px;
   }
   .story-section {
     padding-block: 38px;
@@ -3337,69 +3261,6 @@ h2 {
   margin: 0;
   padding-block: 46px 44px;
 }
-.hero-frame {
-  position: relative;
-  width: min(100%, 500px);
-  margin-inline: auto;
-  padding: 8px;
-  background: var(--paper);
-  border: 1.5px solid var(--ink);
-  border-radius: 3px 2px 4px 2px;
-  box-shadow:
-    5px 6px 0 var(--paper-deep),
-    5px 6px 0 1.5px var(--paper-line);
-  transform: rotate(1.4deg);
-}
-.hero-frame::before {
-  content: "";
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  width: 92px;
-  height: 22px;
-  translate: -50% 0;
-  rotate: -4deg;
-  background: color-mix(in oklch, var(--paper-deep) 82%, transparent);
-  border: 1px solid var(--paper-line);
-  z-index: 1;
-}
-.hero-picture {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1024 / 859;
-  object-fit: cover;
-  background: var(--paper-deep);
-}
-.art-top-note {
-  position: absolute;
-  top: 0;
-  inset-inline-start: 4%;
-  font-size: 23px;
-  transform: rotate(-6deg);
-  z-index: 2;
-}
-.art-top-note svg {
-  position: absolute;
-  top: 16px;
-  inset-inline-start: calc(100% + 4px);
-  width: 62px;
-  height: 46px;
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-[dir="rtl"] .art-top-note svg {
-  transform: scaleX(-1);
-}
-.art-bottom-note {
-  position: absolute;
-  bottom: 2px;
-  inset-inline-start: 8%;
-  color: var(--pencil);
-  transform: rotate(-4deg);
-}
 .please-note {
   position: absolute;
   bottom: 0;
@@ -3420,37 +3281,10 @@ h2 {
   height: 40px;
   transform: rotate(16deg);
 }
-@media (max-width: 1000px) {
-  .art-top-note {
-    font-size: 20px;
-  }
-}
 @media (max-width: 700px) {
   .hero-art {
     margin-top: 18px;
     padding-block: 38px 38px;
-  }
-  .hero-frame {
-    padding: 6px;
-    transform: rotate(1deg);
-  }
-  .hero-frame::before {
-    width: 70px;
-    height: 18px;
-    top: -9px;
-  }
-  .art-top-note {
-    font-size: 18px;
-    inset-inline-start: 2%;
-  }
-  .art-top-note svg {
-    top: 12px;
-    width: 46px;
-    height: 34px;
-  }
-  .art-bottom-note {
-    font-size: 15px;
-    inset-inline-start: 4%;
   }
   .please-note {
     font-size: 21px;
@@ -3810,4 +3644,202 @@ h2 {
   padding: 12px 0;
   background: var(--paper);
   border-top: 1.5px solid var(--ink);
+}
+
+/* ---- Home: phases, frameless hero, spinning stars, receipt Snobi ---- */
+/* The nav's shop link is the current phase stamp: it leads to this phase's drop. */
+.desktop-nav .nav-phase,
+.mobile-nav .nav-phase {
+  display: inline-block;
+  padding: 4px 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition:
+    background-color 0.15s,
+    color 0.15s,
+    transform 0.15s;
+}
+.desktop-nav .nav-phase::after {
+  content: none;
+}
+.nav-phase:hover,
+.nav-phase:focus-visible,
+.nav-phase.active {
+  background: var(--red-ink);
+  color: var(--paper);
+  transform: rotate(-1deg);
+}
+/* Hero art has its background removed (transparent PNG), so it sits straight on the page. */
+.hero-picture {
+  display: block;
+  width: min(100%, 580px);
+  height: auto;
+  margin-inline: auto;
+}
+.hero-art {
+  padding-block: 20px 40px;
+}
+.counter-value span {
+  text-transform: uppercase;
+}
+@keyframes snobi-star-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+/* `rotate` composes with any existing transform tilt on a star. */
+.snobi-site .lucide-asterisk {
+  animation: snobi-star-spin 14s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .snobi-site .lucide-asterisk {
+    animation: none;
+  }
+}
+.receipts {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 580px;
+  justify-self: center;
+}
+@media (min-width: 701px) {
+  .story-layout:has(.receipts) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  }
+}
+.receipts-art {
+  position: relative;
+  aspect-ratio: 578 / 432;
+  touch-action: pan-y;
+}
+.receipts-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.receipts-hidden {
+  visibility: hidden;
+}
+/* Text boxes traced onto the two paper slips in the drawing (578x432 source pixels):
+   they sit in the area left free by Snobi's head and arms in both head positions. */
+.receipt-slip {
+  position: absolute;
+  top: 32.2%;
+  width: 12.6%;
+  height: 21%;
+  overflow: hidden;
+  color: var(--ink);
+  pointer-events: none;
+}
+.receipt-slip-current {
+  left: 17%;
+  transform-origin: top left;
+  transform: rotate(-14deg);
+}
+.receipt-slip-next {
+  right: 16.6%;
+  transform-origin: top right;
+  transform: rotate(15deg);
+  color: var(--pencil);
+}
+.receipt-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 2.4cqw;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.6cqw;
+  margin-bottom: 0.8cqw;
+}
+.receipt-slip-current .receipt-title {
+  color: var(--red-ink);
+}
+.receipt-soon {
+  margin-inline-start: 0.15em;
+}
+.receipt-slip ul,
+.receipt-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.receipt-slip li {
+  font-size: 1.55cqw;
+  line-height: 1.25;
+  margin-top: 0.4cqw;
+}
+.receipt-slip li::before,
+.receipt-list li::before {
+  content: "– ";
+}
+.receipts-lists {
+  display: none;
+}
+.receipts .expense-disclaimer {
+  text-align: center;
+  margin-top: 6px;
+}
+/* Too narrow for the lists on the slips: keep the titles there, write the lists below. */
+@container (max-width: 460px) {
+  .receipt-slip ul {
+    display: none;
+  }
+  .receipt-title {
+    font-size: 3.2cqw;
+    border-bottom: 0;
+  }
+  .receipts-lists {
+    /* Left list matches the left (current) slip in both languages. */
+    direction: ltr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 4px;
+  }
+  .receipt-list {
+    padding: 10px 12px;
+    border: 1px solid var(--ink);
+    background: var(--paper-deep);
+    transform: rotate(-2deg);
+  }
+  .receipt-list + .receipt-list {
+    transform: rotate(2deg);
+    color: var(--pencil);
+  }
+  .receipt-list .receipt-title {
+    font-size: 15px;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+  .receipt-list:first-child .receipt-title {
+    color: var(--red-ink);
+  }
+  .receipt-list li {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+.phase-explainer {
+  margin-top: 28px;
+  max-width: 620px;
+  padding: 18px 20px;
+  border: 1.5px solid var(--red-ink);
+  transform: rotate(-0.6deg);
+}
+.phase-explainer h2 {
+  color: var(--red-ink);
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.phase-explainer p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.phase-explainer p + p {
+  margin-top: 6px;
+  color: var(--pencil);
 }

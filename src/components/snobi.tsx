@@ -22,6 +22,8 @@ import { SNOBI_EMAIL, SNOBI_INSTAGRAM_HANDLE, SNOBI_INSTAGRAM_URL } from "@/lib/
 import { cartQuoteKey } from "@/lib/cart";
 import { CART_STORAGE_KEY, cartCount, useCartStore } from "@/stores/cart";
 import { CartPanel } from "@/components/cart-panel";
+import { ReceiptSnobi } from "@/components/receipt-snobi";
+import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
 
 const LanguageContext = createContext({ ar: false, toggle: () => {} });
 export const useLanguage = () => useContext(LanguageContext);
@@ -60,8 +62,13 @@ export function SnobiShell({ children }: { children: ReactNode }) {
             <Link to="/" activeProps={{ className: "active" }} activeOptions={{ exact: true }}>
               {ar ? "الرئيسية" : "Home"}
             </Link>
-            <Link to="/shop" activeProps={{ className: "active" }}>
-              {ar ? "التيشيرتات" : "Shop"}
+            <Link
+              to="/shop"
+              className="phase-label nav-phase"
+              activeProps={{ className: "active" }}
+              title={ar ? "هدوم المرحلة الحالية" : "Shop the current phase"}
+            >
+              {phaseLabel(CURRENT_PHASE, ar)}
             </Link>
             <Link to="/story" activeProps={{ className: "active" }}>
               {ar ? "حكاية سنوبي" : "Snobi’s story"}
@@ -112,7 +119,9 @@ export function SnobiShell({ children }: { children: ReactNode }) {
             onClick={() => setMenu(false)}
           >
             <Link to="/">{ar ? "الرئيسية" : "Home"}</Link>
-            <Link to="/shop">{ar ? "التيشيرتات" : "Shop"}</Link>
+            <Link to="/shop" className="phase-label nav-phase">
+              {phaseLabel(CURRENT_PHASE, ar)}
+            </Link>
             <Link to="/story">{ar ? "حكاية سنوبي" : "Snobi’s story"}</Link>
             <Link to="/supporters">{ar ? "الداعمين" : "Supporters"}</Link>
           </nav>
@@ -198,8 +207,8 @@ export function Collection({ standalone = false }: { standalone?: boolean }) {
         </h2>
         <p className="handwriting">
           {ar
-            ? "تيشيرتات محدودة. مشاكل مالية بلا حدود."
-            : "limited shirts. unlimited financial problems."}
+            ? `القطع محدودة لـ${phaseLabel(CURRENT_PHASE, true)} بس، ومش هترجع بعد ما المرحلة تخلص.`
+            : `items are limited only to phase ${CURRENT_PHASE} and won’t return after the phase is done.`}
         </p>
       </div>
       {data.length === 0 ? (
@@ -250,11 +259,6 @@ export function Collection({ standalone = false }: { standalone?: boolean }) {
           })}
         </div>
       )}
-      <p className="purchase-note">
-        {ar
-          ? "شراء تيشيرت بيدعم حكاية سنوبي الخيالية. مش تبرع لجمعية خيرية."
-          : "You’re buying a T-shirt and supporting a fictional dog. Not a charity. Just Snobi."}
-      </p>
     </section>
   );
 }
@@ -369,31 +373,7 @@ export function StoryTeaser({ standalone = false }: { standalone?: boolean }) {
             </Link>
           </Button>
         </div>
-        <div className="expense-art">
-          <Mascot className="expense-mascot" />
-          <div className="expense-note">
-            <p className="handwriting expense-title">
-              {ar ? "أولويات سنوبي المالية" : "snobi’s financial priorities"}
-            </p>
-            <div>
-              <span>{ar ? "الأكل" : "food"}</span>
-              <span>{ar ? "أكتر من اللازم غالبًا" : "probably too much"}</span>
-            </div>
-            <div>
-              <span>{ar ? "المدخرات" : "savings"}</span>
-              <span>{ar ? "مدخرات إيه؟" : "what savings"}</span>
-            </div>
-            <div>
-              <span>{ar ? "التخطيط المالي" : "financial planning"}</span>
-              <span className="note-red">{ar ? "لا" : "no"}</span>
-            </div>
-            <p className="expense-disclaimer">
-              {ar
-                ? "دي نكتة في الحكاية. مش حسابات فعلية."
-                : "Fictional dog expenses. Not business accounting."}
-            </p>
-          </div>
-        </div>
+        <ReceiptSnobi ar={ar} />
       </div>
     </section>
   );

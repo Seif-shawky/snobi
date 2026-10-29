@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import roadside from "@/assets/snobi-phase-0-roadside.jpg";
+import roadside from "@/assets/snobi-phase-0-roadside.png";
 import { getAdminSite, resetAdminHero, saveAdminHeroAlt, uploadAdminHero } from "@/lib/admin-site";
 import { ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from "@/lib/admin-shared";
 import { DEFAULT_HERO_ALT, MAX_ALT_LENGTH } from "@/lib/site-content";

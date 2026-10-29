@@ -1,5 +1,12 @@
 # Snobi homepage
 
+## Home redesign (phases)
+
+- [x] Nav "Shop" link replaced by the red current-phase stamp; hero "Phase 0?" button and a "What's Phase 0?" explainer on /shop.
+- [x] Frameless hero (transparent PNG), new tagline, "— Donations" counter, slowly spinning asterisks.
+- [x] Receipt Snobi: two slips (current phase spending, next phase tease) with a head that follows the cursor/touch.
+- [ ] Owner: upload hero art with the background removed (PNG/WebP) when the phase changes; edit src/lib/phase.ts.
+
 ## Phase 5: content, delivery fees and policies
 
 - [x] Per-governorate delivery fees managed in /admin/delivery; fee shown at checkout, re-checked by placeOrder and stored on the order; checkout pauses when no governorate is active.

@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Asterisk } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Collection, HowItWorks, StoryTeaser, Supporters, useLanguage } from "@/components/snobi";
-import roadside from "@/assets/snobi-phase-0-roadside.jpg";
+import roadside from "@/assets/snobi-phase-0-roadside.png";
 import { productsQuery } from "@/lib/catalog";
 import { siteContentQuery } from "@/lib/site";
+import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -15,10 +16,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "He needs money. You get a T-shirt. Meet Snobi, a broke doodle of a dog and an Egyptian streetwear brand.",
+          "He needs your donation. You need his fashion sense. Meet Snobi, a broke doodle of a dog and an Egyptian streetwear brand.",
       },
       { property: "og:title", content: "Snobi Is Broke." },
-      { property: "og:description", content: "He needs money. You get a T-shirt. Seems fair." },
+      {
+        property: "og:description",
+        content: "He needs your donation. You need his fashion sense. Seems fair.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -48,7 +52,6 @@ function Index() {
     <>
       <section className="home-hero page-width">
         <div className="hero-eyebrow">
-          <span className="phase-label">{ar ? "المرحلة ٠" : "PHASE 0"}</span>
           <span>{ar ? "مفيش فلوس. بس فيه أمل." : "NO MONEY. SOME HOPE."}</span>
         </div>
         <div className="hero-main">
@@ -71,13 +74,13 @@ function Index() {
             <p className="hero-subtitle">
               {ar ? (
                 <>
-                  هو محتاج فلوس. إنت تاخد تيشيرت.
+                  هو محتاج تبرعك. وإنت محتاج ذوقه في اللبس.
                   <br />
                   شكلها صفقة عادلة.
                 </>
               ) : (
                 <>
-                  he needs money. you get a t-shirt.
+                  he needs your donation. u need his fashion sense.
                   <br />
                   seems fair.
                 </>
@@ -88,51 +91,40 @@ function Index() {
                 {ar ? "ساعد سنوبي" : "HELP SNOBI"}
                 <ArrowUpRight />
               </Button>
-              <Button variant="note" onClick={seeShirts}>
-                {ar ? "شوف التيشيرتات" : "SEE THE T-SHIRTS"}
-                <ArrowDown />
+              <Button variant="note" asChild>
+                <Link
+                  to="/shop"
+                  aria-label={
+                    ar
+                      ? `يعني إيه ${phaseLabel(CURRENT_PHASE, true)}؟ شوف هدوم المرحلة`
+                      : `What is phase ${CURRENT_PHASE}? See this phase's clothes`
+                  }
+                >
+                  {phaseLabel(CURRENT_PHASE, ar)}
+                  {ar ? "؟" : "?"}
+                  <ArrowUpRight />
+                </Link>
               </Button>
             </div>
-            <p className="handwriting hero-cta-note">
-              {ar ? "قرار مالي مشكوك فيه." : "this is probably a bad financial decision."}
-            </p>
           </div>
           <figure
             className={`hero-art ${wiggle ? "mascot-wiggle" : ""}`}
             onAnimationEnd={() => setWiggle(false)}
           >
-            <span className="handwriting art-top-note">
-              {ar ? "ده سنوبي." : "this is snobi."}
-              <svg viewBox="0 0 100 70" aria-hidden="true">
-                <path d="M12 5 Q78 7 62 57 M48 42 L62 59 L77 44" />
-              </svg>
-            </span>
-            <div className="hero-frame">
-              <img
-                className="hero-picture"
-                src={site.heroImageUrl ?? roadside}
-                alt={ar ? site.heroAltAr : site.heroAltEn}
-                width={1024}
-                height={859}
-                fetchPriority="high"
-              />
-            </div>
-            <span className="handwriting art-bottom-note">
-              {ar ? "معندوش أي حاجة." : "he has nothing."}
-            </span>
+            <img
+              className="hero-picture"
+              src={site.heroImageUrl ?? roadside}
+              alt={ar ? site.heroAltAr : site.heroAltEn}
+              fetchPriority="high"
+            />
             <span className="handwriting please-note">{ar ? "أرجوك." : "please."}</span>
             <Asterisk className="art-star" strokeWidth={1.6} aria-hidden="true" />
           </figure>
         </div>
         <div className="hero-bottom">
           <div className="support-counter">
-            <div>
-              <span className="counter-label">
-                {ar ? "إجمالي الدعم المؤكد" : "SNOBI HAS RECEIVED"}
-              </span>
-              <div className="counter-value">
-                — <span>EGP</span>
-              </div>
+            <div className="counter-value">
+              — <span>{ar ? "تبرعات" : "Donations"}</span>
             </div>
             <div className="counter-message">
               <span className="handwriting">

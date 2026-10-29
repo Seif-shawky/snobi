@@ -27,3 +27,4 @@
 - Keep the homepage hero picture owner-editable through /admin/site (site_settings + R2 under site/hero/), falling back to the bundled Phase 0 drawing; serve R2 objects publicly only for keys accepted by isPublicImageKey.
 - Keep /privacy and /terms as bilingual leaf routes linked from the footer, and update them whenever data collection, sharing, payment, delivery or returns change, so the policies match the real implementation.
 - Hand SSR-fetched queries to the browser through setupRouterSsrQueryIntegration in src/router.tsx, so useSuspenseQuery hydrates with server data instead of refetching or mismatching.
+- Keep the current story phase number and the homepage receipt lists in src/lib/phase.ts, so moving to the next phase updates the nav stamp, hero button, drop copy and receipts in one place; the nav's shop link is the current phase stamp.
