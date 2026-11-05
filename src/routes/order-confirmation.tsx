@@ -103,6 +103,10 @@ function statusCopy(status: OrderView["status"], phone: string, feeKnown: boolea
       return ar
         ? "الطلب اتلغى. مفيش حاجة مطلوبة منك."
         : "This order was cancelled. Nothing to pay.";
+    case "returned":
+      return ar
+        ? "الطلب اترجع. أي استرداد بنتفق عليه معاك مباشرة."
+        : "This order was returned. Any refund is arranged with you directly.";
   }
 }
 
@@ -114,13 +118,14 @@ function OrderDetails({ order }: { order: OrderView }) {
     shipped: ar ? "اتشحن" : "SHIPPED",
     delivered: ar ? "اتسلّم" : "DELIVERED",
     cancelled: ar ? "اتلغى" : "CANCELLED",
+    returned: ar ? "اترجع" : "RETURNED",
   }[order.status];
   const payment =
     order.status === "cancelled"
       ? ar
         ? "كاش عند الاستلام — مفيش حاجة تتدفع"
         : "Cash on delivery — nothing to pay"
-      : order.status === "delivered"
+      : order.status === "delivered" || order.status === "returned"
         ? ar
           ? "كاش عند الاستلام"
           : "Cash on delivery"
@@ -225,20 +230,22 @@ function OrderDetails({ order }: { order: OrderView }) {
         <section className="checkout-summary" aria-labelledby="order-delivery-title">
           <h2 id="order-delivery-title">{ar ? "هنوصّل لـ" : "DELIVERING TO"}</h2>
           <dl className="order-delivery">
-            {order.supporterDisplay !== "hidden" && (
-              <div>
-                <dt>{ar ? "قائمة الداعمين" : "Supporters list"}</dt>
-                <dd>
-                  {order.supporterDisplay === "named"
-                    ? ar
-                      ? `هتظهر باسم «${order.supporterName}» بعد التوصيل`
-                      : `Listed as “${order.supporterName}” after delivery`
-                    : ar
-                      ? "هتظهر كمجهول بعد التوصيل"
-                      : "Listed anonymously after delivery"}
-                </dd>
-              </div>
-            )}
+            {order.supporterDisplay !== "hidden" &&
+              order.status !== "cancelled" &&
+              order.status !== "returned" && (
+                <div>
+                  <dt>{ar ? "قائمة الداعمين" : "Supporters list"}</dt>
+                  <dd>
+                    {order.supporterDisplay === "named"
+                      ? ar
+                        ? `هتظهر باسم «${order.supporterName}» بعد التوصيل`
+                        : `Listed as “${order.supporterName}” after delivery`
+                      : ar
+                        ? "هتظهر كمجهول بعد التوصيل"
+                        : "Listed anonymously after delivery"}
+                  </dd>
+                </div>
+              )}
             <div>
               <dt>{ar ? "الاسم" : "Name"}</dt>
               <dd>{order.customerName}</dd>

@@ -1,5 +1,5 @@
-// Statuses whose item totals count towards Snobi's public donations total. A cancelled order
-// stops counting automatically, and delivery fees are never included.
+// Statuses whose item totals count towards Snobi's public donations total. A cancelled or returned
+// order stops counting automatically, and delivery fees are never included.
 export const DONATION_STATUSES = ["confirmed", "shipped", "delivered"] as const;
 
 export interface SupporterRow {

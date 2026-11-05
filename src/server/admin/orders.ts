@@ -69,20 +69,32 @@ export async function adminSetShipping(id: string, shippingCents: number | null)
   const updated = await db
     .update(orders)
     .set({ shippingCents, updatedAt: Date.now() })
-    .where(and(eq(orders.id, id), sql`${orders.status} not in ('delivered', 'cancelled')`))
+    .where(
+      and(eq(orders.id, id), sql`${orders.status} not in ('delivered', 'cancelled', 'returned')`),
+    )
     .returning({ id: orders.id });
   return updated.length
     ? ({ ok: true } as const)
-    : ({ ok: false, error: "Delivered or cancelled orders can't be changed" } as const);
+    : ({ ok: false, error: "Delivered, cancelled or returned orders can't be changed" } as const);
 }
 
-const CANCELLABLE = ADMIN_ORDER_STATUSES.filter((s) => ORDER_TRANSITIONS[s].includes("cancelled"));
-const CANCELLABLE_SQL = CANCELLABLE.map((s) => `'${s}'`).join(", ");
+function sourceStatusesSql(to: "cancelled" | "returned") {
+  return ADMIN_ORDER_STATUSES.filter((s) => ORDER_TRANSITIONS[s].includes(to))
+    .map((s) => `'${s}'`)
+    .join(", ");
+}
 
-async function cancelOrder(id: string, now: number): Promise<OrderActionResult> {
-  // Restore runs first and is guarded by the order still being cancellable; the status flip
+// Cancels or returns an order, optionally putting its items back into stock.
+async function closeOrder(
+  id: string,
+  to: "cancelled" | "returned",
+  restock: boolean,
+  now: number,
+): Promise<OrderActionResult> {
+  const sources = sourceStatusesSql(to);
+  // Restore runs first and is guarded by the order still being closable; the status flip
   // follows in the same batch. D1 runs a batch as one transaction and executes writes one at
-  // a time, so a second (double-clicked) cancel sees the order already cancelled and its
+  // a time, so a second (double-clicked) request sees the order already closed and its
   // restore matches no rows: stock comes back exactly once without relying on changes().
   const restore = env.DB.prepare(
     `UPDATE variants
@@ -91,13 +103,14 @@ async function cancelOrder(id: string, now: number): Promise<OrderActionResult> 
             updated_at = ?2
       WHERE id IN (SELECT variant_id FROM order_items
                     WHERE order_id = ?1 AND variant_id IS NOT NULL)
-        AND EXISTS (SELECT 1 FROM orders WHERE id = ?1 AND status IN (${CANCELLABLE_SQL}))`,
+        AND EXISTS (SELECT 1 FROM orders WHERE id = ?1 AND status IN (${sources}))`,
   ).bind(id, now);
-  const cancel = env.DB.prepare(
-    `UPDATE orders SET status = 'cancelled', updated_at = ?2
-      WHERE id = ?1 AND status IN (${CANCELLABLE_SQL})`,
-  ).bind(id, now);
-  const [, result] = await env.DB.batch([restore, cancel]);
+  const close = env.DB.prepare(
+    `UPDATE orders SET status = ?3, updated_at = ?2
+      WHERE id = ?1 AND status IN (${sources})`,
+  ).bind(id, now, to);
+  const results = await env.DB.batch(restock ? [restore, close] : [close]);
+  const result = results[results.length - 1];
   return result?.meta.changes === 1
     ? { ok: true }
     : { ok: false, error: "This order was already changed. Refresh to see its current status." };
@@ -107,13 +120,15 @@ export async function adminTransitionOrder(
   id: string,
   from: AdminOrderStatus,
   to: AdminOrderStatus,
+  restock = false,
 ): Promise<OrderActionResult> {
   await requireAdmin();
   if (!canTransitionOrder(from, to)) {
     return { ok: false, error: `An order can't go from ${from} to ${to}` };
   }
   const now = Date.now();
-  if (to === "cancelled") return cancelOrder(id, now);
+  if (to === "cancelled") return closeOrder(id, to, true, now);
+  if (to === "returned") return closeOrder(id, to, restock, now);
   const db = getDb();
   const updated = await db
     .update(orders)

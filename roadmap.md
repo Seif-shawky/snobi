@@ -4,7 +4,8 @@
 
 - [x] Live donations total (confirmed orders, items only) with progress towards the Phase 1 goal of EGP 10,000.
 - [x] Opt-in supporters list chosen at checkout, shown after delivery, with no amounts; admin can remove someone.
-- [ ] Decide how a returned or refunded order leaves the total (orders have no returned status yet).
+- [x] "Returned" order status (from shipped or delivered): leaves the total and the supporters list, with a restock choice.
+- [x] Till-receipt styling for the homepage receipts.
 
 ## Home redesign (phases)
 

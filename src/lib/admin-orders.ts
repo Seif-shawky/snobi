@@ -31,5 +31,12 @@ export const hideAdminOrderSupporter = createServerFn({ method: "POST" })
   .handler(({ data }) => adminHideSupporter(data.id));
 
 export const transitionAdminOrder = createServerFn({ method: "POST" })
-  .validator(z.object({ id: idSchema, from: statusSchema, to: statusSchema }))
-  .handler(({ data }) => adminTransitionOrder(data.id, data.from, data.to));
+  .validator(
+    z.object({
+      id: idSchema,
+      from: statusSchema,
+      to: statusSchema,
+      restock: z.boolean().optional(),
+    }),
+  )
+  .handler(({ data }) => adminTransitionOrder(data.id, data.from, data.to, data.restock ?? false));

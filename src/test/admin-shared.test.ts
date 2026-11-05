@@ -97,6 +97,8 @@ describe("order status transitions", () => {
       "confirmed>shipped",
       "confirmed>cancelled",
       "shipped>delivered",
+      "shipped>returned",
+      "delivered>returned",
     ]);
     for (const from of ADMIN_ORDER_STATUSES) {
       for (const to of ADMIN_ORDER_STATUSES) {

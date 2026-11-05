@@ -3654,16 +3654,22 @@ h2 {
   transform: rotate(15deg);
   color: var(--pencil);
 }
+.receipts {
+  /* Till-receipt look: Arabic falls back to Noto, since monospaced fonts don't carry it. */
+  --receipt-font: ui-monospace, "SF Mono", Menlo, Consolas, "Noto Sans Arabic", monospace;
+  --receipt-paper: oklch(0.995 0.003 85);
+  font-family: var(--receipt-font);
+}
 .receipt-title {
-  font-family: var(--font-heading);
+  font-family: var(--receipt-font);
   font-weight: 800;
+  text-align: center;
   white-space: nowrap;
-  font-size: 2.4cqw;
+  font-size: 2cqw;
   line-height: 1.1;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid currentColor;
+  border-bottom: 1px dashed currentColor;
   padding-bottom: 0.6cqw;
-  margin-bottom: 0.8cqw;
+  margin-bottom: 0.6cqw;
 }
 .receipt-slip-current .receipt-title {
   color: var(--red-ink);
@@ -3678,13 +3684,28 @@ h2 {
   margin: 0;
 }
 .receipt-slip li {
-  font-size: 1.55cqw;
-  line-height: 1.25;
-  margin-top: 0.4cqw;
+  font-size: 1.4cqw;
+  line-height: 1.2;
+  margin-top: 0.35cqw;
 }
-.receipt-slip li::before,
-.receipt-list li::before {
-  content: "– ";
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  font-weight: 800;
+  border-top: 1px dashed currentColor;
+}
+/* The slips only have room for the punchline. */
+.receipt-slip .receipt-total span:first-child {
+  display: none;
+}
+.receipt-slip .receipt-total {
+  justify-content: center;
+  white-space: nowrap;
+  font-size: 1.25cqw;
+  line-height: 1.2;
+  margin-top: 0.5cqw;
+  padding-top: 0.4cqw;
 }
 .receipts-lists {
   display: none;
@@ -3693,45 +3714,79 @@ h2 {
   text-align: center;
   margin-top: 6px;
 }
-/* Too narrow for the lists on the slips: keep the titles there, write the lists below. */
+/* Too narrow for the lists on the slips: keep the titles there, print the receipts below. */
 @container (max-width: 460px) {
-  .receipt-slip ul {
+  .receipt-slip ul,
+  .receipt-slip .receipt-total {
     display: none;
   }
   .receipt-title {
-    font-size: 3.2cqw;
+    font-size: 2.9cqw;
     border-bottom: 0;
   }
   .receipts-lists {
-    /* Left list matches the left (current) slip in both languages. */
+    /* Left receipt matches the left (current) slip in both languages. */
     direction: ltr;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 14px;
+    align-items: start;
     margin-top: 4px;
+    /* On the parent, because the mask on each receipt would clip its own shadow. */
+    filter: drop-shadow(0 1px 2px color-mix(in oklch, var(--ink) 30%, transparent));
   }
   .receipt-list {
-    padding: 10px 12px;
-    border: 1px solid var(--ink);
-    background: var(--paper-deep);
-    transform: rotate(-2deg);
+    --tooth: 10px;
+    padding: 18px 12px 16px;
+    background: var(--receipt-paper);
+    color: var(--ink);
+    transform: rotate(-1.5deg);
+    /* Torn zigzag edges, top and bottom. */
+    mask:
+      conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / var(--tooth) 51%
+        repeat-x,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom /
+        var(--tooth) 51% repeat-x;
   }
   .receipt-list + .receipt-list {
-    transform: rotate(2deg);
+    transform: rotate(1.5deg);
     color: var(--pencil);
   }
   .receipt-list .receipt-title {
     font-size: 15px;
-    border-bottom: 1px solid currentColor;
-    padding-bottom: 4px;
-    margin-bottom: 6px;
+    border-bottom: 1px dashed currentColor;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
   }
   .receipt-list:first-child .receipt-title {
     color: var(--red-ink);
   }
   .receipt-list li {
-    font-size: 13px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.35;
+    margin-top: 5px;
+  }
+  .receipt-list li::before {
+    content: "1x ";
+  }
+  .receipt-list .receipt-total {
+    font-size: 12px;
+    margin-top: 10px;
+    padding-top: 7px;
+  }
+  /* A decorative barcode to finish the till slip. */
+  .receipt-list::after {
+    content: "";
+    display: block;
+    height: 22px;
+    margin-top: 12px;
+    background: repeating-linear-gradient(
+      90deg,
+      currentColor 0 2px,
+      transparent 2px 4px,
+      currentColor 4px 5px,
+      transparent 5px 9px
+    );
   }
 }
 .phase-explainer {

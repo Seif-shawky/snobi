@@ -13,6 +13,7 @@ export const ADMIN_ORDER_STATUSES = [
   "shipped",
   "delivered",
   "cancelled",
+  "returned",
 ] as const;
 export type AdminOrderStatus = (typeof ADMIN_ORDER_STATUSES)[number];
 
@@ -24,9 +25,11 @@ export type AllowedImageType = (typeof ALLOWED_IMAGE_TYPES)[number];
 export const ORDER_TRANSITIONS: Record<AdminOrderStatus, readonly AdminOrderStatus[]> = {
   pending: ["confirmed", "cancelled"],
   confirmed: ["shipped", "cancelled"],
-  shipped: ["delivered"],
-  delivered: [],
+  // Shipped to returned covers a customer refusing the parcel at the door.
+  shipped: ["delivered", "returned"],
+  delivered: ["returned"],
   cancelled: [],
+  returned: [],
 };
 
 export function canTransitionOrder(from: AdminOrderStatus, to: AdminOrderStatus) {

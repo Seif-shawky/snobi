@@ -97,11 +97,15 @@ function SlipText({
   return (
     <div className={className} dir={ar ? "rtl" : "ltr"}>
       <p className="receipt-title">{title}</p>
-      <ul className="handwriting">
+      <ul>
         {(ar ? receipt.itemsAr : receipt.itemsEn).map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
+      <p className="receipt-total">
+        <span>{ar ? "الإجمالي" : "TOTAL"}</span>
+        <span>{ar ? receipt.totalAr : receipt.totalEn}</span>
+      </p>
     </div>
   );
 }

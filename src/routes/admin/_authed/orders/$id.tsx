@@ -55,6 +55,7 @@ const ACTION_LABELS: Record<AdminOrderStatus, string> = {
   shipped: "Mark shipped",
   delivered: "Mark delivered (cash collected)",
   cancelled: "Cancel order",
+  returned: "Mark returned",
 };
 
 function AdminOrder() {
@@ -69,13 +70,13 @@ function AdminOrder() {
   const [feeError, setFeeError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const wa = whatsappUrl(order.phone);
-  const editable = order.status !== "delivered" && order.status !== "cancelled";
+  const editable = !["delivered", "cancelled", "returned"].includes(order.status);
   const total = order.subtotalCents + (order.shippingCents ?? 0);
 
-  async function move(to: AdminOrderStatus) {
+  async function move(to: AdminOrderStatus, restock = false) {
     setBusy(true);
     try {
-      const result = await transition({ data: { id: order.id, from: order.status, to } });
+      const result = await transition({ data: { id: order.id, from: order.status, to, restock } });
       if (result.ok) toast.success(`Order ${to}`);
       else toast.error(result.error);
       await router.invalidate();
@@ -269,6 +270,33 @@ function AdminOrder() {
                       <AlertDialogCancel>Keep order</AlertDialogCancel>
                       <AlertDialogAction onClick={() => void move(to)}>
                         Cancel order
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ) : to === "returned" ? (
+                <AlertDialog key={to}>
+                  <AlertDialogTrigger asChild>
+                    <Button type="button" variant="outline" disabled={busy}>
+                      {ACTION_LABELS[to]}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Mark {order.reference} as returned?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        It leaves the donations total and the supporters list. Can the items be sold
+                        again? This can't be undone. Refunds are arranged with the customer outside
+                        this page, and the delivery fee isn't refundable.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep order</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => void move(to, false)}>
+                        Don't restock
+                      </AlertDialogAction>
+                      <AlertDialogAction onClick={() => void move(to, true)}>
+                        Put back in stock
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

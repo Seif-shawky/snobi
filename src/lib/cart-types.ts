@@ -30,7 +30,7 @@ export interface CartQuote {
 
 export interface OrderView {
   reference: string;
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled" | "returned";
   createdAt: number;
   customerName: string;
   phone: string;

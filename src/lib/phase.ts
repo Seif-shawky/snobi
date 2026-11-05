@@ -18,6 +18,8 @@ export interface PhaseReceipt {
   phase: number;
   itemsEn: string[];
   itemsAr: string[];
+  totalEn: string;
+  totalAr: string;
 }
 
 // Fictional shopping lists on the receipts Snobi holds on the homepage: what he's doing with
@@ -26,10 +28,14 @@ export const CURRENT_RECEIPT: PhaseReceipt = {
   phase: CURRENT_PHASE,
   itemsEn: ["get some food", "buy a blanket", "more food. hungry"],
   itemsAr: ["يجيب أكل", "يشتري بطانية", "أكل تاني. جعان"],
+  totalEn: "still broke",
+  totalAr: "لسه مفلس",
 };
 
 export const NEXT_RECEIPT: PhaseReceipt = {
   phase: CURRENT_PHASE + 1,
   itemsEn: ["a phone (new)", "pants. no holes", "look stylish as hell"],
   itemsAr: ["موبايل (جديد)", "بنطلون مش مقطوع", "يبقى ستايل جامد"],
+  totalEn: "not yet",
+  totalAr: "لسه",
 };

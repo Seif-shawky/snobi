@@ -59,6 +59,9 @@ its sizes and photos for good (past orders still keep their details).
 - Move the order along: pending → confirmed → shipped → delivered.
 - **Cancel** (possible while pending or confirmed) puts the items back into stock. Cancelling
   twice never adds the stock back twice.
+- **Mark returned** (from shipped or delivered, e.g. refused at the door) asks whether the items can
+  be sold again and restocks them only if you say so. Arrange any refund with the customer yourself;
+  the page doesn't record it.
 
 ## Messages and the homepage picture
 
