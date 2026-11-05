@@ -18,7 +18,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getAdminOrder, setAdminOrderShipping, transitionAdminOrder } from "@/lib/admin-orders";
+import {
+  getAdminOrder,
+  hideAdminOrderSupporter,
+  setAdminOrderShipping,
+  transitionAdminOrder,
+} from "@/lib/admin-orders";
 import {
   ORDER_TRANSITIONS,
   adminDateFormat as dateFormat,
@@ -57,6 +62,7 @@ function AdminOrder() {
   const router = useRouter();
   const transition = useServerFn(transitionAdminOrder);
   const setShipping = useServerFn(setAdminOrderShipping);
+  const hideSupporter = useServerFn(hideAdminOrderSupporter);
   const [fee, setFee] = useState(
     order.shippingCents === null ? "" : centsToPoundsInput(order.shippingCents),
   );
@@ -96,6 +102,20 @@ function AdminOrder() {
       await router.invalidate();
     } catch {
       setFeeError("Couldn't save the fee. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onHideSupporter() {
+    setBusy(true);
+    try {
+      const result = await hideSupporter({ data: { id: order.id } });
+      if (result.ok) toast.success("Removed from the supporters list");
+      else toast.error(result.error);
+      await router.invalidate();
+    } catch {
+      toast.error("Couldn't update the list. Try again.");
     } finally {
       setBusy(false);
     }
@@ -196,6 +216,33 @@ function AdminOrder() {
           </form>
         )}
       </section>
+
+      {order.supporterDisplay !== "hidden" && (
+        <section className="admin-card" aria-labelledby="supporter-heading">
+          <h2 id="supporter-heading" className="admin-subtitle">
+            Supporters list
+          </h2>
+          <p>
+            Wants to be listed{" "}
+            {order.supporterDisplay === "named" ? (
+              <>
+                as <strong>{order.supporterName}</strong>
+              </>
+            ) : (
+              "anonymously"
+            )}
+            . This goes public once the order is delivered.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy}
+            onClick={() => void onHideSupporter()}
+          >
+            Remove from the list
+          </Button>
+        </section>
+      )}
 
       {ORDER_TRANSITIONS[order.status].length > 0 && (
         <section className="admin-card" aria-labelledby="status-heading">

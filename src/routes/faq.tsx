@@ -87,7 +87,7 @@ function FaqPage() {
         },
         {
           q: "ممكن أفضل مجهول في صفحة الداعمين؟",
-          a: "الظهور العام اختياري: اسم تختاره، أو ظهور مجهول، أو عدم الظهور. حاليًا إعدادات الملف مجرد معاينة مؤقتة؛ مش بتسجل اختيارك ومش بتنشره، ومفيش ملفات عامة متاحة لسه.",
+          a: "أيوه. وقت الطلب بتختار: اسم تحدده، أو ظهور مجهول، أو عدم الظهور خالص، وده الاختيار الأساسي. القائمة بتظهر بعد التوصيل ومن غير مبالغ. ولو غيرت رأيك ابعتلنا إيميل وهنشيلك.",
           link: { to: "/supporters", label: "صفحة الداعمين" },
         },
         {
@@ -148,7 +148,7 @@ function FaqPage() {
         },
         {
           q: "Can I remain anonymous on the supporters page?",
-          a: "Public display is optional: a name you choose, anonymous display, or no public appearance. Profile settings are currently temporary previews only; they do not save consent or publish anything. Public profiles are not open yet.",
+          a: "Yes. At checkout you choose a name you pick, anonymous, or not listed at all, which is the default. The list updates after delivery and never shows amounts. If you change your mind, email us and we’ll take you off.",
           link: { to: "/supporters", label: "VISIT THE SUPPORTERS PAGE" },
         },
         {

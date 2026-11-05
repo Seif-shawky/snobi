@@ -49,6 +49,20 @@ export async function adminGetOrder(id: string) {
   return { order: rest, items };
 }
 
+// Removes the customer from /supporters on every order with this phone number, so a removal
+// request can't be undone by an older order still marked as public.
+export async function adminHideSupporter(id: string): Promise<OrderActionResult> {
+  await requireAdmin();
+  const db = getDb();
+  const [order] = await db.select({ phone: orders.phone }).from(orders).where(eq(orders.id, id));
+  if (!order) return { ok: false, error: "This order no longer exists" };
+  await db
+    .update(orders)
+    .set({ supporterDisplay: "hidden", supporterName: null, updatedAt: Date.now() })
+    .where(eq(orders.phone, order.phone));
+  return { ok: true };
+}
+
 export async function adminSetShipping(id: string, shippingCents: number | null) {
   await requireAdmin();
   const db = getDb();

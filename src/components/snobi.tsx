@@ -24,6 +24,8 @@ import { CART_STORAGE_KEY, cartCount, useCartStore } from "@/stores/cart";
 import { CartPanel } from "@/components/cart-panel";
 import { ReceiptSnobi } from "@/components/receipt-snobi";
 import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
+import { supportersQuery } from "@/lib/community";
+import type { PublicSupporter } from "@/lib/community-rules";
 
 const LanguageContext = createContext({ ar: false, toggle: () => {} });
 export const useLanguage = () => useContext(LanguageContext);
@@ -313,8 +315,24 @@ export function HowItWorks() {
   );
 }
 
+export function SupporterList({ supporters }: { supporters: PublicSupporter[] }) {
+  const { ar } = useLanguage();
+  return (
+    <ul className="supporter-list">
+      {supporters.map((supporter, index) => (
+        <li key={index} className={supporter.name ? "" : "supporter-anonymous"}>
+          {supporter.name ?? (ar ? "متواطئ مجهول" : "Anonymous enabler")}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const HOME_SUPPORTER_LIMIT = 12;
+
 export function Supporters({ standalone = false }: { standalone?: boolean }) {
   const { ar } = useLanguage();
+  const { data: supporters } = useSuspenseQuery(supportersQuery);
   return (
     <section className={`supporters-section page-width ${standalone ? "standalone-section" : ""}`}>
       <div className="section-kicker">
@@ -326,15 +344,19 @@ export function Supporters({ standalone = false }: { standalone?: boolean }) {
           {ar ? "سنوبي مستني." : "questionable decisions. good people."}
         </p>
       </div>
-      <div className="supporter-empty">
-        <Heart strokeWidth={1.3} aria-hidden="true" />
-        <p>{ar ? "محدش ساعده لسه." : "nobody has enabled him yet."}</p>
-        <span>
-          {ar
-            ? "الدعم المؤكد هيظهر هنا لما يبقى متاح."
-            : "Verified support will appear here when available."}
-        </span>
-      </div>
+      {supporters.length === 0 ? (
+        <div className="supporter-empty">
+          <Heart strokeWidth={1.3} aria-hidden="true" />
+          <p>{ar ? "محدش ظهر هنا لسه." : "nobody on the list yet."}</p>
+          <span>
+            {ar
+              ? "الداعمين اللي اختاروا يظهروا هيتكتبوا هنا بعد ما طلباتهم توصل."
+              : "Customers who choose to be listed appear here once their order is delivered."}
+          </span>
+        </div>
+      ) : (
+        <SupporterList supporters={supporters.slice(0, HOME_SUPPORTER_LIMIT)} />
+      )}
       {!standalone && (
         <Button variant="note" asChild>
           <Link to="/supporters">

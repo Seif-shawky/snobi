@@ -67,6 +67,15 @@ its sizes and photos for good (past orders still keep their details).
 - **/admin → Site** changes the homepage picture of Snobi for each story phase. Upload a new
   drawing (JPEG, PNG or WebP, up to 5 MB) or reset to the default Phase 0 roadside drawing.
 
+## Donations and supporters
+
+- The homepage total adds up the clothing price of confirmed, shipped and delivered orders. Delivery
+  fees never count, and cancelling a confirmed order takes it back out. The Phase 1 goal is set in
+  `src/lib/phase.ts`.
+- Customers can choose at checkout to appear on `/supporters`, by name or anonymously. They show up
+  once the order is delivered, without amounts. If a name is rude, or someone asks to come off the
+  list, open their order in **/admin → Orders** and click **Remove from the list**.
+
 ## Scripts
 
 | Command                     | What it does                                 |

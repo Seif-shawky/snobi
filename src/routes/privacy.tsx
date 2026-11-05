@@ -45,6 +45,10 @@ function PrivacyPage() {
                 كتبته، ملاحظات التوصيل، والمنتجات والمقاسات والأسعار ورقم الطلب ووقته.
               </li>
               <li>
+                <strong>لو اخترت تظهر في قائمة الداعمين:</strong> اختيارك والاسم اللي حددته بيتسجلوا
+                مع الطلب.
+              </li>
+              <li>
                 <strong>لما تبعت رسالة:</strong> اسمك، إيميلك، رقم الطلب لو كتبته، رسالتك، وعنوان
                 الـ IP بتاعك (بنستخدمه بس عشان نحد من الرسايل المزعجة).
               </li>
@@ -90,6 +94,11 @@ function PrivacyPage() {
               <li>
                 <strong>Google Fonts:</strong> الخطوط بتتحمّل من سيرفرات جوجل، فجوجل بتشوف عنوان الـ
                 IP ونوع المتصفح لما تفتح الصفحات.
+              </li>
+              <li>
+                <strong>الجمهور:</strong> لو اخترت تظهر، الاسم اللي حددته (أو «مجهول») بيتنشر في
+                صفحة الداعمين بعد توصيل الطلب، من غير مبالغ أو بيانات تواصل. ولو طلبت نشيلك هنشيلك.
+                إجمالي التبرعات المنشور رقم مجمّع مش بيبيّن أي طلب.
               </li>
               <li>الجهات الرسمية لو القانون ألزمنا بكده.</li>
               <li>مش بنبيع بياناتك لحد. أبدًا.</li>
@@ -163,6 +172,10 @@ function PrivacyPage() {
                 reference and time of the order.
               </li>
               <li>
+                <strong>If you choose to join the supporters list:</strong> your choice and the name
+                you picked are saved with the order.
+              </li>
+              <li>
                 <strong>When you send a message:</strong> your name, email, order number if you add
                 one, your message, and your IP address (used only to limit spam).
               </li>
@@ -208,6 +221,12 @@ function PrivacyPage() {
               <li>
                 <strong>Google Fonts:</strong> our fonts load from Google’s servers, so Google sees
                 your IP address and browser details when pages load.
+              </li>
+              <li>
+                <strong>The public:</strong> if you opt in, the name you picked (or “anonymous”)
+                appears on the supporters page after delivery, with no amounts or contact details.
+                Ask and we’ll remove it. The published donations total is a combined figure that
+                reveals no individual order.
               </li>
               <li>Authorities, if the law requires it.</li>
               <li>We never sell your data.</li>
@@ -294,7 +313,7 @@ function PrivacyPage() {
           ? "سنوبي مش بيراقبك. مش قادر على تمنها."
           : "snobi isn’t tracking you. he can’t afford it."
       }
-      updated={ar ? "آخر تحديث: ٢٩ أكتوبر ٢٠٢٦" : "LAST UPDATED: 29 OCTOBER 2026"}
+      updated={ar ? "آخر تحديث: ٥ نوفمبر ٢٠٢٦" : "LAST UPDATED: 5 NOVEMBER 2026"}
       sections={sections}
     />
   );

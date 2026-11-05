@@ -18,6 +18,7 @@ import {
   GOVERNORATES,
   checkoutSchema,
   governorateLabel,
+  SUPPORTER_DISPLAY_OPTIONS,
   type CheckoutField,
   type PlaceOrderPayload,
   type PlaceOrderResult,
@@ -55,6 +56,8 @@ const EMPTY: Values = {
   city: "",
   addressLine: "",
   notes: "",
+  supporterDisplay: "hidden",
+  supporterName: "",
 };
 const FIELD_ORDER: CheckoutField[] = [
   "name",
@@ -64,6 +67,7 @@ const FIELD_ORDER: CheckoutField[] = [
   "city",
   "addressLine",
   "notes",
+  "supporterName",
 ];
 
 function errorText(code: string, ar: boolean): string {
@@ -83,6 +87,12 @@ function errorText(code: string, ar: boolean): string {
     address_required: [
       "Enter the street, building and apartment.",
       "اكتب الشارع ورقم العمارة والشقة.",
+    ],
+    supporter_name_required: ["Choose a name to show.", "اختار اسم يظهر."],
+    supporter_name_too_long: ["Keep the name to 40 characters.", "خلّي الاسم ٤٠ حرف بالكتير."],
+    supporter_name_invalid: [
+      "Just a name, please: no links, emails or phone numbers.",
+      "اسم بس لو سمحت: من غير لينكات أو إيميلات أو أرقام تليفون.",
     ],
   };
   const pair = messages[code];
@@ -394,6 +404,44 @@ function CheckoutPage() {
                 )}
               </div>
             </div>
+            <fieldset className="checkout-supporter">
+              <legend>
+                {ar ? "تظهر في قائمة الداعمين؟" : "Show up on the supporters list?"}{" "}
+                <span>{ar ? "(اختياري)" : "(optional)"}</span>
+              </legend>
+              <p>
+                {ar
+                  ? "القائمة عامة وبتظهر بعد ما الطلب يوصل، من غير أي مبالغ. موبايلك وعنوانك واسمك الحقيقي مش بيظهروا."
+                  : "The list is public and updates after your order is delivered. No amounts, and never your phone, address or real name."}
+              </p>
+              {SUPPORTER_DISPLAY_OPTIONS.map((option) => (
+                <label key={option}>
+                  <input
+                    type="radio"
+                    name="supporterDisplay"
+                    value={option}
+                    checked={values.supporterDisplay === option}
+                    onChange={() => update("supporterDisplay", option)}
+                  />
+                  {option === "hidden"
+                    ? ar
+                      ? "لا، شكرًا"
+                      : "No thanks"
+                    : option === "anonymous"
+                      ? ar
+                        ? "أيوه، كمجهول"
+                        : "Yes, anonymously"
+                      : ar
+                        ? "أيوه، باسم أختاره"
+                        : "Yes, with a name I choose"}
+                </label>
+              ))}
+              {values.supporterDisplay === "named" &&
+                field("supporterName", ar ? "الاسم اللي يظهر" : "Name to show", {
+                  note: ar ? "اسم مستعار ينفع." : "A nickname is fine.",
+                  input: { maxLength: 40, autoComplete: "off" },
+                })}
+            </fieldset>
             <div aria-live="assertive" className="checkout-feedback">
               {deliveryPaused && (
                 <div className="contact-feedback" role="status">

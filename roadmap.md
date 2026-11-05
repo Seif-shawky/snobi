@@ -1,5 +1,11 @@
 # Snobi homepage
 
+## Donations and supporters
+
+- [x] Live donations total (confirmed orders, items only) with progress towards the Phase 1 goal of EGP 10,000.
+- [x] Opt-in supporters list chosen at checkout, shown after delivery, with no amounts; admin can remove someone.
+- [ ] Decide how a returned or refunded order leaves the total (orders have no returned status yet).
+
 ## Home redesign (phases)
 
 - [x] Nav "Shop" link replaced by the red current-phase stamp; hero "Phase 0?" button and a "What's Phase 0?" explainer on /shop.
@@ -19,7 +25,8 @@
 - [ ] Publish a size guide; decide restock policy (still labelled undecided in the FAQ).
 - [ ] Auto-delete contact messages older than 12 months (privacy policy promise).
 - [ ] Order notifications to the owner (email/WhatsApp) and checkout spam protection.
-- [ ] Phase 6: deploy to Cloudflare (D1, R2, secrets), domain, one real test order.
+- [x] Phase 6: deployed to Cloudflare with D1, R2 and secrets.
+- [ ] Confirm the live address loads, add a custom domain if workers.dev stays blocked, and place one real test order.
 
 ## Own backend: cash-on-delivery purchase flow
 

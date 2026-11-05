@@ -184,8 +184,8 @@ function StoryPage() {
           <h3>{ar ? "أما الفلوس الحقيقية؟" : "AND THE REAL MONEY?"}</h3>
           <p>
             {ar
-              ? "مفيش بيان مالي أو إجمالي دعم مؤكد منشور لسه. الدفتر اللي فوق مش دليل على مدفوعات أو مصروفات فعلية. أي معلومات مالية تتنشر لازم تكون مبنية على سجلات مؤكدة، مش حكاية سنوبي."
-              : "No business financial report or verified support total is published yet. The notebook above is not evidence of real payments or spending. Any financial information published must come from verified records, not Snobi’s story."}
+              ? "الرقم الوحيد الحقيقي هو إجمالي التبرعات في الصفحة الرئيسية: أسعار الهدوم في الطلبات المؤكدة، من غير التوصيل. مفيش بيان مالي تاني منشور، والدفتر اللي فوق مش دليل على مدفوعات أو مصروفات فعلية."
+              : "The only real number is the donations total on the homepage: the price of clothing in confirmed orders, without delivery fees. No other financial report is published, and the notebook above is not evidence of real payments or spending."}
           </p>
         </div>
       </section>

@@ -41,8 +41,9 @@ function TermsPage() {
           body: (
             <p>
               سنوبي كلب كرتوني خيالي، و«ساعد سنوبي» جزء من الحكاية. لما تشتري، إنت بتشتري هدوم
-              بالسعر المعروض. ده مش تبرع ولا عمل خيري ولا استثمار، ومش بيديك أي حصة أو ملكية أو عائد
-              في سنوبي أو البراند أو الحكاية.
+              بالسعر المعروض. كلمة «تبرعات» في الموقع جزء من نكتة سنوبي ومعناها مشتريات الهدوم. ده
+              مش تبرع حقيقي ولا عمل خيري ولا استثمار، ومش بيديك أي حصة أو ملكية أو عائد في سنوبي أو
+              البراند أو الحكاية.
             </p>
           ),
         },
@@ -159,9 +160,10 @@ function TermsPage() {
           body: (
             <p>
               Snobi is a fictional cartoon dog, and “helping Snobi” is part of the story. When you
-              buy, you are buying clothes at the displayed price. It is not a donation, charity or
-              investment, and it gives you no stake, ownership or return in Snobi, the brand or the
-              story.
+              buy, you are buying clothes at the displayed price. The word “donations” on this site
+              is part of Snobi’s joke and means clothing purchases. It is not a real donation,
+              charity or investment, and it gives you no stake, ownership or return in Snobi, the
+              brand or the story.
             </p>
           ),
         },
@@ -292,7 +294,7 @@ function TermsPage() {
         )
       }
       note={ar ? "سنوبي قراها. فهم نصها." : "snobi read them. understood about half."}
-      updated={ar ? "آخر تحديث: ٢٩ أكتوبر ٢٠٢٦" : "LAST UPDATED: 29 OCTOBER 2026"}
+      updated={ar ? "آخر تحديث: ٥ نوفمبر ٢٠٢٦" : "LAST UPDATED: 5 NOVEMBER 2026"}
       sections={sections}
     />
   );

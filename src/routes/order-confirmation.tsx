@@ -225,6 +225,20 @@ function OrderDetails({ order }: { order: OrderView }) {
         <section className="checkout-summary" aria-labelledby="order-delivery-title">
           <h2 id="order-delivery-title">{ar ? "هنوصّل لـ" : "DELIVERING TO"}</h2>
           <dl className="order-delivery">
+            {order.supporterDisplay !== "hidden" && (
+              <div>
+                <dt>{ar ? "قائمة الداعمين" : "Supporters list"}</dt>
+                <dd>
+                  {order.supporterDisplay === "named"
+                    ? ar
+                      ? `هتظهر باسم «${order.supporterName}» بعد التوصيل`
+                      : `Listed as “${order.supporterName}” after delivery`
+                    : ar
+                      ? "هتظهر كمجهول بعد التوصيل"
+                      : "Listed anonymously after delivery"}
+                </dd>
+              </div>
+            )}
             <div>
               <dt>{ar ? "الاسم" : "Name"}</dt>
               <dd>{order.customerName}</dd>

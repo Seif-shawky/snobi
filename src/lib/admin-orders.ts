@@ -3,6 +3,7 @@ import { z } from "zod";
 import { ADMIN_ORDER_STATUSES } from "@/lib/admin-shared";
 import {
   adminGetOrder,
+  adminHideSupporter,
   adminListOrders,
   adminSetShipping,
   adminTransitionOrder,
@@ -24,6 +25,10 @@ export const setAdminOrderShipping = createServerFn({ method: "POST" })
     z.object({ id: idSchema, shippingCents: z.number().int().min(0).max(1_000_000).nullable() }),
   )
   .handler(({ data }) => adminSetShipping(data.id, data.shippingCents));
+
+export const hideAdminOrderSupporter = createServerFn({ method: "POST" })
+  .validator(z.object({ id: idSchema }))
+  .handler(({ data }) => adminHideSupporter(data.id));
 
 export const transitionAdminOrder = createServerFn({ method: "POST" })
   .validator(z.object({ id: idSchema, from: statusSchema, to: statusSchema }))

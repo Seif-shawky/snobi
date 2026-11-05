@@ -86,6 +86,8 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+export const SUPPORTER_DISPLAYS = ["hidden", "anonymous", "named"] as const;
+
 export const orders = sqliteTable(
   "orders",
   {
@@ -107,6 +109,11 @@ export const orders = sqliteTable(
     city: text("city").notNull(),
     addressLine: text("address_line").notNull(),
     notes: text("notes"),
+    // Opt-in public listing on /supporters, chosen at checkout. Never shows amounts or contact details.
+    supporterDisplay: text("supporter_display", { enum: SUPPORTER_DISPLAYS })
+      .notNull()
+      .default("hidden"),
+    supporterName: text("supporter_name"),
     subtotalCents: integer("subtotal_cents").notNull(),
     // Null until the delivery fee is confirmed with the customer.
     shippingCents: integer("shipping_cents"),

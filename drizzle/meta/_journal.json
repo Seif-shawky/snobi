@@ -15,6 +15,13 @@
       "when": 1793224025317,
       "tag": "0001_content",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793842152498,
+      "tag": "0002_supporters",
+      "breakpoints": true
     }
   ]
 }

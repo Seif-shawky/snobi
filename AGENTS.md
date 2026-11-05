@@ -10,7 +10,8 @@
 - Manage products, sizes, stock and photos only through the password-protected /admin (every admin server function calls requireAdmin() first); never show mockups or unconfirmed designs as store items.
 - Keep visual styling and semantic color tokens in src/styles.css, so the paper-and-ink system remains consistent across pages.
 - Keep the full story in the /story leaf route and homepage story content as a teaser, so each page has a distinct purpose without duplicating the full narrative.
-- Keep the full supporters experience in /supporters and its homepage section as a teaser; until verified activity and consent storage exist, profile edits are session-only previews and never imply publication.
+- Keep the full supporters experience in /supporters and its homepage section as a teaser; list only delivered orders whose buyers opted in at checkout (hidden is the default), use each customer's newest choice, and never show amounts, phones, addresses or legal names.
+- Compute the public donations total only from item subtotals of confirmed, shipped and delivered orders (DONATION_STATUSES), never delivery fees; the next-phase goal lives in src/lib/phase.ts.
 - Keep FAQ answers in the bilingual /faq leaf route, linked from the shared footer, and explicitly label any still-undecided business policy instead of supplying defaults.
 - Keep the bag dialog and /cart page on one persistent Zustand cart ("snobi-cart-v1") that stores only variant IDs and quantities, hydrated after mount; render names, prices, stock and totals only from the server quoteCart response, so the client never decides what anything costs.
 - Create cash-on-delivery orders only through placeOrder, which re-prices from D1 and inserts the order, items and stock decrements in one atomic D1 batch with an idempotency key; the delivery fee comes from delivery_rates on the server and must match the fee the customer saw (otherwise no_delivery / delivery_fee_changed, nothing written).

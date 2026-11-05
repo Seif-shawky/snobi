@@ -6,7 +6,14 @@ import { Collection, HowItWorks, StoryTeaser, Supporters, useLanguage } from "@/
 import roadside from "@/assets/snobi-phase-0-roadside.png";
 import { productsQuery } from "@/lib/catalog";
 import { siteContentQuery } from "@/lib/site";
-import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
+import { donationTotalQuery, supportersQuery } from "@/lib/community";
+import { formatMoney } from "@/lib/money";
+import {
+  CURRENT_PHASE,
+  NEXT_PHASE_GOAL_CENTS,
+  phaseLabel,
+  phaseProgressPercent,
+} from "@/lib/phase";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -31,6 +38,8 @@ export const Route = createFileRoute("/")({
     await Promise.all([
       context.queryClient.ensureQueryData(productsQuery),
       context.queryClient.ensureQueryData(siteContentQuery),
+      context.queryClient.ensureQueryData(donationTotalQuery),
+      context.queryClient.ensureQueryData(supportersQuery),
     ]);
   },
   component: Index,
@@ -39,6 +48,9 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { ar } = useLanguage();
   const { data: site } = useSuspenseQuery(siteContentQuery);
+  const { data: donationCents } = useSuspenseQuery(donationTotalQuery);
+  const progress = phaseProgressPercent(donationCents, NEXT_PHASE_GOAL_CENTS);
+  const nextPhase = phaseLabel(CURRENT_PHASE + 1, ar);
   const [wiggle, setWiggle] = useState(false);
   const seeShirts = () => {
     setWiggle(true);
@@ -124,14 +136,33 @@ function Index() {
         <div className="hero-bottom">
           <div className="support-counter">
             <div className="counter-value">
-              — <span>{ar ? "تبرعات" : "Donations"}</span>
+              {formatMoney(donationCents, ar)} <span>{ar ? "تبرعات" : "Donations"}</span>
             </div>
             <div className="counter-message">
               <span className="handwriting">
                 {ar ? "وضعه المالي محرج." : "his financial situation is embarrassing."}
               </span>
+              <div
+                className="phase-progress"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progress}
+                aria-label={ar ? `التقدم ناحية ${nextPhase}` : `Progress towards ${nextPhase}`}
+              >
+                <span style={{ width: `${progress}%` }} />
+              </div>
               <p>
-                {ar ? "الدعم المؤكد لسه مش متاح." : "Verified support total not available yet."}
+                {progress >= 100
+                  ? ar
+                    ? `وصل لهدف ${nextPhase}. المرحلة الجاية قربت.`
+                    : `He reached the ${nextPhase} goal. The next phase is coming.`
+                  : ar
+                    ? `${formatMoney(donationCents, ar)} من ${formatMoney(NEXT_PHASE_GOAL_CENTS, ar)} عشان يوصل لـ${nextPhase}.`
+                    : `${formatMoney(donationCents, ar)} of ${formatMoney(NEXT_PHASE_GOAL_CENTS, ar)} to reach ${nextPhase}.`}{" "}
+                {ar
+                  ? "بنحسب أسعار الهدوم في الطلبات المؤكدة بس، من غير التوصيل."
+                  : "Counts clothing in confirmed orders only, without delivery fees."}
               </p>
             </div>
           </div>

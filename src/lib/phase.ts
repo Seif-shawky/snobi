@@ -6,6 +6,14 @@ export function phaseLabel(phase: number, ar: boolean) {
   return ar ? `المرحلة ${phase.toLocaleString("ar-EG")}` : `PHASE ${phase}`;
 }
 
+// Lifetime donations (EGP piastres) Snobi needs to reach the next phase.
+export const NEXT_PHASE_GOAL_CENTS = 1_000_000;
+
+export function phaseProgressPercent(totalCents: number, goalCents: number) {
+  if (goalCents <= 0) return 100;
+  return Math.min(100, Math.floor((totalCents / goalCents) * 100));
+}
+
 export interface PhaseReceipt {
   phase: number;
   itemsEn: string[];

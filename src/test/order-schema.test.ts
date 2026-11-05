@@ -40,6 +40,7 @@ describe("checkoutSchema", () => {
       governorate: "cairo",
       city: "Nasr City",
       addressLine: "12 Abbas El Akkad St, floor 3",
+      supporterDisplay: "hidden",
     });
     expect(parsed.email).toBeUndefined();
     expect(parsed.notes).toBeUndefined();
