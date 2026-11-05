@@ -2,7 +2,7 @@ import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import { LOW_STOCK_THRESHOLD, type FieldErrors, type ProductFormOutput } from "@/lib/admin-shared";
 import { getDb } from "../db/client";
-import { orders, productImages, products, variants } from "../db/schema";
+import { orders, productImages, products, userWornItems, variants } from "../db/schema";
 import { requireAdmin } from "./auth";
 import { imagesBucket } from "../images-bucket";
 
@@ -178,16 +178,22 @@ export async function adminSaveProduct(
 export async function adminDeleteProduct(id: string) {
   await requireAdmin();
   const db = getDb();
-  const images = await db
-    .select({ key: productImages.r2Key })
-    .from(productImages)
-    .where(eq(productImages.productId, id));
+  const [images, [product]] = await Promise.all([
+    db
+      .select({ key: productImages.r2Key })
+      .from(productImages)
+      .where(eq(productImages.productId, id)),
+    db.select({ wearableKey: products.wearableKey }).from(products).where(eq(products.id, id)),
+  ]);
   // Explicit child deletes so this doesn't depend on SQLite foreign-key enforcement.
   await db.batch([
     db.delete(productImages).where(eq(productImages.productId, id)),
     db.delete(variants).where(eq(variants.productId, id)),
+    db.delete(userWornItems).where(eq(userWornItems.productId, id)),
     db.delete(products).where(eq(products.id, id)),
   ]);
-  if (images.length) await imagesBucket()?.delete(images.map((i) => i.key));
+  const keys = images.map((i) => i.key);
+  if (product?.wearableKey) keys.push(product.wearableKey);
+  if (keys.length) await imagesBucket()?.delete(keys);
   return { ok: true as const };
 }

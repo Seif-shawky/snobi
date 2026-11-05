@@ -1,14 +1,16 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, Loader2, Truck } from "lucide-react";
 import { useLanguage } from "@/components/snobi";
 import { CartPanel } from "@/components/cart-panel";
+import { SnobiAvatar } from "@/components/snobi-avatar";
 import { lineProblem } from "@/lib/cart-copy";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCartQuote } from "@/hooks/use-cart-quote";
+import { currentUserQuery } from "@/lib/account";
 import { cartQuoteKey } from "@/lib/cart";
 import { deliveryRatesKey, loadDeliveryRates, useDeliveryRates } from "@/lib/delivery";
 import { formatDeliveryEstimate, type PublicDeliveryRate } from "@/lib/delivery-rules";
@@ -18,7 +20,6 @@ import {
   GOVERNORATES,
   checkoutSchema,
   governorateLabel,
-  SUPPORTER_DISPLAY_OPTIONS,
   type CheckoutField,
   type PlaceOrderPayload,
   type PlaceOrderResult,
@@ -56,8 +57,6 @@ const EMPTY: Values = {
   city: "",
   addressLine: "",
   notes: "",
-  supporterDisplay: "hidden",
-  supporterName: "",
 };
 const FIELD_ORDER: CheckoutField[] = [
   "name",
@@ -67,7 +66,6 @@ const FIELD_ORDER: CheckoutField[] = [
   "city",
   "addressLine",
   "notes",
-  "supporterName",
 ];
 
 function errorText(code: string, ar: boolean): string {
@@ -87,12 +85,6 @@ function errorText(code: string, ar: boolean): string {
     address_required: [
       "Enter the street, building and apartment.",
       "اكتب الشارع ورقم العمارة والشقة.",
-    ],
-    supporter_name_required: ["Choose a name to show.", "اختار اسم يظهر."],
-    supporter_name_too_long: ["Keep the name to 40 characters.", "خلّي الاسم ٤٠ حرف بالكتير."],
-    supporter_name_invalid: [
-      "Just a name, please: no links, emails or phone numbers.",
-      "اسم بس لو سمحت: من غير لينكات أو إيميلات أو أرقام تليفون.",
     ],
   };
   const pair = messages[code];
@@ -138,6 +130,15 @@ function CheckoutPage() {
   const deliveryPaused = rates !== undefined && rates.length === 0;
   const ratesUnavailable = rates === undefined;
   const formRef = useRef<HTMLFormElement>(null);
+  const { data: user } = useQuery(currentUserQuery);
+  const accountPhone = user?.phone;
+  // Fill in their number once, without overwriting one they've already typed.
+  const prefilledPhone = useRef(false);
+  useEffect(() => {
+    if (!accountPhone || prefilledPhone.current) return;
+    prefilledPhone.current = true;
+    setValues((v) => (v.phone ? v : { ...v, phone: accountPhone }));
+  }, [accountPhone]);
   // One key per checkout attempt: a retried submit (e.g. after a dropped connection) returns
   // the same order instead of creating a second one.
   const idempotencyKey = useRef<string | null>(null);
@@ -301,6 +302,34 @@ function CheckoutPage() {
                 </p>
               </div>
             </div>
+            {user ? (
+              <div className="checkout-account">
+                <SnobiAvatar
+                  imageUrl={user.snobiImageUrl}
+                  wornUrls={user.wornUrls}
+                  alt=""
+                  className="checkout-account-avatar"
+                />
+                <p>
+                  {ar ? "بتشتري باسم " : "Buying as "}
+                  <strong>{user.displayName}</strong>
+                  {ar ? ". الطلب ده هيتحسب ليك." : ". This order counts towards your total."}
+                </p>
+              </div>
+            ) : (
+              user === null && (
+                <p className="checkout-account">
+                  <Link to="/join" search={{ redirect: "checkout" }}>
+                    {ar
+                      ? "سجّل دخول أو اعمل سنوبي بتاعك الأول"
+                      : "Log in or create your Snobi first"}
+                  </Link>{" "}
+                  {ar
+                    ? "عشان تظهر في الترتيب. شنطتك محفوظة، وتقدر تكمل من غير حساب عادي."
+                    : "to get on the leaderboard. Your bag stays saved, and you can carry on without one."}
+                </p>
+              )
+            )}
             <div className="contact-fields">
               {field("name", ar ? "الاسم بالكامل" : "Full name", {
                 wide: true,
@@ -404,44 +433,6 @@ function CheckoutPage() {
                 )}
               </div>
             </div>
-            <fieldset className="checkout-supporter">
-              <legend>
-                {ar ? "تظهر في قائمة الداعمين؟" : "Show up on the supporters list?"}{" "}
-                <span>{ar ? "(اختياري)" : "(optional)"}</span>
-              </legend>
-              <p>
-                {ar
-                  ? "القائمة عامة وبتظهر بعد ما الطلب يوصل، من غير أي مبالغ. موبايلك وعنوانك واسمك الحقيقي مش بيظهروا."
-                  : "The list is public and updates after your order is delivered. No amounts, and never your phone, address or real name."}
-              </p>
-              {SUPPORTER_DISPLAY_OPTIONS.map((option) => (
-                <label key={option}>
-                  <input
-                    type="radio"
-                    name="supporterDisplay"
-                    value={option}
-                    checked={values.supporterDisplay === option}
-                    onChange={() => update("supporterDisplay", option)}
-                  />
-                  {option === "hidden"
-                    ? ar
-                      ? "لا، شكرًا"
-                      : "No thanks"
-                    : option === "anonymous"
-                      ? ar
-                        ? "أيوه، كمجهول"
-                        : "Yes, anonymously"
-                      : ar
-                        ? "أيوه، باسم أختاره"
-                        : "Yes, with a name I choose"}
-                </label>
-              ))}
-              {values.supporterDisplay === "named" &&
-                field("supporterName", ar ? "الاسم اللي يظهر" : "Name to show", {
-                  note: ar ? "اسم مستعار ينفع." : "A nickname is fine.",
-                  input: { maxLength: 40, autoComplete: "off" },
-                })}
-            </fieldset>
             <div aria-live="assertive" className="checkout-feedback">
               {deliveryPaused && (
                 <div className="contact-feedback" role="status">

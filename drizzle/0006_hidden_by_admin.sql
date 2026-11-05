@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `hidden_by_admin` integer DEFAULT false NOT NULL;

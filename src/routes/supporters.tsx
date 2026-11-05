@@ -1,10 +1,16 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { ArrowUpRight, Heart, ShieldCheck, EyeOff } from "lucide-react";
-import { Mascot, SupporterList, useLanguage } from "@/components/snobi";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, useHydrated } from "@tanstack/react-router";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowUpRight, Heart, ShieldCheck } from "lucide-react";
+import { Leaderboard, Mascot, useLanguage } from "@/components/snobi";
+import { SnobiAvatar } from "@/components/snobi-avatar";
 import { Button } from "@/components/ui/button";
-import { supportersQuery } from "@/lib/community";
-import { SNOBI_EMAIL } from "@/lib/contact-details";
+import { currentUserQuery } from "@/lib/account";
+import { donationFeedQuery, helpersQuery, leaderboardQuery } from "@/lib/community";
+import { relativeTime } from "@/lib/community-rules";
+import { formatMoney } from "@/lib/money";
+import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
+
 export const Route = createFileRoute("/supporters")({
   head: () => ({
     meta: [
@@ -12,7 +18,7 @@ export const Route = createFileRoute("/supporters")({
       {
         name: "description",
         content:
-          "The people helping a broke dog. Only delivered orders whose buyers chose to be listed.",
+          "The top 5 people helping a broke dog, a live feed of donations and everyone who chose to be public.",
       },
       { property: "og:title", content: "Snobi’s Enablers" },
       { property: "og:description", content: "Good people. Questionable decisions." },
@@ -20,13 +26,21 @@ export const Route = createFileRoute("/supporters")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(supportersQuery),
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(leaderboardQuery),
+      context.queryClient.ensureQueryData(donationFeedQuery),
+      context.queryClient.ensureQueryData(helpersQuery),
+    ]);
+  },
   component: SupportersPage,
 });
 
 function SupportersPage() {
   const { ar } = useLanguage();
-  const { data: supporters } = useSuspenseQuery(supportersQuery);
+  const { data: leaders } = useSuspenseQuery(leaderboardQuery);
+  const { data: helpers } = useSuspenseQuery(helpersQuery);
+  const { data: user } = useQuery(currentUserQuery);
   return (
     <>
       <section className="enablers-intro page-width">
@@ -34,7 +48,7 @@ function SupportersPage() {
           <span className="shop-breadcrumb">
             <Link to="/">{ar ? "الرئيسية" : "HOME"}</Link> / {ar ? "الداعمين" : "SUPPORTERS"}
           </span>
-          <span className="phase-label">{ar ? "المرحلة ٠" : "PHASE 0"}</span>
+          <span className="phase-label">{phaseLabel(CURRENT_PHASE, ar)}</span>
         </div>
         <div className="enablers-title">
           <span className="section-kicker">
@@ -60,35 +74,45 @@ function SupportersPage() {
           </p>
         </div>
         <div className="enablers-intro-bottom">
-          <p>
-            {ar
-              ? "الناس اللي بتدي حكاية كلب مفلس فرصة تكمل. مجتمع صغير، مش مسابقة مالية."
-              : "The people giving a broke dog’s story a chance. A little community, not a financial competition."}
-          </p>
+          <div>
+            <p>
+              {ar
+                ? "الناس اللي بتدي حكاية كلب مفلس فرصة تكمل، واختاروا يتشافوا وهم بيعملوا كده."
+                : "The people giving a broke dog’s story a chance, who chose to be seen doing it."}
+            </p>
+            {user === null && (
+              <Button variant="ink" asChild>
+                <Link to="/join">
+                  {ar ? "اعمل سنوبي بتاعك" : "CREATE YOUR OWN SNOBI"}
+                  <ArrowUpRight />
+                </Link>
+              </Button>
+            )}
+          </div>
           <span>
             <ShieldCheck aria-hidden="true" />
-            {ar ? "دعم مؤكد فقط · الظهور باختيارك" : "VERIFIED ONLY · PUBLIC BY CHOICE"}
+            {ar ? "طلبات مؤكدة بس · الظهور باختيارك" : "CONFIRMED ORDERS ONLY · PUBLIC BY CHOICE"}
           </span>
         </div>
       </section>
-      <section className="enablers-activity page-width" aria-labelledby="recent-support-title">
+      <section className="enablers-activity page-width" aria-labelledby="leaderboard-title">
         <div className="enablers-section-heading">
           <div>
             <Heart aria-hidden="true" />
-            <h2 id="recent-support-title">{ar ? "المتواطئين." : "THE ENABLERS."}</h2>
+            <h2 id="leaderboard-title">{ar ? "أعلى ٥." : "THE TOP 5."}</h2>
           </div>
           <span className="handwriting">
             {ar ? "سنوبي بيستنى." : "he is refreshing this page."}
           </span>
         </div>
-        {supporters.length === 0 ? (
+        {leaders.length === 0 ? (
           <div className="enablers-waiting">
             <Mascot className="waiting-mascot" />
-            <p className="handwriting">{ar ? "محدش ظهر هنا لسه." : "nobody on the list yet."}</p>
+            <p className="handwriting">{ar ? "محدش هنا لسه." : "nobody up here yet."}</p>
             <p>
               {ar
-                ? "الأسماء بتظهر هنا بعد ما الطلبات توصل. مش هنخترع أصحاب لسنوبي."
-                : "Names appear here once orders are delivered. We’re not making up friends for him."}
+                ? "الأسماء بتظهر هنا بعد ما نأكد الطلبات. مش هنخترع أصحاب لسنوبي."
+                : "Names appear here once orders are confirmed. We’re not making up friends for him."}
             </p>
             <Button variant="note" asChild>
               <Link to="/shop">
@@ -98,78 +122,112 @@ function SupportersPage() {
             </Button>
           </div>
         ) : (
-          <SupporterList supporters={supporters} />
+          <Leaderboard entries={leaders} />
         )}
       </section>
+      <LiveFeed />
+      {helpers.length > 0 && (
+        <section className="enablers-activity page-width" aria-labelledby="helpers-title">
+          <div className="enablers-section-heading">
+            <div>
+              <h2 id="helpers-title">{ar ? "كل المتواطئين." : "EVERY ENABLER."}</h2>
+            </div>
+            <span className="handwriting">{ar ? "من غير مبالغ." : "no amounts down here."}</span>
+          </div>
+          <ul className="helpers-grid">
+            {helpers.map((helper, index) => (
+              <li key={`${index}-${helper.displayName}`}>
+                <SnobiAvatar
+                  imageUrl={helper.imageUrl}
+                  wornUrls={helper.wornUrls}
+                  alt=""
+                  className="helper-avatar"
+                />
+                <span>{helper.displayName}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <section className="enablers-ranking-band">
-        <div className="page-width enablers-ranking">
-          <div>
-            <span className="section-kicker">
-              {ar ? "التقدير. مش الاستثمار." : "RECOGNITION. NOT AN INVESTMENT."}
-            </span>
-            <h2>
-              <Heart aria-hidden="true" />
-              {ar ? "مفيش ترتيب." : "NO LEADERBOARD."}
-            </h2>
-            <p>
+        <div className="page-width enablers-rules">
+          <h3>{ar ? "القواعد." : "THE RULES."}</h3>
+          <ul>
+            <li>
               {ar
-                ? "مجرد قائمة أسماء. مفيش مراكز ومفيش مبالغ، لأن مين دفع كام مش شغل حد."
-                : "Just a list of names. No places and no amounts, because who paid what is nobody’s business."}
-            </p>
-          </div>
-          <div className="enablers-rules">
-            <h3>{ar ? "القواعد." : "THE RULES."}</h3>
-            <ul>
-              <li>
-                {ar
-                  ? "الطلبات اللي اتسلّمت بس هي اللي بتظهر هنا."
-                  : "Only delivered orders appear here."}
-              </li>
-              <li>
-                {ar
-                  ? "الظهور باختيارك وقت الطلب. لو طلبت أكتر من مرة، آخر اختيار ليك هو اللي بيتحسب."
-                  : "Being listed is your choice at checkout. If you order more than once, your latest choice counts."}
-              </li>
-              <li>
-                {ar
-                  ? "مفيش ملكية أو عوائد استثمار أو مكافآت مالية. مجرد تقدير."
-                  : "No ownership, investment returns or financial rewards. Just a little recognition."}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-      <section className="enablers-privacy page-width">
-        <div>
-          <span className="section-kicker">{ar ? "اسمك. اختيارك." : "YOUR NAME. YOUR CALL."}</span>
-          <h2>{ar ? "ساعده من غير أضواء." : "ENABLE HIM. NOT THE SPOTLIGHT."}</h2>
-          <p>
-            {ar
-              ? "في صفحة إتمام الطلب تقدر تختار: اسم تحدده، أو ظهور مجهول، أو عدم الظهور خالص. عدم الظهور هو الاختيار الأساسي."
-              : "At checkout you choose: a name you pick, anonymous, or not at all. Not at all is the default."}
-          </p>
-          <p>
-            {ar ? "عايز تتشال من القائمة؟ ابعت رقم طلبك على " : "Want to come off the list? Email "}
-            <a href={`mailto:${SNOBI_EMAIL}`}>{SNOBI_EMAIL}</a>
-            {ar ? "." : " with your order number."}
-          </p>
-          <Button variant="note" asChild>
-            <Link to="/shop">
-              {ar ? "شوف الهدوم" : "SEE THE CLOTHES"}
-              <ArrowUpRight />
-            </Link>
-          </Button>
-        </div>
-        <div className="enablers-title-note">
-          <EyeOff aria-hidden="true" />
-          <p className="handwriting">
-            {ar ? "موبايلك وعنوانك مش هنا." : "your phone and address stay off this page."}
-          </p>
-          <span>
-            {ar ? "ولا اسمك الحقيقي، إلا لو كتبته." : "So does your real name, unless you type it."}
-          </span>
+                ? "المبالغ هي أسعار الهدوم في الطلبات المؤكدة، من غير مصاريف التوصيل."
+                : "Amounts are clothing prices in confirmed orders, without delivery fees."}
+            </li>
+            <li>
+              {ar
+                ? "اللي بيظهر هنا بس اللي عنده حساب واختار يبقى ظاهر. موبايلك وعنوانك عمرهم ما بيظهروا."
+                : "Only people with an account who chose to be public appear here. Your mobile and address never do."}
+            </li>
+            <li>
+              {ar
+                ? "تقدر تخفي نفسك في أي وقت من حسابك."
+                : "You can hide yourself any time from your account."}
+            </li>
+            <li>
+              {ar
+                ? "مفيش ملكية أو استثمار أو مكافآت. مجرد تقدير."
+                : "No ownership, investment or rewards. Just a little recognition."}
+            </li>
+          </ul>
         </div>
       </section>
     </>
+  );
+}
+
+// The clock differs between server and browser, so times appear only after hydration.
+function useNow(intervalMs: number) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(timer);
+  }, [intervalMs]);
+  return now;
+}
+
+function LiveFeed() {
+  const { ar } = useLanguage();
+  const { data: feed } = useSuspenseQuery(donationFeedQuery);
+  const hydrated = useHydrated();
+  const now = useNow(30_000);
+  return (
+    <section className="enablers-activity page-width" aria-labelledby="feed-title">
+      <div className="enablers-section-heading">
+        <div>
+          <span className="live-dot" aria-hidden="true" />
+          <h2 id="feed-title">{ar ? "لايف." : "LIVE."}</h2>
+        </div>
+        <span className="handwriting">{ar ? "آخر التبرعات." : "latest donations first."}</span>
+      </div>
+      {feed.length === 0 ? (
+        <p className="feed-empty">
+          {ar ? "هادي. هادي أوي. سنوبي قلقان." : "Quiet. Very quiet. Snobi is concerned."}
+        </p>
+      ) : (
+        <ol className="donation-feed">
+          {feed.map((entry, index) => (
+            <li key={`${entry.at}-${index}`}>
+              <SnobiAvatar
+                imageUrl={entry.imageUrl}
+                wornUrls={entry.wornUrls}
+                alt=""
+                className="helper-avatar"
+              />
+              <p>
+                <strong>{entry.displayName}</strong> {ar ? "اتبرع بـ" : "donated "}
+                <strong className="feed-amount">{formatMoney(entry.amountCents, ar)}</strong>
+              </p>
+              <time>{hydrated ? relativeTime(entry.at, Math.max(now, Date.now()), ar) : ""}</time>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
   );
 }

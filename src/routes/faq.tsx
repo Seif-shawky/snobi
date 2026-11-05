@@ -86,8 +86,8 @@ function FaqPage() {
           a: "مفيش قرار لسه. الكميات محدودة، ومش هنقول «آخر فرصة» من غير سبب حقيقي. تابع @snobi.isbroke على إنستجرام.",
         },
         {
-          q: "ممكن أفضل مجهول في صفحة الداعمين؟",
-          a: "أيوه. وقت الطلب بتختار: اسم تحدده، أو ظهور مجهول، أو عدم الظهور خالص، وده الاختيار الأساسي. القائمة بتظهر بعد التوصيل ومن غير مبالغ. ولو غيرت رأيك ابعتلنا إيميل وهنشيلك.",
+          q: "لازم أظهر في صفحة الداعمين؟",
+          a: "لأ. تقدر تشتري من غير حساب خالص، ومش هتظهر في أي حتة. لو عملت حساب، إنت اللي بتختار تظهر ولا لأ: اسمك ولقبك وسنوبي بتاعك والمبالغ. تقدر تخفي نفسك أو تمسح حسابك في أي وقت. رقم موبايلك عمره ما بيظهر.",
           link: { to: "/supporters", label: "صفحة الداعمين" },
         },
         {
@@ -147,8 +147,8 @@ function FaqPage() {
           a: "No decision yet. Stock is limited, and we won’t call it your “last chance” without a real reason. Follow @snobi.isbroke on Instagram.",
         },
         {
-          q: "Can I remain anonymous on the supporters page?",
-          a: "Yes. At checkout you choose a name you pick, anonymous, or not listed at all, which is the default. The list updates after delivery and never shows amounts. If you change your mind, email us and we’ll take you off.",
+          q: "Do I have to show up on the supporters page?",
+          a: "No. You can buy without an account and you won’t appear anywhere. With an account, you choose whether you’re public: your name, title, Snobi and amounts. You can hide yourself or delete your account any time. Your mobile number is never shown.",
           link: { to: "/supporters", label: "VISIT THE SUPPORTERS PAGE" },
         },
         {

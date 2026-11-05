@@ -2,6 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import type { OrderView } from "@/lib/cart-types";
 import type { PlaceOrderInput, PlaceOrderResult } from "@/lib/order-schema";
+import { getCurrentUser } from "./account/auth";
 import { loadVariantRows } from "./cart";
 import { getDb } from "./db/client";
 import { orderItems, orders, variants } from "./db/schema";
@@ -55,6 +56,8 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
   if (!delivery.ok) return delivery;
   const { shippingCents } = delivery;
 
+  // From the session only: the client never says whose order this is. Guests stay null.
+  const user = await getCurrentUser();
   const db = getDb();
   const now = Date.now();
 
@@ -73,8 +76,7 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
         customerName: customer.name,
         phone: customer.phone,
         email: customer.email ?? null,
-        supporterDisplay: customer.supporterDisplay,
-        supporterName: customer.supporterName ?? null,
+        userId: user?.id ?? null,
         governorate: customer.governorate,
         city: customer.city,
         addressLine: customer.addressLine,
@@ -154,8 +156,6 @@ export async function getOrderServer(reference: string, token: string): Promise<
     city: order.city,
     addressLine: order.addressLine,
     notes: order.notes,
-    supporterDisplay: order.supporterDisplay,
-    supporterName: order.supporterName,
     subtotalCents: order.subtotalCents,
     shippingCents: order.shippingCents,
     currency: order.currency,

@@ -1,9 +1,17 @@
 # Snobi homepage
 
+## Customer Snobis
+
+- [x] Accounts (mobile + password) with a chosen Snobi, name and title; /join, /account with a personal donation bar.
+- [x] Wardrobe: delivered items with a wearable layer can be worn; returned items drop off.
+- [x] /supporters: top 5 with amounts, live feed with amounts, all helpers without amounts.
+- [x] Admin: Snobi options, product wearables, customers (hide, edit, reset password, delete).
+- [ ] Owner: draw wearable layers for real products; replace starter Snobis if wanted.
+- [ ] Check login on the live site stays within the free plan's 10 ms CPU limit (no Error 1102).
+
 ## Donations and supporters
 
 - [x] Live donations total (confirmed orders, items only) with progress towards the Phase 1 goal of EGP 10,000.
-- [x] Opt-in supporters list chosen at checkout, shown after delivery, with no amounts; admin can remove someone.
 - [x] "Returned" order status (from shipped or delivered): leaves the total and the supporters list, with a restock choice.
 - [x] Till-receipt styling for the homepage receipts.
 

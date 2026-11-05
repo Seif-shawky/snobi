@@ -1,7 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { productFormSchema } from "@/lib/admin-shared";
-import { adminDeleteImage, adminUpdateImages, adminUploadImage } from "@/server/admin/images";
+import {
+  adminDeleteImage,
+  adminRemoveWearable,
+  adminUpdateImages,
+  adminUploadImage,
+  adminUploadWearable,
+} from "@/server/admin/images";
 import {
   adminDashboard,
   adminDeleteProduct,
@@ -36,6 +42,17 @@ export const uploadAdminImage = createServerFn({ method: "POST" })
     return data;
   })
   .handler(({ data }) => adminUploadImage(data));
+
+export const uploadAdminWearable = createServerFn({ method: "POST" })
+  .validator((data: unknown) => {
+    if (!(data instanceof FormData)) throw new Error("Expected form data");
+    return data;
+  })
+  .handler(({ data }) => adminUploadWearable(data));
+
+export const removeAdminWearable = createServerFn({ method: "POST" })
+  .validator(z.object({ productId: idSchema }))
+  .handler(({ data }) => adminRemoveWearable(data.productId));
 
 export const updateAdminImages = createServerFn({ method: "POST" })
   .validator(

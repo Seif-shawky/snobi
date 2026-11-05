@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { snobiImageUrl } from "@/lib/account-rules";
 import {
   ADMIN_ORDER_STATUSES,
   ORDER_TRANSITIONS,
@@ -7,7 +8,7 @@ import {
   type AdminOrderStatus,
 } from "@/lib/admin-shared";
 import { getDb } from "../db/client";
-import { orderItems, orders } from "../db/schema";
+import { orderItems, orders, snobiOptions, users } from "../db/schema";
 import { requireAdmin } from "./auth";
 
 export type OrderActionResult = { ok: true } | { ok: false; error: string };
@@ -46,21 +47,22 @@ export async function adminGetOrder(id: string) {
     .where(eq(orderItems.orderId, id))
     .orderBy(asc(orderItems.productNameEn));
   const { accessToken: _token, idempotencyKey: _key, ...rest } = order;
-  return { order: rest, items };
+  return { order: rest, items, account: order.userId ? await orderAccount(order.userId) : null };
 }
 
-// Removes the customer from /supporters on every order with this phone number, so a removal
-// request can't be undone by an older order still marked as public.
-export async function adminHideSupporter(id: string): Promise<OrderActionResult> {
-  await requireAdmin();
-  const db = getDb();
-  const [order] = await db.select({ phone: orders.phone }).from(orders).where(eq(orders.id, id));
-  if (!order) return { ok: false, error: "This order no longer exists" };
-  await db
-    .update(orders)
-    .set({ supporterDisplay: "hidden", supporterName: null, updatedAt: Date.now() })
-    .where(eq(orders.phone, order.phone));
-  return { ok: true };
+async function orderAccount(userId: string) {
+  const [row] = await getDb()
+    .select({
+      id: users.id,
+      displayName: users.displayName,
+      imageKey: snobiOptions.imageKey,
+    })
+    .from(users)
+    .innerJoin(snobiOptions, eq(users.snobiOptionId, snobiOptions.id))
+    .where(eq(users.id, userId));
+  if (!row) return null;
+  const { imageKey, ...account } = row;
+  return { ...account, imageUrl: snobiImageUrl(imageKey) };
 }
 
 export async function adminSetShipping(id: string, shippingCents: number | null) {
@@ -132,7 +134,7 @@ export async function adminTransitionOrder(
   const db = getDb();
   const updated = await db
     .update(orders)
-    .set({ status: to, updatedAt: now })
+    .set({ status: to, updatedAt: now, ...(to === "confirmed" ? { confirmedAt: now } : {}) })
     .where(and(eq(orders.id, id), eq(orders.status, from)))
     .returning({ id: orders.id });
   return updated.length

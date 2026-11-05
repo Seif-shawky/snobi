@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { Link, useHydrated } from "@tanstack/react-router";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -12,6 +12,7 @@ import {
   Mail,
   Shirt,
   Sparkles,
+  UserRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -24,8 +25,10 @@ import { CART_STORAGE_KEY, cartCount, useCartStore } from "@/stores/cart";
 import { CartPanel } from "@/components/cart-panel";
 import { ReceiptSnobi } from "@/components/receipt-snobi";
 import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
-import { supportersQuery } from "@/lib/community";
-import type { PublicSupporter } from "@/lib/community-rules";
+import { SnobiAvatar } from "@/components/snobi-avatar";
+import { currentUserQuery } from "@/lib/account";
+import { leaderboardQuery } from "@/lib/community";
+import type { LeaderboardEntry } from "@/server/community";
 
 const LanguageContext = createContext({ ar: false, toggle: () => {} });
 export const useLanguage = () => useContext(LanguageContext);
@@ -48,6 +51,25 @@ export function SnobiShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
   const count = hydrated ? quantity : 0;
+  // Plain useQuery: the server and first paint show the logged-out state, then this fills in.
+  const { data: user } = useQuery(currentUserQuery);
+  const accountLabel = user
+    ? ar
+      ? "سنوبي بتاعك"
+      : "Your Snobi"
+    : ar
+      ? "اعمل سنوبي أو سجّل دخول"
+      : "Create your Snobi or log in";
+  const accountIcon = user ? (
+    <SnobiAvatar
+      imageUrl={user.snobiImageUrl}
+      wornUrls={user.wornUrls}
+      alt=""
+      className="account-control-avatar"
+    />
+  ) : (
+    <UserRound aria-hidden="true" />
+  );
   return (
     <LanguageContext.Provider value={{ ar, toggle: () => setAr((v) => !v) }}>
       <div className="snobi-site" dir={ar ? "rtl" : "ltr"} lang={ar ? "ar" : "en"}>
@@ -90,6 +112,14 @@ export function SnobiShell({ children }: { children: ReactNode }) {
               <span className="language-divider">/</span>
               <span className={ar ? "language-active" : ""}>AR</span>
             </Button>
+            <Link
+              to={user ? "/account" : "/join"}
+              className="account-control"
+              aria-label={accountLabel}
+              title={accountLabel}
+            >
+              {accountIcon}
+            </Link>
             <Button
               variant="ghost"
               className="bag-button"
@@ -126,6 +156,16 @@ export function SnobiShell({ children }: { children: ReactNode }) {
             </Link>
             <Link to="/story">{ar ? "حكاية سنوبي" : "Snobi’s story"}</Link>
             <Link to="/supporters">{ar ? "الداعمين" : "Supporters"}</Link>
+            <Link to={user ? "/account" : "/join"} className="mobile-nav-account">
+              {accountIcon}
+              {user
+                ? ar
+                  ? "سنوبي بتاعك"
+                  : "Your Snobi"
+                : ar
+                  ? "اعمل سنوبي بتاعك"
+                  : "Create your Snobi"}
+            </Link>
           </nav>
         )}
         <main>{children}</main>
@@ -315,26 +355,37 @@ export function HowItWorks() {
   );
 }
 
-export function SupporterList({ supporters }: { supporters: PublicSupporter[] }) {
+export function Leaderboard({ entries }: { entries: LeaderboardEntry[] }) {
   const { ar } = useLanguage();
   return (
-    <ul className="supporter-list">
-      {supporters.map((supporter, index) => (
-        <li key={index} className={supporter.name ? "" : "supporter-anonymous"}>
-          {supporter.name ?? (ar ? "متواطئ مجهول" : "Anonymous enabler")}
+    <ol className="leaderboard">
+      {entries.map((entry, index) => (
+        <li key={`${index}-${entry.displayName}`}>
+          <span className="leaderboard-rank" aria-hidden="true">
+            {(index + 1).toLocaleString(ar ? "ar-EG" : "en-US")}
+          </span>
+          <SnobiAvatar
+            imageUrl={entry.imageUrl}
+            wornUrls={entry.wornUrls}
+            alt=""
+            className="leaderboard-avatar"
+          />
+          <div className="leaderboard-name">
+            <strong>{entry.displayName}</strong>
+            {entry.title && <span className="handwriting">{entry.title}</span>}
+          </div>
+          <span className="leaderboard-amount">{formatMoney(entry.totalCents, ar)}</span>
         </li>
       ))}
-    </ul>
+    </ol>
   );
 }
 
-const HOME_SUPPORTER_LIMIT = 12;
-
-export function Supporters({ standalone = false }: { standalone?: boolean }) {
+export function Supporters() {
   const { ar } = useLanguage();
-  const { data: supporters } = useSuspenseQuery(supportersQuery);
+  const { data: leaders } = useSuspenseQuery(leaderboardQuery);
   return (
-    <section className={`supporters-section page-width ${standalone ? "standalone-section" : ""}`}>
+    <section className="supporters-section page-width">
       <div className="section-kicker">
         <span>03 / {ar ? "المتواطئين" : "THE ENABLERS"}</span>
       </div>
@@ -344,27 +395,25 @@ export function Supporters({ standalone = false }: { standalone?: boolean }) {
           {ar ? "سنوبي مستني." : "questionable decisions. good people."}
         </p>
       </div>
-      {supporters.length === 0 ? (
+      {leaders.length === 0 ? (
         <div className="supporter-empty">
           <Heart strokeWidth={1.3} aria-hidden="true" />
-          <p>{ar ? "محدش ظهر هنا لسه." : "nobody on the list yet."}</p>
+          <p>{ar ? "محدش ظهر هنا لسه." : "nobody on the board yet."}</p>
           <span>
             {ar
-              ? "الداعمين اللي اختاروا يظهروا هيتكتبوا هنا بعد ما طلباتهم توصل."
-              : "Customers who choose to be listed appear here once their order is delivered."}
+              ? "اللي عندهم سنوبي واختاروا يظهروا هيتكتبوا هنا بعد ما نأكد طلباتهم."
+              : "People with a Snobi who chose to be public appear here once we confirm their order."}
           </span>
         </div>
       ) : (
-        <SupporterList supporters={supporters.slice(0, HOME_SUPPORTER_LIMIT)} />
+        <Leaderboard entries={leaders} />
       )}
-      {!standalone && (
-        <Button variant="note" asChild>
-          <Link to="/supporters">
-            {ar ? "شوف الداعمين" : "MEET THE ENABLERS"}
-            <ArrowUpRight />
-          </Link>
-        </Button>
-      )}
+      <Button variant="note" asChild>
+        <Link to="/supporters">
+          {ar ? "شوف الداعمين" : "MEET THE ENABLERS"}
+          <ArrowUpRight />
+        </Link>
+      </Button>
     </section>
   );
 }

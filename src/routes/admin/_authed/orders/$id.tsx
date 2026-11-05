@@ -18,12 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  getAdminOrder,
-  hideAdminOrderSupporter,
-  setAdminOrderShipping,
-  transitionAdminOrder,
-} from "@/lib/admin-orders";
+import { SnobiAvatar } from "@/components/snobi-avatar";
+import { getAdminOrder, setAdminOrderShipping, transitionAdminOrder } from "@/lib/admin-orders";
 import {
   ORDER_TRANSITIONS,
   adminDateFormat as dateFormat,
@@ -59,11 +55,10 @@ const ACTION_LABELS: Record<AdminOrderStatus, string> = {
 };
 
 function AdminOrder() {
-  const { order, items } = Route.useLoaderData();
+  const { order, items, account } = Route.useLoaderData();
   const router = useRouter();
   const transition = useServerFn(transitionAdminOrder);
   const setShipping = useServerFn(setAdminOrderShipping);
-  const hideSupporter = useServerFn(hideAdminOrderSupporter);
   const [fee, setFee] = useState(
     order.shippingCents === null ? "" : centsToPoundsInput(order.shippingCents),
   );
@@ -103,20 +98,6 @@ function AdminOrder() {
       await router.invalidate();
     } catch {
       setFeeError("Couldn't save the fee. Try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function onHideSupporter() {
-    setBusy(true);
-    try {
-      const result = await hideSupporter({ data: { id: order.id } });
-      if (result.ok) toast.success("Removed from the supporters list");
-      else toast.error(result.error);
-      await router.invalidate();
-    } catch {
-      toast.error("Couldn't update the list. Try again.");
     } finally {
       setBusy(false);
     }
@@ -218,30 +199,18 @@ function AdminOrder() {
         )}
       </section>
 
-      {order.supporterDisplay !== "hidden" && (
-        <section className="admin-card" aria-labelledby="supporter-heading">
-          <h2 id="supporter-heading" className="admin-subtitle">
-            Supporters list
+      {account && (
+        <section className="admin-card" aria-labelledby="account-heading">
+          <h2 id="account-heading" className="admin-subtitle">
+            Account
           </h2>
-          <p>
-            Wants to be listed{" "}
-            {order.supporterDisplay === "named" ? (
-              <>
-                as <strong>{order.supporterName}</strong>
-              </>
-            ) : (
-              "anonymously"
-            )}
-            . This goes public once the order is delivered.
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busy}
-            onClick={() => void onHideSupporter()}
-          >
-            Remove from the list
-          </Button>
+          <div className="admin-account-row">
+            <SnobiAvatar imageUrl={account.imageUrl} alt="" className="admin-snobi-sm" />
+            <span className="admin-list-title">{account.displayName}</span>
+            <Link to="/admin/customers/$id" params={{ id: account.id }} className="admin-link">
+              Open customer page
+            </Link>
+          </div>
         </section>
       )}
 

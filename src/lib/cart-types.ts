@@ -39,8 +39,6 @@ export interface OrderView {
   city: string;
   addressLine: string;
   notes: string | null;
-  supporterDisplay: "hidden" | "anonymous" | "named";
-  supporterName: string | null;
   subtotalCents: number;
   shippingCents: number | null;
   currency: string;

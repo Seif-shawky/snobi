@@ -1,34 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { listPublicSupporters, type SupporterRow } from "@/lib/community-rules";
-import { checkoutSchema } from "@/lib/order-schema";
+import {
+  buildWardrobe,
+  donatedCents,
+  joinRedirectTarget,
+  type OrderStatus,
+  type WardrobeRow,
+} from "@/lib/account-rules";
+import { relativeTime } from "@/lib/community-rules";
 import { phaseProgressPercent } from "@/lib/phase";
-
-const row = (
-  phone: string,
-  supporterDisplay: SupporterRow["supporterDisplay"],
-  supporterName: string | null = null,
-): SupporterRow => ({ phone, supporterDisplay, supporterName });
-
-describe("listPublicSupporters", () => {
-  it("lists named and anonymous customers and skips hidden ones", () => {
-    expect(
-      listPublicSupporters([row("1", "named", "Bob"), row("2", "anonymous"), row("3", "hidden")]),
-    ).toEqual([{ name: "Bob" }, { name: null }]);
-  });
-
-  it("uses each customer's newest choice, so a newer opt-out removes them", () => {
-    expect(listPublicSupporters([row("1", "hidden"), row("1", "named", "Bob")])).toEqual([]);
-    expect(listPublicSupporters([row("1", "named", "New"), row("1", "named", "Old")])).toEqual([
-      { name: "New" },
-    ]);
-  });
-
-  it("never exposes phone numbers", () => {
-    expect(JSON.stringify(listPublicSupporters([row("01012345678", "anonymous")]))).not.toContain(
-      "0101",
-    );
-  });
-});
 
 describe("phaseProgressPercent", () => {
   it("rounds down and caps at 100", () => {
@@ -38,42 +17,75 @@ describe("phaseProgressPercent", () => {
   });
 });
 
-describe("checkout supporter choice", () => {
-  const base = {
-    name: "Test Person",
-    phone: "01012345678",
-    governorate: "cairo",
-    city: "Maadi",
-    addressLine: "5 Test Street",
-  };
-  const codes = (input: object) => {
-    const result = checkoutSchema.safeParse({ ...base, ...input });
-    return result.success ? [] : result.error.issues.map((i) => i.message);
-  };
-
-  it("defaults to not being listed", () => {
-    expect(checkoutSchema.parse(base).supporterDisplay).toBe("hidden");
-  });
-
-  it("requires a clean name only when listing by name", () => {
-    expect(codes({ supporterDisplay: "named" })).toEqual(["supporter_name_required"]);
-    expect(codes({ supporterDisplay: "named", supporterName: "a".repeat(41) })).toEqual([
-      "supporter_name_too_long",
-    ]);
-    for (const supporterName of ["visit www.spam", "http://x", "a@b", "spam.com", "0101234567"]) {
-      expect(codes({ supporterDisplay: "named", supporterName })).toEqual([
-        "supporter_name_invalid",
-      ]);
+describe("joinRedirectTarget", () => {
+  it("only ever goes to checkout or the account page", () => {
+    expect(joinRedirectTarget("checkout")).toBe("/checkout");
+    for (const value of ["account", "https://evil.example", "//evil.example", "/admin", null, 1]) {
+      expect(joinRedirectTarget(value)).toBe("/account");
     }
-    expect(codes({ supporterDisplay: "named", supporterName: "سنوبي فان" })).toEqual([]);
+  });
+});
+
+describe("donatedCents", () => {
+  it("counts confirmed, shipped and delivered orders only", () => {
+    const orders = (
+      ["pending", "confirmed", "shipped", "delivered", "cancelled", "returned"] as OrderStatus[]
+    ).map((status) => ({ status, subtotalCents: 100 }));
+    expect(donatedCents(orders)).toBe(300);
+  });
+});
+
+describe("buildWardrobe", () => {
+  const row = (over: Partial<WardrobeRow>): WardrobeRow => ({
+    productId: "p1",
+    nameEn: "Shirt",
+    nameAr: "تيشيرت",
+    wearableKey: "products/p1/wear.png",
+    status: "delivered",
+    ...over,
   });
 
-  it("drops a typed name when the customer isn't listing by name", () => {
-    const parsed = checkoutSchema.parse({
-      ...base,
-      supporterDisplay: "anonymous",
-      supporterName: "Bob",
-    });
-    expect(parsed.supporterName).toBeUndefined();
+  it("lists delivered wearable items with their overlay and worn state", () => {
+    expect(buildWardrobe([row({})], new Set(["p1"]))).toEqual([
+      {
+        productId: "p1",
+        nameEn: "Shirt",
+        nameAr: "تيشيرت",
+        overlayUrl: "/images/products/p1/wear.png",
+        worn: true,
+      },
+    ]);
+  });
+
+  it("leaves out anything not delivered, not wearable or deleted", () => {
+    for (const status of ["pending", "confirmed", "shipped", "cancelled", "returned"] as const) {
+      expect(buildWardrobe([row({ status })], new Set())).toEqual([]);
+    }
+    expect(buildWardrobe([row({ wearableKey: null })], new Set())).toEqual([]);
+    expect(buildWardrobe([row({ productId: null })], new Set())).toEqual([]);
+  });
+
+  it("lists a product once, and keeps it if another delivered order still has it", () => {
+    const items = buildWardrobe(
+      [row({}), row({ status: "returned" }), row({ status: "delivered" })],
+      new Set(),
+    );
+    expect(items).toHaveLength(1);
+  });
+});
+
+describe("relativeTime", () => {
+  const now = 1_000_000_000;
+  const minutes = (n: number) => now - n * 60_000;
+
+  it("counts up from just now, in both languages", () => {
+    expect(relativeTime(now, now, false)).toBe("just now");
+    expect(relativeTime(now + 5000, now, false)).toBe("just now");
+    expect(relativeTime(minutes(5), now, false)).toBe("5 min ago");
+    expect(relativeTime(minutes(60), now, false)).toBe("1 hour ago");
+    expect(relativeTime(minutes(60 * 48), now, false)).toBe("2 days ago");
+    expect(relativeTime(now, now, true)).toBe("دلوقتي");
+    expect(relativeTime(minutes(2), now, true)).toBe("من دقيقتين");
+    expect(relativeTime(minutes(5), now, true)).toBe("من ٥ دقايق");
   });
 });

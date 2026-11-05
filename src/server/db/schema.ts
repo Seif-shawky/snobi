@@ -1,5 +1,13 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  check,
+  index,
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
 // Money is stored as integer piastres (1 EGP = 100) to avoid float rounding.
 // Timestamps are Unix epoch milliseconds.
@@ -12,6 +20,59 @@ const timestamps = {
     .notNull()
     .default(sql`(unixepoch() * 1000)`),
 };
+
+// The Snobis customers pick from. All share one canvas and pose so bought items line up on any of
+// them. imageKey is "builtin:<name>" for files in public/snobis, otherwise an R2 key.
+export const snobiOptions = sqliteTable("snobi_options", {
+  id: text("id").primaryKey(),
+  nameEn: text("name_en").notNull(),
+  nameAr: text("name_ar").notNull(),
+  imageKey: text("image_key").notNull(),
+  // Retired options stop being offered; accounts that already picked them keep them.
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamps.createdAt,
+});
+
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    // Normalised Egyptian mobile number, used to log in. Never shown publicly.
+    phone: text("phone").notNull(),
+    passwordHash: text("password_hash").notNull(),
+    displayName: text("display_name").notNull(),
+    // Joke title, e.g. "Snobi's Financial Advisor".
+    title: text("title"),
+    snobiOptionId: text("snobi_option_id")
+      .notNull()
+      .references(() => snobiOptions.id),
+    // Shown on the leaderboard, live feed and helpers list, with amounts.
+    isPublic: integer("is_public", { mode: "boolean" }).notNull().default(true),
+    // Set by the owner (rude name, removal request). Customers can't undo it, unlike isPublic.
+    hiddenByAdmin: integer("hidden_by_admin", { mode: "boolean" }).notNull().default(false),
+    // Part of the session signature: bumping it signs the account out everywhere.
+    sessionVersion: integer("session_version").notNull().default(1),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("users_phone_idx").on(t.phone)],
+);
+
+// Items a customer has chosen to show on their Snobi. Whether they still own the item (delivered,
+// not returned) is checked whenever these are read.
+export const userWornItems = sqliteTable(
+  "user_worn_items",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    createdAt: timestamps.createdAt,
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.productId] })],
+);
 
 export const PRODUCT_STATUSES = ["draft", "active", "archived"] as const;
 export type ProductStatus = (typeof PRODUCT_STATUSES)[number];
@@ -29,6 +90,8 @@ export const products = sqliteTable(
     status: text("status", { enum: PRODUCT_STATUSES }).notNull().default("draft"),
     // Story phase this drop belongs to (Phase 0 = launch).
     phase: integer("phase").notNull().default(0),
+    // Transparent PNG (R2) layered over a customer's Snobi once they've received this item.
+    wearableKey: text("wearable_key"),
     sortOrder: integer("sort_order").notNull().default(0),
     ...timestamps,
   },
@@ -87,8 +150,6 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-export const SUPPORTER_DISPLAYS = ["hidden", "anonymous", "named"] as const;
-
 export const orders = sqliteTable(
   "orders",
   {
@@ -110,11 +171,10 @@ export const orders = sqliteTable(
     city: text("city").notNull(),
     addressLine: text("address_line").notNull(),
     notes: text("notes"),
-    // Opt-in public listing on /supporters, chosen at checkout. Never shows amounts or contact details.
-    supporterDisplay: text("supporter_display", { enum: SUPPORTER_DISPLAYS })
-      .notNull()
-      .default("hidden"),
-    supporterName: text("supporter_name"),
+    // The Snobi account that placed the order, taken from the session on the server. Null for guests.
+    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    // When the order first counted as a donation; orders the live feed by this.
+    confirmedAt: integer("confirmed_at", { mode: "number" }),
     subtotalCents: integer("subtotal_cents").notNull(),
     // Null until the delivery fee is confirmed with the customer.
     shippingCents: integer("shipping_cents"),
@@ -124,6 +184,7 @@ export const orders = sqliteTable(
   (t) => [
     uniqueIndex("orders_reference_idx").on(t.reference),
     uniqueIndex("orders_idempotency_idx").on(t.idempotencyKey),
+    index("orders_user_idx").on(t.userId),
     index("orders_status_idx").on(t.status),
   ],
 );

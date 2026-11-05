@@ -28,6 +28,11 @@ describe("App routing", () => {
     expect(router.matchRoutes("/checkout").at(-1)?.routeId).toBe("/checkout");
     expect(router.matchRoutes("/order-confirmation").at(-1)?.routeId).toBe("/order-confirmation");
   });
+  it("matches the join and account pages", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/join").at(-1)?.routeId).toBe("/join");
+    expect(router.matchRoutes("/account").at(-1)?.routeId).toBe("/account");
+  });
   it("matches product pages by handle", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
     expect(router.matchRoutes("/product/some-shirt").at(-1)?.routeId).toBe("/product/$handle");

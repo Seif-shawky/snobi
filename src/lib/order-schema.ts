@@ -66,13 +66,7 @@ const optionalText = (max: number, code: string) =>
     .optional()
     .transform((v) => (v ? v : undefined));
 
-export const SUPPORTER_DISPLAY_OPTIONS = ["hidden", "anonymous", "named"] as const;
-export type SupporterDisplay = (typeof SUPPORTER_DISPLAY_OPTIONS)[number];
-
-// A public nickname, so no links, email addresses or phone numbers.
-const SUPPORTER_NAME_FORBIDDEN = /https?:|www\.|@|\.[a-z]{2,}\b|\d{5,}/i;
-
-const checkoutFields = z.object({
+export const checkoutSchema = z.object({
   name: z.string().trim().min(2, "name_required").max(100, "name_too_long"),
   phone: z.string().transform((v, ctx) => {
     const phone = normalizeEgyptPhone(v);
@@ -95,29 +89,7 @@ const checkoutFields = z.object({
   city: z.string().trim().min(2, "city_required").max(100, "city_too_long"),
   addressLine: z.string().trim().min(5, "address_required").max(300, "address_too_long"),
   notes: optionalText(500, "notes_too_long"),
-  supporterDisplay: z.enum(SUPPORTER_DISPLAY_OPTIONS).default("hidden"),
-  supporterName: z.string().trim().max(200).optional(),
 });
-
-export const checkoutSchema = checkoutFields
-  .superRefine((value, ctx) => {
-    if (value.supporterDisplay !== "named") return;
-    const name = value.supporterName ?? "";
-    const message =
-      name.length < 2
-        ? "supporter_name_required"
-        : name.length > 40
-          ? "supporter_name_too_long"
-          : SUPPORTER_NAME_FORBIDDEN.test(name)
-            ? "supporter_name_invalid"
-            : null;
-    if (message) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["supporterName"], message });
-  })
-  // The nickname is kept only when the customer chose to be listed by name.
-  .transform((value) => ({
-    ...value,
-    supporterName: value.supporterDisplay === "named" ? value.supporterName : undefined,
-  }));
 
 export type CheckoutFormInput = z.input<typeof checkoutSchema>;
 export type CheckoutDetails = z.output<typeof checkoutSchema>;

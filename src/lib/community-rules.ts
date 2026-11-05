@@ -2,29 +2,31 @@
 // order stops counting automatically, and delivery fees are never included.
 export const DONATION_STATUSES = ["confirmed", "shipped", "delivered"] as const;
 
-export interface SupporterRow {
-  phone: string;
-  supporterDisplay: "hidden" | "anonymous" | "named";
-  supporterName: string | null;
-}
+export const LEADERBOARD_SIZE = 5;
+export const FEED_SIZE = 10;
+export const FEED_REFRESH_MS = 20_000;
 
-export interface PublicSupporter {
-  // Null means anonymous.
-  name: string | null;
-}
+const pluralAr = (n: number, one: string, two: string, few: string, many: string) => {
+  if (n === 1) return `من ${one}`;
+  if (n === 2) return `من ${two}`;
+  return `من ${n.toLocaleString("ar-EG")} ${n <= 10 ? few : many}`;
+};
 
-// One entry per customer, from delivered orders sorted newest first: the customer's latest
-// choice wins, so opting out on a newer order also removes them. Phones never leave this function.
-export function listPublicSupporters(rowsNewestFirst: readonly SupporterRow[]): PublicSupporter[] {
-  const seen = new Set<string>();
-  const supporters: PublicSupporter[] = [];
-  for (const row of rowsNewestFirst) {
-    if (seen.has(row.phone)) continue;
-    seen.add(row.phone);
-    if (row.supporterDisplay === "hidden") continue;
-    supporters.push({
-      name: row.supporterDisplay === "named" ? row.supporterName : null,
-    });
+// Depends on the clock, so only render it after hydration.
+export function relativeTime(at: number, now: number, ar: boolean) {
+  const minutes = Math.floor(Math.max(0, now - at) / 60_000);
+  if (minutes < 1) return ar ? "دلوقتي" : "just now";
+  if (minutes < 60) {
+    return ar ? pluralAr(minutes, "دقيقة", "دقيقتين", "دقايق", "دقيقة") : `${minutes} min ago`;
   }
-  return supporters;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return ar
+      ? pluralAr(hours, "ساعة", "ساعتين", "ساعات", "ساعة")
+      : `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+  }
+  const days = Math.floor(hours / 24);
+  return ar
+    ? pluralAr(days, "يوم", "يومين", "أيام", "يوم")
+    : `${days} ${days === 1 ? "day" : "days"} ago`;
 }

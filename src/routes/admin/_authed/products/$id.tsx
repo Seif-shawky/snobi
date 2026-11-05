@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import { ProductForm } from "@/components/admin/product-form";
 import { productToForm } from "@/components/admin/product-form-state";
 import { ProductImages } from "@/components/admin/product-images";
+import { ProductWearable } from "@/components/admin/product-wearable";
 import { getAdminProduct } from "@/lib/admin-products";
 
 export const Route = createFileRoute("/admin/_authed/products/$id")({
@@ -43,6 +44,7 @@ function EditProduct() {
         productId={product.id}
         images={data.images}
       />
+      <ProductWearable productId={product.id} wearableKey={product.wearableKey} />
       <ProductForm
         key={`form-${product.updatedAt}`}
         productId={product.id}

@@ -75,9 +75,24 @@ its sizes and photos for good (past orders still keep their details).
 - The homepage total adds up the clothing price of confirmed, shipped and delivered orders. Delivery
   fees never count, and cancelling a confirmed order takes it back out. The Phase 1 goal is set in
   `src/lib/phase.ts`.
-- Customers can choose at checkout to appear on `/supporters`, by name or anonymously. They show up
-  once the order is delivered, without amounts. If a name is rude, or someone asks to come off the
-  list, open their order in **/admin → Orders** and click **Remove from the list**.
+
+## Customer Snobis
+
+- Customers create an account at `/join` with a mobile number and password, pick a Snobi, and add a
+  name and an optional joke title. Accounts are optional; guests can still buy.
+- **Adding a Snobi option:** go to **/admin → Snobis**, download the template, draw on it in the same
+  pose and position, and export a transparent square PNG up to 5 MB. It must never look like the
+  original Snobi, so give it a hat, a moustache or similar.
+- **Making an item wearable:** on the product page, use "How it looks on a customer's Snobi" to upload
+  a transparent square PNG of only the item, drawn on the template. Customers can wear it once their
+  order is delivered, and lose it if they return it. Leave it empty for items that can't be worn.
+- **Forgotten password:** go to **/admin → Customers**, find them by mobile number and choose Reset
+  password. The temporary password shows once; send it to them.
+- **Rude names or removal requests:** on the customer's page, choose Hide from public lists. They
+  can't undo that themselves.
+- `/supporters` shows the top 5 with amounts, a live feed of recent donations with amounts (refreshes
+  every 20 seconds while open) and everyone else without amounts. Only public accounts appear, and
+  orders placed before an account existed don't link to it.
 
 ## Scripts
 

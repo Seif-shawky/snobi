@@ -10,11 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as JoinRouteImport } from './routes/join'
 import { Route as OrderConfirmationRouteImport } from './routes/order-confirmation'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ShippingRouteImport } from './routes/shipping'
@@ -30,6 +32,9 @@ import { Route as AdminAuthedIndexRouteImport } from './routes/admin/_authed/ind
 import { Route as AdminAuthedDeliveryRouteImport } from './routes/admin/_authed/delivery'
 import { Route as AdminAuthedMessagesRouteImport } from './routes/admin/_authed/messages'
 import { Route as AdminAuthedSiteRouteImport } from './routes/admin/_authed/site'
+import { Route as AdminAuthedSnobisRouteImport } from './routes/admin/_authed/snobis'
+import { Route as AdminAuthedCustomersIndexRouteImport } from './routes/admin/_authed/customers/index'
+import { Route as AdminAuthedCustomersIdRouteImport } from './routes/admin/_authed/customers/$id'
 import { Route as AdminAuthedOrdersIndexRouteImport } from './routes/admin/_authed/orders/index'
 import { Route as AdminAuthedOrdersIdRouteImport } from './routes/admin/_authed/orders/$id'
 import { Route as AdminAuthedProductsIndexRouteImport } from './routes/admin/_authed/products/index'
@@ -39,6 +44,11 @@ import { Route as AdminAuthedProductsNewRouteImport } from './routes/admin/_auth
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
@@ -64,6 +74,11 @@ const ContactRoute = ContactRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrderConfirmationRoute = OrderConfirmationRouteImport.update({
@@ -140,6 +155,22 @@ const AdminAuthedSiteRoute = AdminAuthedSiteRouteImport.update({
   path: '/site',
   getParentRoute: () => AdminAuthedRouteRoute,
 } as any)
+const AdminAuthedSnobisRoute = AdminAuthedSnobisRouteImport.update({
+  id: '/snobis',
+  path: '/snobis',
+  getParentRoute: () => AdminAuthedRouteRoute,
+} as any)
+const AdminAuthedCustomersIndexRoute =
+  AdminAuthedCustomersIndexRouteImport.update({
+    id: '/customers/',
+    path: '/customers/',
+    getParentRoute: () => AdminAuthedRouteRoute,
+  } as any)
+const AdminAuthedCustomersIdRoute = AdminAuthedCustomersIdRouteImport.update({
+  id: '/customers/$id',
+  path: '/customers/$id',
+  getParentRoute: () => AdminAuthedRouteRoute,
+} as any)
 const AdminAuthedOrdersIndexRoute = AdminAuthedOrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
@@ -170,10 +201,12 @@ const AdminAuthedProductsNewRoute = AdminAuthedProductsNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/join': typeof JoinRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
   '/shipping': typeof ShippingRoute
@@ -187,20 +220,25 @@ export interface FileRoutesByFullPath {
   '/admin/delivery': typeof AdminAuthedDeliveryRoute
   '/admin/messages': typeof AdminAuthedMessagesRoute
   '/admin/site': typeof AdminAuthedSiteRoute
+  '/admin/snobis': typeof AdminAuthedSnobisRoute
   '/admin/': typeof AdminAuthedIndexRoute
+  '/admin/customers/$id': typeof AdminAuthedCustomersIdRoute
   '/admin/orders/$id': typeof AdminAuthedOrdersIdRoute
   '/admin/products/$id': typeof AdminAuthedProductsIdRoute
   '/admin/products/new': typeof AdminAuthedProductsNewRoute
+  '/admin/customers/': typeof AdminAuthedCustomersIndexRoute
   '/admin/orders/': typeof AdminAuthedOrdersIndexRoute
   '/admin/products/': typeof AdminAuthedProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminAuthedIndexRoute
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/join': typeof JoinRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
   '/shipping': typeof ShippingRoute
@@ -214,9 +252,12 @@ export interface FileRoutesByTo {
   '/admin/delivery': typeof AdminAuthedDeliveryRoute
   '/admin/messages': typeof AdminAuthedMessagesRoute
   '/admin/site': typeof AdminAuthedSiteRoute
+  '/admin/snobis': typeof AdminAuthedSnobisRoute
+  '/admin/customers/$id': typeof AdminAuthedCustomersIdRoute
   '/admin/orders/$id': typeof AdminAuthedOrdersIdRoute
   '/admin/products/$id': typeof AdminAuthedProductsIdRoute
   '/admin/products/new': typeof AdminAuthedProductsNewRoute
+  '/admin/customers': typeof AdminAuthedCustomersIndexRoute
   '/admin/orders': typeof AdminAuthedOrdersIndexRoute
   '/admin/products': typeof AdminAuthedProductsIndexRoute
 }
@@ -224,10 +265,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/account': typeof AccountRoute
   '/cart': typeof CartRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/join': typeof JoinRoute
   '/order-confirmation': typeof OrderConfirmationRoute
   '/privacy': typeof PrivacyRoute
   '/shipping': typeof ShippingRoute
@@ -242,10 +285,13 @@ export interface FileRoutesById {
   '/admin/_authed/delivery': typeof AdminAuthedDeliveryRoute
   '/admin/_authed/messages': typeof AdminAuthedMessagesRoute
   '/admin/_authed/site': typeof AdminAuthedSiteRoute
+  '/admin/_authed/snobis': typeof AdminAuthedSnobisRoute
   '/admin/_authed/': typeof AdminAuthedIndexRoute
+  '/admin/_authed/customers/$id': typeof AdminAuthedCustomersIdRoute
   '/admin/_authed/orders/$id': typeof AdminAuthedOrdersIdRoute
   '/admin/_authed/products/$id': typeof AdminAuthedProductsIdRoute
   '/admin/_authed/products/new': typeof AdminAuthedProductsNewRoute
+  '/admin/_authed/customers/': typeof AdminAuthedCustomersIndexRoute
   '/admin/_authed/orders/': typeof AdminAuthedOrdersIndexRoute
   '/admin/_authed/products/': typeof AdminAuthedProductsIndexRoute
 }
@@ -254,10 +300,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/account'
     | '/cart'
     | '/checkout'
     | '/contact'
     | '/faq'
+    | '/join'
     | '/order-confirmation'
     | '/privacy'
     | '/shipping'
@@ -271,20 +319,25 @@ export interface FileRouteTypes {
     | '/admin/delivery'
     | '/admin/messages'
     | '/admin/site'
+    | '/admin/snobis'
     | '/admin/'
+    | '/admin/customers/$id'
     | '/admin/orders/$id'
     | '/admin/products/$id'
     | '/admin/products/new'
+    | '/admin/customers/'
     | '/admin/orders/'
     | '/admin/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
+    | '/account'
     | '/cart'
     | '/checkout'
     | '/contact'
     | '/faq'
+    | '/join'
     | '/order-confirmation'
     | '/privacy'
     | '/shipping'
@@ -298,19 +351,24 @@ export interface FileRouteTypes {
     | '/admin/delivery'
     | '/admin/messages'
     | '/admin/site'
+    | '/admin/snobis'
+    | '/admin/customers/$id'
     | '/admin/orders/$id'
     | '/admin/products/$id'
     | '/admin/products/new'
+    | '/admin/customers'
     | '/admin/orders'
     | '/admin/products'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/account'
     | '/cart'
     | '/checkout'
     | '/contact'
     | '/faq'
+    | '/join'
     | '/order-confirmation'
     | '/privacy'
     | '/shipping'
@@ -325,10 +383,13 @@ export interface FileRouteTypes {
     | '/admin/_authed/delivery'
     | '/admin/_authed/messages'
     | '/admin/_authed/site'
+    | '/admin/_authed/snobis'
     | '/admin/_authed/'
+    | '/admin/_authed/customers/$id'
     | '/admin/_authed/orders/$id'
     | '/admin/_authed/products/$id'
     | '/admin/_authed/products/new'
+    | '/admin/_authed/customers/'
     | '/admin/_authed/orders/'
     | '/admin/_authed/products/'
   fileRoutesById: FileRoutesById
@@ -336,10 +397,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  AccountRoute: typeof AccountRoute
   CartRoute: typeof CartRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
+  JoinRoute: typeof JoinRoute
   OrderConfirmationRoute: typeof OrderConfirmationRoute
   PrivacyRoute: typeof PrivacyRoute
   ShippingRoute: typeof ShippingRoute
@@ -358,6 +421,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -393,6 +463,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/order-confirmation': {
@@ -500,6 +577,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAuthedSiteRouteImport
       parentRoute: typeof AdminAuthedRouteRoute
     }
+    '/admin/_authed/snobis': {
+      id: '/admin/_authed/snobis'
+      path: '/snobis'
+      fullPath: '/admin/snobis'
+      preLoaderRoute: typeof AdminAuthedSnobisRouteImport
+      parentRoute: typeof AdminAuthedRouteRoute
+    }
+    '/admin/_authed/customers/': {
+      id: '/admin/_authed/customers/'
+      path: '/customers'
+      fullPath: '/admin/customers/'
+      preLoaderRoute: typeof AdminAuthedCustomersIndexRouteImport
+      parentRoute: typeof AdminAuthedRouteRoute
+    }
+    '/admin/_authed/customers/$id': {
+      id: '/admin/_authed/customers/$id'
+      path: '/customers/$id'
+      fullPath: '/admin/customers/$id'
+      preLoaderRoute: typeof AdminAuthedCustomersIdRouteImport
+      parentRoute: typeof AdminAuthedRouteRoute
+    }
     '/admin/_authed/orders/': {
       id: '/admin/_authed/orders/'
       path: '/orders'
@@ -542,10 +640,13 @@ interface AdminAuthedRouteRouteChildren {
   AdminAuthedDeliveryRoute: typeof AdminAuthedDeliveryRoute
   AdminAuthedMessagesRoute: typeof AdminAuthedMessagesRoute
   AdminAuthedSiteRoute: typeof AdminAuthedSiteRoute
+  AdminAuthedSnobisRoute: typeof AdminAuthedSnobisRoute
   AdminAuthedIndexRoute: typeof AdminAuthedIndexRoute
+  AdminAuthedCustomersIdRoute: typeof AdminAuthedCustomersIdRoute
   AdminAuthedOrdersIdRoute: typeof AdminAuthedOrdersIdRoute
   AdminAuthedProductsIdRoute: typeof AdminAuthedProductsIdRoute
   AdminAuthedProductsNewRoute: typeof AdminAuthedProductsNewRoute
+  AdminAuthedCustomersIndexRoute: typeof AdminAuthedCustomersIndexRoute
   AdminAuthedOrdersIndexRoute: typeof AdminAuthedOrdersIndexRoute
   AdminAuthedProductsIndexRoute: typeof AdminAuthedProductsIndexRoute
 }
@@ -554,10 +655,13 @@ const AdminAuthedRouteRouteChildren: AdminAuthedRouteRouteChildren = {
   AdminAuthedDeliveryRoute: AdminAuthedDeliveryRoute,
   AdminAuthedMessagesRoute: AdminAuthedMessagesRoute,
   AdminAuthedSiteRoute: AdminAuthedSiteRoute,
+  AdminAuthedSnobisRoute: AdminAuthedSnobisRoute,
   AdminAuthedIndexRoute: AdminAuthedIndexRoute,
+  AdminAuthedCustomersIdRoute: AdminAuthedCustomersIdRoute,
   AdminAuthedOrdersIdRoute: AdminAuthedOrdersIdRoute,
   AdminAuthedProductsIdRoute: AdminAuthedProductsIdRoute,
   AdminAuthedProductsNewRoute: AdminAuthedProductsNewRoute,
+  AdminAuthedCustomersIndexRoute: AdminAuthedCustomersIndexRoute,
   AdminAuthedOrdersIndexRoute: AdminAuthedOrdersIndexRoute,
   AdminAuthedProductsIndexRoute: AdminAuthedProductsIndexRoute,
 }
@@ -582,10 +686,12 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  AccountRoute: AccountRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
+  JoinRoute: JoinRoute,
   OrderConfirmationRoute: OrderConfirmationRoute,
   PrivacyRoute: PrivacyRoute,
   ShippingRoute: ShippingRoute,

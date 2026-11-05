@@ -6,20 +6,20 @@ export const MIN_SECRET_LENGTH = 32;
 
 const encoder = new TextEncoder();
 
-function toBase64Url(buffer: ArrayBuffer): string {
+export function toBase64Url(buffer: ArrayBuffer): string {
   let binary = "";
   for (const byte of new Uint8Array(buffer)) binary += String.fromCharCode(byte);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
-function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
+export function fromBase64Url(value: string): Uint8Array<ArrayBuffer> {
   const binary = atob(value.replace(/-/g, "+").replace(/_/g, "/"));
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
   return bytes;
 }
 
-function hmacKey(secret: string) {
+export function hmacKey(secret: string) {
   return crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),

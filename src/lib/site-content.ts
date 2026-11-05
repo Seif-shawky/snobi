@@ -9,10 +9,11 @@ export const SITE_SETTING_KEYS = {
 
 export const HERO_KEY_PATTERN = /^site\/hero\/[\w.-]+$/;
 const PRODUCT_KEY_PATTERN = /^products\/[\w-]+\/[\w.-]+$/;
+export const SNOBI_KEY_PATTERN = /^site\/snobis\/[\w.-]+$/;
 
 // Only these R2 keys are served publicly by /images/$.
 export function isPublicImageKey(key: string): boolean {
-  return PRODUCT_KEY_PATTERN.test(key) || HERO_KEY_PATTERN.test(key);
+  return PRODUCT_KEY_PATTERN.test(key) || HERO_KEY_PATTERN.test(key) || SNOBI_KEY_PATTERN.test(key);
 }
 
 export const MAX_ALT_LENGTH = 200;

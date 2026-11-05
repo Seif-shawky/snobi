@@ -1,5 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
+import { readLayerPng } from "@/lib/admin-layers";
 import {
   ALLOWED_IMAGE_TYPES,
   IMAGE_EXTENSIONS,
@@ -13,6 +14,7 @@ import { requireAdmin } from "./auth";
 import { imagesBucket, PHOTO_STORAGE_MISSING } from "../images-bucket";
 
 export type UploadResult = { ok: true; id: string; r2Key: string } | { ok: false; error: string };
+export type WearableResult = { ok: true } | { ok: false; error: string };
 
 export type ValidatedImage =
   | { ok: true; bytes: Uint8Array; type: AllowedImageType; extension: string }
@@ -70,6 +72,52 @@ export async function adminUploadImage(form: FormData): Promise<UploadResult> {
     throw error;
   }
   return { ok: true, id, r2Key };
+}
+
+// The picture stays out of product_images, and updatedAt stays put so the product form below it
+// keeps any unsaved edits.
+export async function adminUploadWearable(form: FormData): Promise<WearableResult> {
+  await requireAdmin();
+  const productId = form.get("productId");
+  if (typeof productId !== "string" || !/^[\w-]{1,64}$/.test(productId)) {
+    return { ok: false, error: "Missing product" };
+  }
+  const bucket = imagesBucket();
+  if (!bucket) return { ok: false, error: PHOTO_STORAGE_MISSING };
+  const image = await readLayerPng(form.get("file"));
+  if (!image.ok) return image;
+
+  const db = getDb();
+  const [product] = await db
+    .select({ wearableKey: products.wearableKey })
+    .from(products)
+    .where(eq(products.id, productId));
+  if (!product) return { ok: false, error: "This product no longer exists" };
+
+  const wearableKey = `products/${productId}/wear-${crypto.randomUUID()}.png`;
+  await bucket.put(wearableKey, image.bytes, { httpMetadata: { contentType: "image/png" } });
+  try {
+    await db.update(products).set({ wearableKey }).where(eq(products.id, productId));
+  } catch (error) {
+    await bucket.delete(wearableKey);
+    throw error;
+  }
+  if (product.wearableKey) await bucket.delete(product.wearableKey);
+  return { ok: true };
+}
+
+export async function adminRemoveWearable(productId: string) {
+  await requireAdmin();
+  const db = getDb();
+  const [product] = await db
+    .select({ wearableKey: products.wearableKey })
+    .from(products)
+    .where(eq(products.id, productId));
+  if (product?.wearableKey) {
+    await db.update(products).set({ wearableKey: null }).where(eq(products.id, productId));
+    await imagesBucket()?.delete(product.wearableKey);
+  }
+  return { ok: true as const };
 }
 
 export async function adminUpdateImages(

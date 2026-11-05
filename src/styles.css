@@ -698,17 +698,6 @@ h2 {
   height: 190px;
   margin-inline: auto;
 }
-@keyframes snobi-wiggle {
-  25% {
-    transform: rotate(-3deg);
-  }
-  75% {
-    transform: rotate(3deg);
-  }
-}
-.mascot-wiggle {
-  animation: snobi-wiggle 0.35s ease-in-out;
-}
 [dir="rtl"] .hero-copy h1 {
   font-size: 85px;
   line-height: 1.35;
@@ -1362,35 +1351,6 @@ h2 {
   border-block: 1px solid var(--paper-line);
   padding-block: 44px;
 }
-.enablers-ranking {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 70px;
-}
-.enablers-ranking h2 {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-block: 17px;
-  font-size: 40px;
-}
-.enablers-ranking h2 svg {
-  width: 29px;
-  height: 29px;
-  flex-shrink: 0;
-}
-.enablers-ranking p {
-  font-size: 13px;
-  color: var(--pencil);
-  line-height: 1.9;
-  max-width: 430px;
-}
-.enablers-ranking .handwriting {
-  display: block;
-  margin-top: 20px;
-  font-size: 18px;
-  color: var(--red-ink);
-}
 .enablers-rules h3 {
   font-size: 25px;
   padding-bottom: 13px;
@@ -1405,41 +1365,6 @@ h2 {
   font-size: 12px;
   line-height: 1.8;
   color: var(--pencil);
-}
-.enablers-privacy {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: 55px;
-  align-items: center;
-  padding-block: 48px;
-}
-.enablers-privacy h2 {
-  font-size: 38px;
-  margin-block: 18px;
-}
-.enablers-privacy p:not(.handwriting) {
-  font-size: 12px;
-  line-height: 1.9;
-  color: var(--pencil);
-  margin-bottom: 12px;
-}
-.enablers-title-note {
-  border-inline-start: 1px dashed var(--paper-line);
-  padding-inline-start: 30px;
-}
-.enablers-title-note > svg {
-  width: 28px;
-  height: 28px;
-  margin-bottom: 14px;
-}
-.enablers-title-note .handwriting {
-  font-size: 22px;
-}
-.enablers-title-note > span {
-  display: block;
-  font-size: 11px;
-  color: var(--pencil);
-  margin-top: 10px;
 }
 [dir="rtl"] .enablers-title h1 {
   font-size: 62px;
@@ -1472,18 +1397,6 @@ h2 {
   }
   .enablers-waiting > .handwriting {
     font-size: 21px;
-  }
-  .enablers-ranking,
-  .enablers-privacy {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-  }
-  .enablers-ranking h2,
-  .enablers-privacy h2 {
-    font-size: 32px;
-  }
-  .enablers-title-note {
-    padding-inline-start: 18px;
   }
   [dir="rtl"] .enablers-title h1 {
     font-size: 40px;
@@ -3810,7 +3723,7 @@ h2 {
   color: var(--pencil);
 }
 
-/* ---- Donations progress and the supporters list ---- */
+/* ---- Donations progress ---- */
 .phase-progress {
   height: 8px;
   max-width: 320px;
@@ -3823,53 +3736,762 @@ h2 {
   height: 100%;
   background: var(--red-ink);
 }
-.supporter-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  list-style: none;
-  margin: 18px 0;
-  padding: 0;
+/* ---- Customer Snobis ---- */
+.snobi-avatar {
+  position: relative;
+  display: inline-block;
+  aspect-ratio: 1;
+  flex-shrink: 0;
 }
-.supporter-list li {
-  padding: 6px 12px;
-  border: 1px solid var(--ink);
-  background: var(--paper-deep);
-  font-family: var(--font-hand);
-  font-size: 17px;
-  overflow-wrap: anywhere;
+.snobi-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.supporter-list li:nth-child(odd) {
-  transform: rotate(-1.2deg);
+
+/* ---- Accounts: /join, /account, leaderboard, feed ---- */
+.account-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 36px;
 }
-.supporter-list li:nth-child(even) {
-  transform: rotate(1deg);
+.account-control svg {
+  width: 20px;
+  height: 20px;
 }
-.supporter-anonymous {
-  color: var(--pencil);
+.account-control-avatar {
+  width: 34px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  overflow: hidden;
 }
-.checkout-supporter {
-  display: grid;
-  gap: 8px;
-  margin: 18px 0 0;
-  padding: 14px 16px;
-  border: 1px dashed var(--paper-line);
-}
-.checkout-supporter legend {
-  padding-inline: 6px;
-  font-weight: 700;
-}
-.checkout-supporter legend span,
-.checkout-supporter > p {
-  color: var(--pencil);
-  font-size: 13px;
-  font-weight: 400;
-}
-.checkout-supporter label {
-  display: flex;
+.mobile-nav-account {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
 }
-.checkout-supporter .contact-field label {
+.mobile-nav-account svg {
+  width: 18px;
+  height: 18px;
+}
+.join-page,
+.account-page {
+  padding-block: 32px 60px;
+}
+.join-heading {
+  max-width: 720px;
+}
+.join-heading h1 {
+  font-size: 64px;
+  line-height: 1;
+  margin-block: 14px;
+}
+[dir="rtl"] .join-heading h1 {
+  font-size: 48px;
+  line-height: 1.4;
+}
+.join-heading p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.join-bag-note {
+  color: var(--pencil);
+}
+.join-switch {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.join-switch-field {
+  justify-self: start;
+  font-size: 13px;
+}
+.join-form {
+  display: grid;
+  gap: 26px;
+  max-width: 720px;
+  margin-top: 28px;
+}
+.join-form-login {
+  max-width: 420px;
+}
+.join-form > .ink-button,
+.join-form > .note-button {
+  justify-self: start;
+}
+.join-submit {
+  max-width: 100%;
+}
+.join-fine {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--pencil);
+}
+.join-fine a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.join-public {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  cursor: pointer;
+}
+.join-public input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--ink);
+}
+.snobi-picker {
+  min-width: 0;
+}
+.snobi-picker legend {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.snobi-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.snobi-picker > .contact-error {
+  margin-top: 10px;
+}
+.snobi-option {
+  position: relative;
   display: block;
+  cursor: pointer;
+}
+.snobi-option input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.snobi-option-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  height: 100%;
+  padding: 8px 4px 10px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+}
+.snobi-option-art {
+  display: block;
+  width: 100%;
+  max-width: 110px;
+}
+.snobi-option-avatar {
+  display: block;
+  width: 100%;
+}
+.snobi-option-name {
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+}
+.snobi-option-tick {
+  position: absolute;
+  top: 5px;
+  inset-inline-end: 5px;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  padding: 2px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 50%;
+  opacity: 0;
+}
+.snobi-option:hover .snobi-option-card {
+  border-color: var(--ink);
+}
+.snobi-option input:checked + .snobi-option-card {
+  border: 2px solid var(--ink);
+  background: var(--paper-deep);
+  box-shadow: var(--drawn-shadow);
+}
+.snobi-option input:checked + .snobi-option-card .snobi-option-name {
+  font-weight: 700;
+}
+.snobi-option input:checked + .snobi-option-card .snobi-option-tick {
+  opacity: 1;
+}
+.snobi-option input:focus-visible + .snobi-option-card {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.snobi-option input[aria-invalid="true"]:not(:checked) + .snobi-option-card {
+  border-color: var(--red-ink);
+}
+.title-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.title-chip {
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px dashed var(--paper-line);
+  background: var(--paper);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: start;
+  cursor: pointer;
+}
+.title-chip:hover,
+.title-chip[aria-pressed="true"] {
+  border: 1px solid var(--ink);
+  background: var(--paper-deep);
+}
+.account-hero {
+  display: grid;
+  grid-template-columns: minmax(180px, 320px) minmax(0, 1fr);
+  gap: 36px;
+  align-items: center;
+  margin-top: 20px;
+  padding-bottom: 32px;
+  border-bottom: 2px solid var(--ink);
+}
+.account-avatar {
+  width: 100%;
+}
+.account-hero-copy h1 {
+  font-size: 64px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+[dir="rtl"] .account-hero-copy h1 {
+  font-size: 48px;
+  line-height: 1.4;
+}
+.account-title {
+  font-size: 24px;
+  color: var(--pencil);
+  margin-top: 4px;
+}
+.account-donated {
+  margin-top: 22px;
+}
+.account-donated strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+[dir="rtl"] .account-donated strong {
+  font-family: inherit;
+  font-size: 26px;
+  line-height: 1.5;
+}
+.account-donated p,
+.account-visibility {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--pencil);
+}
+.account-visibility {
+  margin-top: 12px;
+}
+.account-visibility a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.account-section {
+  padding-block: 28px;
+  border-bottom: 1px dashed var(--paper-line);
+}
+.account-section h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+.account-empty {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--pencil);
+}
+.account-empty svg {
+  width: 26px;
+  height: 26px;
+}
+.wardrobe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  list-style: none;
+}
+.wardrobe-item {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  border: 1px solid var(--paper-line);
+  background: var(--paper);
+  font-size: 12px;
+  text-align: start;
+  cursor: pointer;
+}
+.wardrobe-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+.wardrobe-item strong {
+  font-size: 11px;
+}
+.wardrobe-item:hover {
+  border-color: var(--ink);
+}
+.wardrobe-item[aria-pressed="true"] {
+  border: 2px solid var(--ink);
+  background: var(--paper-deep);
+}
+.wardrobe-item[aria-pressed="true"] strong {
+  color: var(--red-ink);
+}
+.wardrobe-item:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.account-orders {
+  list-style: none;
+}
+.account-orders a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto 16px;
+  gap: 16px;
+  align-items: center;
+  padding-block: 12px;
+  border-bottom: 1px dashed var(--paper-line);
+  font-size: 13px;
+}
+.account-orders a:hover {
+  text-decoration: underline;
+}
+.account-orders svg {
+  width: 16px;
+  height: 16px;
+}
+[dir="rtl"] .account-orders svg {
+  transform: scaleX(-1);
+}
+.account-edit {
+  padding-block: 24px;
+  border-bottom: 1px dashed var(--paper-line);
+}
+.account-edit summary {
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.account-password {
+  padding-top: 26px;
+  border-top: 1px dashed var(--paper-line);
+}
+.account-password h3 {
+  font-size: 22px;
+}
+.account-saved {
+  font-size: 13px;
+  font-weight: 600;
+}
+.account-exit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding-top: 26px;
+}
+.account-exit .join-switch {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--pencil);
+}
+.account-delete {
+  display: grid;
+  gap: 16px;
+  flex-basis: 100%;
+  max-width: 520px;
+  padding: 16px;
+  border: 1px solid var(--red-ink);
+}
+.account-delete > p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.account-delete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+.leaderboard {
+  list-style: none;
+  margin-block: 16px;
+}
+.leaderboard li {
+  display: grid;
+  grid-template-columns: 26px 64px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding-block: 10px;
+  border-bottom: 1px dashed var(--paper-line);
+}
+.leaderboard li:first-child {
+  border-top: 1px solid var(--ink);
+}
+.leaderboard-rank {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+}
+.leaderboard-avatar {
+  width: 64px;
+}
+.leaderboard-name {
+  display: grid;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.leaderboard-name strong {
+  font-size: 15px;
+}
+.leaderboard-name .handwriting {
+  font-size: 16px;
+  line-height: 1.3;
+  color: var(--pencil);
+}
+.leaderboard-amount {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}
+.supporters-section > .leaderboard + .note-button {
+  margin-top: 8px;
+}
+.enablers-intro-bottom > div {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+}
+.enablers-intro-bottom > div > p {
+  max-width: 550px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.enablers-ranking-band .enablers-rules {
+  padding-block: 6px;
+}
+.live-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--red-ink);
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+}
+.feed-empty {
+  padding-block: 18px;
+  font-size: 13px;
+  color: var(--pencil);
+}
+.donation-feed {
+  list-style: none;
+  margin-top: 14px;
+}
+.donation-feed li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding-block: 8px;
+  border-bottom: 1px dashed var(--paper-line);
+}
+.donation-feed p {
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.feed-amount {
+  white-space: nowrap;
+}
+.donation-feed time {
+  font-size: 12px;
+  color: var(--pencil);
+  white-space: nowrap;
+}
+.helper-avatar {
+  width: 44px;
+}
+.helpers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 16px 10px;
+  margin-top: 16px;
+  list-style: none;
+}
+.helpers-grid li {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 12px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.helpers-grid .helper-avatar {
+  width: 68px;
+}
+.checkout-account {
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 12px 14px;
+  border: 1px dashed var(--paper-line);
+  font-size: 13px;
+  line-height: 1.8;
+}
+div.checkout-account {
+  display: flex;
+}
+p.checkout-account a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.checkout-account-avatar {
+  width: 44px;
+}
+@media (max-width: 700px) {
+  .account-control-avatar {
+    width: 30px;
+  }
+  .join-heading h1 {
+    font-size: 48px;
+  }
+  [dir="rtl"] .join-heading h1 {
+    font-size: 36px;
+  }
+  .snobi-picker-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .join-submit {
+    width: 100%;
+  }
+  .account-hero {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .account-avatar {
+    width: min(70vw, 260px);
+    justify-self: center;
+  }
+  .account-hero-copy h1 {
+    font-size: 48px;
+  }
+  [dir="rtl"] .account-hero-copy h1 {
+    font-size: 36px;
+  }
+  .account-orders a {
+    grid-template-columns: minmax(0, 1fr) auto 16px;
+    gap: 4px 12px;
+  }
+  .account-orders a > span:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 11px;
+    color: var(--pencil);
+  }
+  .account-orders a > svg {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+  .leaderboard li {
+    grid-template-columns: 20px 48px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .leaderboard-rank {
+    font-size: 22px;
+  }
+  .leaderboard-avatar {
+    width: 48px;
+  }
+  .leaderboard-name strong,
+  .leaderboard-amount {
+    font-size: 13px;
+  }
+  .leaderboard-name .handwriting {
+    font-size: 14px;
+  }
+  .donation-feed li {
+    grid-template-columns: 38px minmax(0, 1fr);
+  }
+  .donation-feed time {
+    grid-column: 2;
+  }
+  .donation-feed .helper-avatar {
+    width: 38px;
+    grid-row: 1 / 3;
+  }
+}
+
+/* ---- Admin: Snobis, customers and wearable items ---- */
+/* Checkerboard behind transparent pictures, so see-through areas are obvious. */
+.admin-layer-canvas {
+  display: inline-flex;
+  flex-shrink: 0;
+  border: 1px solid var(--paper-line);
+  background: repeating-conic-gradient(var(--paper-line) 0 25%, var(--card) 0 50%) 0 0 / 16px 16px;
+}
+.admin-snobi-sm {
+  width: 56px;
+}
+.admin-snobi-md {
+  width: 88px;
+}
+.admin-snobi-lg {
+  width: min(160px, 38vw);
+}
+.admin-snobi-rule {
+  margin-bottom: 8px;
+}
+.admin-snobi-howto {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-inline-start: 20px;
+  list-style: disc;
+}
+.admin-snobi-group {
+  margin-top: 28px;
+}
+.admin-snobi-compare {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.admin-snobi-compare figure {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  width: min(160px, 38vw);
+}
+.admin-snobi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.admin-snobi-card {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  border: 1px solid var(--paper-line);
+  background: var(--card);
+  padding: 10px 12px;
+}
+.admin-snobi-card[data-retired] .admin-snobi-head {
+  opacity: 0.65;
+}
+.admin-snobi-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.admin-snobi-ar {
+  justify-self: start;
+}
+.admin-snobi-intro,
+.admin-customer-contact {
+  margin-bottom: 14px;
+}
+.admin-snobi-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.admin-snobi-rename {
+  display: grid;
+  gap: 10px;
+}
+.admin-wearable {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.admin-wearable-side {
+  display: grid;
+  gap: 8px;
+}
+.admin-account-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.admin-customer-search {
+  margin-block: 14px;
+}
+.admin-customer-more {
+  margin-top: 12px;
+}
+.admin-customer-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-block: 12px;
+}
+.admin-customer-head .admin-title {
+  margin-bottom: 0;
+}
+.admin-temp-password {
+  display: grid;
+  gap: 8px;
+  margin-block: 12px;
+  border: 2px solid var(--ink);
+  padding: 12px;
+}
+.admin-temp-password-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.admin-temp-password code {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
 }

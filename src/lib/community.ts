@@ -1,12 +1,19 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { loadDonationTotalCents, loadSupporters } from "@/server/community";
+import { FEED_REFRESH_MS } from "@/lib/community-rules";
+import {
+  loadDonationFeed,
+  loadDonationTotalCents,
+  loadHelpers,
+  loadLeaderboard,
+} from "@/server/community";
 
 export const getDonationTotal = createServerFn({ method: "GET" }).handler(() =>
   loadDonationTotalCents(),
 );
-
-export const getSupporters = createServerFn({ method: "GET" }).handler(() => loadSupporters());
+export const getLeaderboard = createServerFn({ method: "GET" }).handler(() => loadLeaderboard());
+export const getHelpers = createServerFn({ method: "GET" }).handler(() => loadHelpers());
+export const getDonationFeed = createServerFn({ method: "GET" }).handler(() => loadDonationFeed());
 
 export const donationTotalQuery = queryOptions({
   queryKey: ["snobi", "donation-total"],
@@ -15,9 +22,26 @@ export const donationTotalQuery = queryOptions({
   retry: 1,
 });
 
-export const supportersQuery = queryOptions({
-  queryKey: ["snobi", "supporters"],
-  queryFn: () => getSupporters(),
+export const leaderboardQuery = queryOptions({
+  queryKey: ["snobi", "leaderboard"],
+  queryFn: () => getLeaderboard(),
   staleTime: 60_000,
+  retry: 1,
+});
+
+export const helpersQuery = queryOptions({
+  queryKey: ["snobi", "helpers"],
+  queryFn: () => getHelpers(),
+  staleTime: 60_000,
+  retry: 1,
+});
+
+// Polls while the page is open and visible; react-query pauses it in background tabs. Each poll
+// counts towards the Workers free plan's daily requests, so don't shorten this casually.
+export const donationFeedQuery = queryOptions({
+  queryKey: ["snobi", "donation-feed"],
+  queryFn: () => getDonationFeed(),
+  staleTime: FEED_REFRESH_MS,
+  refetchInterval: FEED_REFRESH_MS,
   retry: 1,
 });

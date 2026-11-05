@@ -45,8 +45,9 @@ function PrivacyPage() {
                 كتبته، ملاحظات التوصيل، والمنتجات والمقاسات والأسعار ورقم الطلب ووقته.
               </li>
               <li>
-                <strong>لو اخترت تظهر في قائمة الداعمين:</strong> اختيارك والاسم اللي حددته بيتسجلوا
-                مع الطلب.
+                <strong>لو عملت حساب سنوبي:</strong> رقم موبايلك للدخول، باسورد متخزن مشفّر بطريقة
+                متقدرش حد يقراه، الاسم واللقب والسنوبي اللي اخترتهم، طلباتك، والحاجات اللي سنوبي
+                بتاعك لابسها.
               </li>
               <li>
                 <strong>لما تبعت رسالة:</strong> اسمك، إيميلك، رقم الطلب لو كتبته، رسالتك، وعنوان
@@ -57,8 +58,13 @@ function PrivacyPage() {
                 بتوصلنا غير لما تأكد الطلب. اختيار اللغة مش بيتحفظ.
               </li>
               <li>
-                <strong>كوكي الإدارة:</strong> كوكي دخول بيستخدمها صاحب المحل بس لصفحات الإدارة.
-                الزوار مش بياخدوها.
+                <strong>محاولات الدخول:</strong> بنسجل المحاولات الفاشلة بعنوان الـ IP ورقم الموبايل
+                لمدة حوالي ١٥ دقيقة عشان نوقف تخمين الباسورد.
+              </li>
+              <li>
+                <strong>كوكيز الدخول:</strong> لو دخلت حسابك بنحفظ كوكي دخول لمدة ٣٠ يوم عشان تفضل
+                داخل. صاحب المحل عنده كوكي دخول منفصلة لصفحات الإدارة. الزوار اللي من غير حساب مش
+                بياخدوا كوكيز.
               </li>
               <li>
                 مش بنستخدم أدوات تحليلات أو إعلانات أو كوكيز تتبّع، ومش بنجمع بيانات كروت دفع، لأن
@@ -96,9 +102,10 @@ function PrivacyPage() {
                 IP ونوع المتصفح لما تفتح الصفحات.
               </li>
               <li>
-                <strong>الجمهور:</strong> لو اخترت تظهر، الاسم اللي حددته (أو «مجهول») بيتنشر في
-                صفحة الداعمين بعد توصيل الطلب، من غير مبالغ أو بيانات تواصل. ولو طلبت نشيلك هنشيلك.
-                إجمالي التبرعات المنشور رقم مجمّع مش بيبيّن أي طلب.
+                <strong>الجمهور:</strong> لو حسابك عام، الاسم واللقب والسنوبي بتوعك ومبالغ تبرعاتك
+                ووقتها بيظهروا للكل في لوحة الأوائل والتبرعات الحالية وقائمة المساعدين. تقدر تخفي
+                نفسك في أي وقت من صفحة حسابك. رقم موبايلك وعنوانك واسمك الحقيقي مش بيظهروا أبدًا. لو
+                اشتريت من غير حساب مش هتظهر في أي قائمة.
               </li>
               <li>الجهات الرسمية لو القانون ألزمنا بكده.</li>
               <li>مش بنبيع بياناتك لحد. أبدًا.</li>
@@ -114,6 +121,10 @@ function PrivacyPage() {
                 الرسايل: بنمسحها لما مانحتاجهاش، وبحد أقصى ١٢ شهر. عنوان الـ IP بيتمسح مع الرسالة.
               </li>
               <li>الشنطة: لحد ما تفضّيها أو تمسح بيانات المتصفح.</li>
+              <li>
+                الحساب: لحد ما تمسحه من صفحة حسابك. بعدها اسمك وسنوبي بتاعك بيتشالوا من كل القوايم،
+                وطلباتك بتفضل عندنا من غير ربط بالحساب للأسباب اللي فوق.
+              </li>
             </ul>
           ),
         },
@@ -172,8 +183,9 @@ function PrivacyPage() {
                 reference and time of the order.
               </li>
               <li>
-                <strong>If you choose to join the supporters list:</strong> your choice and the name
-                you picked are saved with the order.
+                <strong>If you create a Snobi account:</strong> your mobile number to log in, a
+                password stored only as a scrambled hash we can’t read, the name, title and Snobi
+                you chose, your orders, and what your Snobi is wearing.
               </li>
               <li>
                 <strong>When you send a message:</strong> your name, email, order number if you add
@@ -184,8 +196,13 @@ function PrivacyPage() {
                 We don’t receive it until you place an order. Your language choice is not stored.
               </li>
               <li>
-                <strong>Admin cookie:</strong> a sign-in cookie used only by the shop owner for the
-                admin pages. Visitors don’t get one.
+                <strong>Login attempts:</strong> we record failed attempts by IP address and mobile
+                number for about 15 minutes, to stop password guessing.
+              </li>
+              <li>
+                <strong>Sign-in cookies:</strong> if you log in, a cookie keeps you signed in for 30
+                days. The shop owner has a separate one for the admin pages. Visitors without an
+                account don’t get any.
               </li>
               <li>
                 We use no analytics, advertising or tracking cookies, and we never collect payment
@@ -223,10 +240,11 @@ function PrivacyPage() {
                 your IP address and browser details when pages load.
               </li>
               <li>
-                <strong>The public:</strong> if you opt in, the name you picked (or “anonymous”)
-                appears on the supporters page after delivery, with no amounts or contact details.
-                Ask and we’ll remove it. The published donations total is a combined figure that
-                reveals no individual order.
+                <strong>The public:</strong> if your account is public, your name, title, Snobi,
+                donation amounts and their timing appear to everyone on the leaderboard, the live
+                feed and the helpers list. You can hide yourself any time from your account page.
+                Your mobile number, address and real name are never shown. If you buy without an
+                account, you don’t appear on any list.
               </li>
               <li>Authorities, if the law requires it.</li>
               <li>We never sell your data.</li>
@@ -246,6 +264,11 @@ function PrivacyPage() {
                 IP address is deleted with the message.
               </li>
               <li>Your bag: until you empty it or clear your browser data.</li>
+              <li>
+                Your account: until you delete it from your account page. Your name and Snobi then
+                leave every list, and your orders stay with us, no longer linked to an account, for
+                the reasons above.
+              </li>
             </ul>
           ),
         },

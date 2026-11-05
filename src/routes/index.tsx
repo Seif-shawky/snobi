@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUpRight, Asterisk } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { Collection, HowItWorks, StoryTeaser, Supporters, useLanguage } from "@/components/snobi";
 import roadside from "@/assets/snobi-phase-0-roadside.png";
 import { productsQuery } from "@/lib/catalog";
 import { siteContentQuery } from "@/lib/site";
-import { donationTotalQuery, supportersQuery } from "@/lib/community";
+import { currentUserQuery } from "@/lib/account";
+import { donationTotalQuery, leaderboardQuery } from "@/lib/community";
 import { formatMoney } from "@/lib/money";
 import {
   CURRENT_PHASE,
@@ -14,7 +15,6 @@ import {
   phaseLabel,
   phaseProgressPercent,
 } from "@/lib/phase";
-import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/")({
       context.queryClient.ensureQueryData(productsQuery),
       context.queryClient.ensureQueryData(siteContentQuery),
       context.queryClient.ensureQueryData(donationTotalQuery),
-      context.queryClient.ensureQueryData(supportersQuery),
+      context.queryClient.ensureQueryData(leaderboardQuery),
     ]);
   },
   component: Index,
@@ -51,15 +51,7 @@ function Index() {
   const { data: donationCents } = useSuspenseQuery(donationTotalQuery);
   const progress = phaseProgressPercent(donationCents, NEXT_PHASE_GOAL_CENTS);
   const nextPhase = phaseLabel(CURRENT_PHASE + 1, ar);
-  const [wiggle, setWiggle] = useState(false);
-  const seeShirts = () => {
-    setWiggle(true);
-    document.getElementById("collection")?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-    });
-  };
+  const { data: user } = useQuery(currentUserQuery);
   return (
     <>
       <section className="home-hero page-width">
@@ -99,9 +91,18 @@ function Index() {
               )}
             </p>
             <div className="hero-buttons">
-              <Button variant="ink" onClick={seeShirts}>
-                {ar ? "ساعد سنوبي" : "HELP SNOBI"}
-                <ArrowUpRight />
+              <Button variant="ink" asChild>
+                {user ? (
+                  <Link to="/account">
+                    {ar ? "سنوبي بتاعك" : "YOUR SNOBI"}
+                    <ArrowUpRight />
+                  </Link>
+                ) : (
+                  <Link to="/join">
+                    {ar ? "اعمل سنوبي بتاعك" : "CREATE YOUR OWN SNOBI"}
+                    <ArrowUpRight />
+                  </Link>
+                )}
               </Button>
               <Button variant="note" asChild>
                 <Link
@@ -119,10 +120,7 @@ function Index() {
               </Button>
             </div>
           </div>
-          <figure
-            className={`hero-art ${wiggle ? "mascot-wiggle" : ""}`}
-            onAnimationEnd={() => setWiggle(false)}
-          >
+          <figure className="hero-art">
             <img
               className="hero-picture"
               src={site.heroImageUrl ?? roadside}

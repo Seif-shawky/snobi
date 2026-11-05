@@ -100,6 +100,18 @@ function TermsPage() {
           ),
         },
         {
+          title: "حساب سنوبي",
+          body: (
+            <p>
+              الحساب اختياري ومجاني، والشراء ممكن من غيره. إنت مسؤول عن باسوردك، وعن إن رقم الموبايل
+              بتاعك فعلًا. الاسم واللقب بيظهروا للكل لو حسابك عام، فمتكتبش حاجة مسيئة أو تنتحل شخصية
+              حد؛ ممكن نخفيها أو نعدلها أو نقفل الحساب. لوحة الأوائل والتبرعات الحالية تقدير بس، ومن
+              غير أي جوايز أو حقوق. الحاجات اللي سنوبي بتاعك بيلبسها افتراضية، بتظهر بعد توصيل
+              المنتج وبتتشال لو رجّعته، ومالهاش قيمة مالية.
+            </p>
+          ),
+        },
+        {
           title: "الملكية الفكرية",
           body: (
             <p>
@@ -220,6 +232,20 @@ function TermsPage() {
               Everything is on the <Link to="/shipping">shipping &amp; returns</Link> page. In
               short: you can return items within 14 days of delivery, and delivery fees are not
               refundable.
+            </p>
+          ),
+        },
+        {
+          title: "Your Snobi account",
+          body: (
+            <p>
+              An account is optional and free; you can buy without one. You’re responsible for your
+              password and for the mobile number being yours. Your name and title are public if your
+              account is public, so don’t use anything offensive or pretend to be someone else; we
+              may hide or edit them, or close the account. The leaderboard and live feed are just
+              recognition, with no prizes or rights. Items your Snobi wears are virtual, appear
+              after the product is delivered, disappear if you return it, and have no monetary
+              value.
             </p>
           ),
         },
