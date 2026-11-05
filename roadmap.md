@@ -38,18 +38,13 @@
 - [x] Order confirmation by reference + secret token (constant-time compare), not-found state otherwise; cart cleared after a successful order.
 - [x] Removed Shopify code and copy; FAQ/shipping rewritten for cash on delivery with unconfirmed policies still labelled.
 - [x] Unit tests (schema, codes, cart store, pricing) and a local end-to-end run (order, stock, idempotent retry, oversell race, wrong token).
-- [ ] Confirm delivery areas, fees and times, then record the fee on orders (admin).
-- [ ] Rate-limit placeOrder and add bot protection before launch.
-- [ ] Send order notifications (WhatsApp/email) once contact channels are confirmed.
 - [ ] Online payment methods (not planned for launch).
 
 - [x] Build Page 11 Shipping, Returns & Exchanges with all policies marked unconfirmed.
 - [x] Build and verify Page 10 Contact: bilingual form, accessible validation, honest not-sent feedback and footer navigation.
-- [ ] Activate contact delivery and official email/Instagram links; blocked by missing confirmed business contact details and delivery setup.
 - [x] Build and verify Page 9 FAQ: twelve honest bilingual answers, accessible accordion and footer link.
 - [x] Build Page 8 Supporters from the original brief, with verified-only empty states, ranking safeguards and a private profile preview.
 - [x] Verify Page 8 in English/Arabic, profile controls and narrow layouts.
-- [ ] Activate verified supporter feed, rankings and saved opt-out choices; blocked by missing verified purchases and public-profile consent service.
 - [x] Align Page 7 at /story with the original document: title, Phase 0 chronology and fictional-versus-real finances.
 - [x] Verify Page 7 in English/Arabic and its clothing-gallery link.
 - [x] Build Page 5 checkout review in English/Arabic and connect bag checkout navigation.
