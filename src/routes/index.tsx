@@ -7,8 +7,9 @@ import roadside from "@/assets/snobi-phase-0-roadside.png";
 import { productsQuery } from "@/lib/catalog";
 import { siteContentQuery } from "@/lib/site";
 import { currentUserQuery } from "@/lib/account";
-import { leaderboardQuery } from "@/lib/community";
-import { CURRENT_PHASE, phaseLabel } from "@/lib/phase";
+import { donationProgressQuery, leaderboardQuery } from "@/lib/community";
+import { formatDonations } from "@/lib/donations";
+import { CURRENT_PHASE, NEXT_PHASE_GOAL_DONATIONS, phaseLabel } from "@/lib/phase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/")({
     await Promise.all([
       context.queryClient.ensureQueryData(productsQuery),
       context.queryClient.ensureQueryData(siteContentQuery),
+      context.queryClient.ensureQueryData(donationProgressQuery),
       context.queryClient.ensureQueryData(leaderboardQuery),
     ]);
   },
@@ -41,6 +43,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { ar } = useLanguage();
   const { data: site } = useSuspenseQuery(siteContentQuery);
+  const { data: progress } = useSuspenseQuery(donationProgressQuery);
+  const nextPhase = phaseLabel(CURRENT_PHASE + 1, ar);
   const { data: user } = useQuery(currentUserQuery);
   return (
     <>
@@ -127,6 +131,28 @@ function Index() {
               <span className="handwriting">
                 {ar ? "وضعه المالي محرج." : "his financial situation is embarrassing."}
               </span>
+              <div
+                className="phase-progress"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progress.percent}
+                aria-label={ar ? `التقدم ناحية ${nextPhase}` : `Progress towards ${nextPhase}`}
+              >
+                <span style={{ width: `${progress.percent}%` }} />
+              </div>
+              <p>
+                {progress.percent >= 100
+                  ? ar
+                    ? `وصل للهدف. ${nextPhase} قربت.`
+                    : `Goal reached. ${nextPhase} is coming.`
+                  : ar
+                    ? `الهدف: ${formatDonations(NEXT_PHASE_GOAL_DONATIONS, ar)} تبرع عشان يوصل لـ${nextPhase}.`
+                    : `Goal: ${formatDonations(NEXT_PHASE_GOAL_DONATIONS, ar)} donations to reach ${nextPhase}.`}{" "}
+                <Link to="/faq" hash="donations">
+                  {ar ? "التبرعات بتتحسب إزاي؟" : "How donations work"}
+                </Link>
+              </p>
             </div>
           </div>
           <span className="hero-scroll handwriting">

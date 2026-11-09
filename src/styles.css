@@ -4136,7 +4136,7 @@ h2 {
 }
 .leaderboard li {
   display: grid;
-  grid-template-columns: 26px 64px minmax(0, 1fr);
+  grid-template-columns: 26px 64px minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
   padding-block: 10px;
@@ -4313,7 +4313,7 @@ p.checkout-account a {
     grid-row: 1 / 3;
   }
   .leaderboard li {
-    grid-template-columns: 20px 48px minmax(0, 1fr);
+    grid-template-columns: 20px 48px minmax(0, 1fr) auto;
     gap: 10px;
   }
   .leaderboard-rank {
@@ -4468,4 +4468,26 @@ p.checkout-account a {
   font-weight: 700;
   letter-spacing: 0.04em;
   overflow-wrap: anywhere;
+}
+
+/* ---- Donations (points) ---- */
+.checkout-donations dd span {
+  color: var(--pencil);
+  font-weight: 400;
+}
+.leaderboard-amount {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  white-space: nowrap;
+  text-align: end;
+}
+.leaderboard-amount span,
+.feed-amount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pencil);
+}
+.feed-amount {
+  color: var(--ink);
 }

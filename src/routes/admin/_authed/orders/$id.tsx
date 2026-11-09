@@ -168,6 +168,8 @@ function AdminOrder() {
           <dd>
             {order.shippingCents === null ? "Not set yet" : formatMoney(order.shippingCents, false)}
           </dd>
+          <dt>Donations</dt>
+          <dd>{order.donations.toLocaleString("en-US")} (counts once confirmed)</dd>
           <dt>To collect</dt>
           <dd>
             <strong>{formatMoney(total, false)}</strong>

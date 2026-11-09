@@ -176,6 +176,8 @@ export const orders = sqliteTable(
     // When the order first counted as a donation; orders the live feed by this.
     confirmedAt: integer("confirmed_at", { mode: "number" }),
     subtotalCents: integer("subtotal_cents").notNull(),
+    // Snobi "donations" this order earns (src/lib/donations.ts), fixed when the order is placed.
+    donations: integer("donations").notNull().default(0),
     // Null until the delivery fee is confirmed with the customer.
     shippingCents: integer("shipping_cents"),
     currency: text("currency").notNull().default("EGP"),

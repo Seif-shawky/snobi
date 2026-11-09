@@ -72,11 +72,15 @@ its sizes and photos for good (past orders still keep their details).
 
 ## Donations and supporters
 
-- No money figures are shown to the public: no donations total, no progress bar, no amounts per
-  person. Admin still sees everything.
-- Rankings and each customer's own private total (on their account page) count the clothing price of
-  confirmed, shipped and delivered orders. Delivery fees never count, and cancelled or returned
-  orders drop out. The Phase 1 goal used on account pages is set in `src/lib/phase.ts`.
+- "Donations" are Snobi points, not pounds. Each order earns its clothing price in EGP (no
+  delivery fee) × a multiplier that grows with the number of items in that one order: 1 item ×1.2,
+  2 ×1.4, 3 ×1.6, 4 ×1.8, 5 or more ×2. A EGP 1,000 jacket = 1,200; two in one order = 2,800.
+  Rates live in `src/lib/donations.ts`; each order's donations are saved when it's placed, so
+  changing the rates only affects new orders.
+- Orders count once confirmed and drop out if cancelled or returned.
+- Public: the home bar (fill only, plus the goal), and each person's donations on the leaderboard
+  and live feed. Never public: pounds, and the overall current total. The Phase 1 goal (30,000) is
+  `NEXT_PHASE_GOAL_DONATIONS` in `src/lib/phase.ts`.
 
 ## Customer Snobis
 
@@ -92,8 +96,8 @@ its sizes and photos for good (past orders still keep their details).
   password. The temporary password shows once; send it to them.
 - **Rude names or removal requests:** on the customer's page, choose Hide from public lists. They
   can't undo that themselves.
-- `/supporters` shows the top 5 (ranked, no amounts), a live feed of who just helped (refreshes every
-  20 seconds while open, no amounts) and everyone else. Only public accounts appear, and
+- `/supporters` shows the top 5 with their donations, a live feed of who just helped and with how many
+  donations (refreshes every 20 seconds while open) and everyone else. Only public accounts appear, and
   orders placed before an account existed don't link to it.
 
 ## Scripts

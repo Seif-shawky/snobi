@@ -172,12 +172,10 @@ export function buildWardrobe(rows: WardrobeRow[], wornIds: ReadonlySet<string>)
   return [...items.values()];
 }
 
-export function donatedCents(orders: { status: OrderStatus; subtotalCents: number }[]) {
+export function totalDonations(orders: { status: OrderStatus; donations: number }[]) {
   return orders.reduce(
     (sum, o) =>
-      (DONATION_STATUSES as readonly OrderStatus[]).includes(o.status)
-        ? sum + o.subtotalCents
-        : sum,
+      (DONATION_STATUSES as readonly OrderStatus[]).includes(o.status) ? sum + o.donations : sum,
     0,
   );
 }
@@ -187,12 +185,13 @@ export interface AccountOrder {
   accessToken: string;
   status: OrderStatus;
   subtotalCents: number;
+  donations: number;
   createdAt: number;
 }
 
 export interface MyAccount {
   user: SessionUser;
-  donatedCents: number;
+  donations: number;
   orders: AccountOrder[];
   wardrobe: WardrobeItem[];
 }

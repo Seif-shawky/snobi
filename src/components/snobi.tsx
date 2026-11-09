@@ -1,3 +1,4 @@
+import { formatDonations } from "@/lib/donations";
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import { Link, useHydrated } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -374,6 +375,9 @@ export function Leaderboard({ entries }: { entries: LeaderboardEntry[] }) {
             <strong>{entry.displayName}</strong>
             {entry.title && <span className="handwriting">{entry.title}</span>}
           </div>
+          <span className="leaderboard-amount">
+            {formatDonations(entry.donations, ar)} <span>{ar ? "تبرع" : "donations"}</span>
+          </span>
         </li>
       ))}
     </ol>

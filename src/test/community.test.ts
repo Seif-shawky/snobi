@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildWardrobe,
-  donatedCents,
+  totalDonations,
   joinRedirectTarget,
   type OrderStatus,
   type WardrobeRow,
@@ -26,12 +26,12 @@ describe("joinRedirectTarget", () => {
   });
 });
 
-describe("donatedCents", () => {
+describe("totalDonations", () => {
   it("counts confirmed, shipped and delivered orders only", () => {
     const orders = (
       ["pending", "confirmed", "shipped", "delivered", "cancelled", "returned"] as OrderStatus[]
-    ).map((status) => ({ status, subtotalCents: 100 }));
-    expect(donatedCents(orders)).toBe(300);
+    ).map((status) => ({ status, donations: 100 }));
+    expect(totalDonations(orders)).toBe(300);
   });
 });
 

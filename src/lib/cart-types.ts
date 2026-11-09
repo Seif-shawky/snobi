@@ -41,6 +41,7 @@ export interface OrderView {
   notes: string | null;
   subtotalCents: number;
   shippingCents: number | null;
+  donations: number;
   currency: string;
   items: {
     nameEn: string;

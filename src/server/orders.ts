@@ -1,3 +1,4 @@
+import { donationsForOrder } from "@/lib/donations";
 import { eq, sql } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
 import type { OrderView } from "@/lib/cart-types";
@@ -82,6 +83,10 @@ export async function placeOrderServer(input: PlaceOrderInput): Promise<PlaceOrd
         addressLine: customer.addressLine,
         notes: customer.notes ?? null,
         subtotalCents: priced.subtotalCents,
+        donations: donationsForOrder(
+          priced.subtotalCents,
+          priced.items.reduce((sum, item) => sum + item.quantity, 0),
+        ),
         shippingCents,
         currency: "EGP",
         createdAt: now,
@@ -158,6 +163,7 @@ export async function getOrderServer(reference: string, token: string): Promise<
     notes: order.notes,
     subtotalCents: order.subtotalCents,
     shippingCents: order.shippingCents,
+    donations: order.donations,
     currency: order.currency,
     items: items.map((i) => ({
       nameEn: i.productNameEn,

@@ -106,8 +106,9 @@ function TermsPage() {
               الحساب اختياري ومجاني، والشراء ممكن من غيره. إنت مسؤول عن باسوردك، وعن إن رقم الموبايل
               بتاعك فعلًا. الاسم واللقب بيظهروا للكل لو حسابك عام، فمتكتبش حاجة مسيئة أو تنتحل شخصية
               حد؛ ممكن نخفيها أو نعدلها أو نقفل الحساب. لوحة الأوائل والتبرعات الحالية تقدير بس، ومن
-              غير أي جوايز أو حقوق. الحاجات اللي سنوبي بتاعك بيلبسها افتراضية، بتظهر بعد توصيل
-              المنتج وبتتشال لو رجّعته، ومالهاش قيمة مالية.
+              غير أي جوايز أو حقوق. «التبرعات» نقط بنحسبها من مشترياتك، مالهاش قيمة مالية ومش بتتحول
+              لفلوس، وممكن نغير طريقة حسابها للطلبات الجاية. الحاجات اللي سنوبي بتاعك بيلبسها
+              افتراضية، بتظهر بعد توصيل المنتج وبتتشال لو رجّعته، ومالهاش قيمة مالية.
             </p>
           ),
         },
@@ -243,7 +244,9 @@ function TermsPage() {
               password and for the mobile number being yours. Your name and title are public if your
               account is public, so don’t use anything offensive or pretend to be someone else; we
               may hide or edit them, or close the account. The leaderboard and live feed are just
-              recognition, with no prizes or rights. Items your Snobi wears are virtual, appear
+              recognition, with no prizes or rights. “Donations” are points we calculate from your
+              purchases; they have no cash value, can’t be exchanged for money, and we may change
+              how they’re calculated for future orders. Items your Snobi wears are virtual, appear
               after the product is delivered, disappear if you return it, and have no monetary
               value.
             </p>

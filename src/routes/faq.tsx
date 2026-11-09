@@ -32,6 +32,7 @@ export const Route = createFileRoute("/faq")({
 
 type FaqLink = "/supporters" | "/shipping" | "/contact" | "/privacy" | "/terms";
 interface Faq {
+  id?: string;
   q: string;
   a: string;
   link?: { to: FaqLink; label: string };
@@ -49,6 +50,12 @@ function FaqPage() {
           q: "إيه اللي بيحصل لما أساعد سنوبي؟",
           a: "شراء الهدوم بيساعد حكاية سنوبي الخيالية تكمل. إنت بتشتري المنتج بالسعر الموضح، مش حصة في البراند أو استثمار. ده مش تبرع خيري.",
           link: { to: "/terms", label: "الشروط والأحكام" },
+        },
+        {
+          id: "donations",
+          q: "التبرعات بتتحسب إزاي؟",
+          a: "التبرعات نقط سنوبي، مش جنيهات. كل جنيه بتدفعه في الهدوم (من غير التوصيل) بيتحسب ×١٫٢ تبرع، وكل قطعة زيادة في نفس الطلب بتعلّي المضاعف ٠٫٢، لحد ×٢ من ٥ قطع. يعني جاكيت بـ١٠٠٠ جنيه = ١٢٠٠ تبرع، واتنين في نفس الطلب = ٢٨٠٠. التبرعات بتتحسب لما نأكد الطلب، وبتتشال لو اتلغى أو رجع. هدف المرحلة ١: ٣٠٬٠٠٠ تبرع. التبرعات مالهاش قيمة مالية.",
+          link: { to: "/supporters", label: "صفحة الداعمين" },
         },
         {
           q: "هاخد تيشيرت؟",
@@ -110,6 +117,12 @@ function FaqPage() {
           q: "What happens when I help Snobi?",
           a: "Buying clothes helps Snobi’s fictional story continue. You’re buying the item at its displayed price, not a stake in the brand or an investment. It is not a charity donation.",
           link: { to: "/terms", label: "READ THE TERMS" },
+        },
+        {
+          id: "donations",
+          q: "How do donations work?",
+          a: "Donations are Snobi points, not pounds. Every pound you spend on clothes (not delivery) counts ×1.2, and each extra item in the same order adds 0.2 to the multiplier, up to ×2 at 5 items. So a EGP 1,000 jacket = 1,200 donations, and two in one order = 2,800. They count once we confirm the order and drop off if it’s cancelled or returned. Phase 1 needs 30,000. Donations have no cash value.",
+          link: { to: "/supporters", label: "VISIT THE SUPPORTERS PAGE" },
         },
         {
           q: "Do I receive a T-shirt?",
@@ -210,8 +223,8 @@ function FaqPage() {
           </p>
         </div>
         <Accordion type="single" collapsible defaultValue="question-0" className="faq-accordion">
-          {questions.map(({ q, a, link }, i) => (
-            <AccordionItem value={`question-${i}`} key={q}>
+          {questions.map(({ id, q, a, link }, i) => (
+            <AccordionItem value={`question-${i}`} key={q} id={id}>
               <AccordionTrigger className="faq-question">
                 <span className="faq-number" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}

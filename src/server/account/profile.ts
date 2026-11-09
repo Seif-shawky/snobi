@@ -2,7 +2,7 @@ import { setResponseHeader } from "@tanstack/react-start/server";
 import { and, desc, eq } from "drizzle-orm";
 import {
   buildWardrobe,
-  donatedCents,
+  totalDonations,
   snobiImageUrl,
   type AccountResult,
   type MyAccount,
@@ -79,6 +79,7 @@ export async function loadMyAccount(): Promise<MyAccount> {
         accessToken: orders.accessToken,
         status: orders.status,
         subtotalCents: orders.subtotalCents,
+        donations: orders.donations,
         createdAt: orders.createdAt,
       })
       .from(orders)
@@ -92,7 +93,7 @@ export async function loadMyAccount(): Promise<MyAccount> {
   ]);
   return {
     user: await toSessionUser(user),
-    donatedCents: donatedCents(myOrders),
+    donations: totalDonations(myOrders),
     orders: myOrders,
     wardrobe: buildWardrobe(wardrobeRows, new Set(wornRows.map((r) => r.productId))),
   };

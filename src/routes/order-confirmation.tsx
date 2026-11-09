@@ -1,3 +1,4 @@
+import { formatDonations } from "@/lib/donations";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowUpRight } from "lucide-react";
@@ -218,6 +219,17 @@ function OrderDetails({ order }: { order: OrderView }) {
               <dt>{ar ? "الدفع" : "Payment"}</dt>
               <dd>{payment}</dd>
             </div>
+            {order.donations > 0 && order.status !== "cancelled" && order.status !== "returned" && (
+              <div className="checkout-donations">
+                <dt>{ar ? "تبرعات لسنوبي" : "Donations for Snobi"}</dt>
+                <dd>
+                  {formatDonations(order.donations, ar)}
+                  {order.status === "pending" && (
+                    <span>{ar ? " بعد ما نأكد الطلب" : " once we confirm it"}</span>
+                  )}
+                </dd>
+              </div>
+            )}
           </dl>
           <p className="checkout-summary-note">
             {ar

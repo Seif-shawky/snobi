@@ -4,7 +4,8 @@
 
 - [x] Accounts (mobile + password) with a chosen Snobi, name and title; /join, /account with a personal donation bar.
 - [x] Wardrobe: delivered items with a wearable layer can be worn; returned items drop off.
-- [x] /supporters: ranked top 5, live feed and all helpers. No money shown publicly (owner decision, 9 Nov 2026).
+- [x] /supporters: top 5 and live feed show donations (points); pounds never public (9 Nov 2026).
+- [x] Donations as points with a per-order multiplier (×1.2 rising to ×2 by items); home bar shows fill + goal of 30,000 only.
 - [x] Admin: Snobi options, product wearables, customers (hide, edit, reset password, delete).
 - [ ] Owner: draw wearable layers for real products; replace starter Snobis if wanted.
 - [ ] Check login on the live site stays within the free plan's 10 ms CPU limit (no Error 1102).

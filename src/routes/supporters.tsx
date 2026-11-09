@@ -1,3 +1,4 @@
+import { formatDonations } from "@/lib/donations";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useHydrated } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -155,8 +156,8 @@ function SupportersPage() {
           <ul>
             <li>
               {ar
-                ? "الترتيب حسب المساعدة في الطلبات المؤكدة، والمبالغ نفسها مش بتظهر لحد."
-                : "The ranking follows how much people helped in confirmed orders. The amounts themselves stay private."}
+                ? "الترتيب حسب التبرعات في الطلبات المؤكدة. التبرعات نقط سنوبي، مش جنيهات، والمبالغ المدفوعة مش بتظهر لحد."
+                : "The ranking follows donations from confirmed orders. Donations are Snobi points, not pounds; what anyone paid stays private."}
             </li>
             <li>
               {ar
@@ -220,7 +221,10 @@ function LiveFeed() {
                 className="helper-avatar"
               />
               <p>
-                <strong>{entry.displayName}</strong> {ar ? "ساعد سنوبي." : "helped Snobi."}
+                <strong>{entry.displayName}</strong> {ar ? "ساعد سنوبي بـ" : "helped Snobi with "}
+                <strong className="feed-amount">
+                  {formatDonations(entry.donations, ar)} {ar ? "تبرع" : "donations"}
+                </strong>
               </p>
               <time>{hydrated ? relativeTime(entry.at, Math.max(now, Date.now()), ar) : ""}</time>
             </li>

@@ -1,3 +1,4 @@
+import { formatDonations } from "@/lib/donations";
 import { useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
@@ -33,7 +34,7 @@ import {
 import { formatMoney } from "@/lib/money";
 import {
   CURRENT_PHASE,
-  NEXT_PHASE_GOAL_CENTS,
+  NEXT_PHASE_GOAL_DONATIONS,
   phaseLabel,
   phaseProgressPercent,
 } from "@/lib/phase";
@@ -97,7 +98,7 @@ function AccountPage() {
         <div className="account-hero-copy">
           <h1>{user.displayName}</h1>
           {user.title && <p className="handwriting account-title">{user.title}</p>}
-          <Donated ar={ar} cents={account.donatedCents} orders={account.orders} />
+          <Donated ar={ar} donations={account.donations} orders={account.orders} />
           <p className="account-visibility">
             {user.hiddenByAdmin ? (
               ar ? (
@@ -131,15 +132,23 @@ function AccountPage() {
   );
 }
 
-function Donated({ ar, cents, orders }: { ar: boolean; cents: number; orders: AccountOrder[] }) {
-  const progress = phaseProgressPercent(cents, NEXT_PHASE_GOAL_CENTS);
+function Donated({
+  ar,
+  donations,
+  orders,
+}: {
+  ar: boolean;
+  donations: number;
+  orders: AccountOrder[];
+}) {
+  const progress = phaseProgressPercent(donations, NEXT_PHASE_GOAL_DONATIONS);
   const nextPhase = phaseLabel(CURRENT_PHASE + 1, ar);
-  const amount = formatMoney(cents, ar);
-  const goal = formatMoney(NEXT_PHASE_GOAL_CENTS, ar);
+  const mine = formatDonations(donations, ar);
+  const goal = formatDonations(NEXT_PHASE_GOAL_DONATIONS, ar);
   const waiting = orders.some((o) => o.status === "pending");
   return (
     <div className="account-donated">
-      <strong>{ar ? `اتبرعت بـ${amount}` : `YOU’VE DONATED ${amount}`}</strong>
+      <strong>{ar ? `${mine} تبرع منك` : `YOU’VE GIVEN ${mine} DONATIONS`}</strong>
       <div
         className="phase-progress"
         role="progressbar"
@@ -152,8 +161,8 @@ function Donated({ ar, cents, orders }: { ar: boolean; cents: number; orders: Ac
       </div>
       <p>
         {ar
-          ? `${amount} بتوعك من ${goal} محتاجهم سنوبي عشان يوصل لـ${nextPhase}.`
-          : `Your ${amount} of the ${goal} Snobi needs for ${nextPhase}.`}{" "}
+          ? `${mine} من ${goal} تبرع محتاجهم سنوبي عشان يوصل لـ${nextPhase}. الرقم ده ليك إنت بس.`
+          : `Your ${mine} of the ${goal} donations Snobi needs for ${nextPhase}. Only you can see this number.`}{" "}
         {waiting &&
           (ar ? "الطلبات بتتحسب بعد ما نأكدها." : "Orders count once we’ve confirmed them.")}
       </p>
