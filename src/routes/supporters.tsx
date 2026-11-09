@@ -132,7 +132,7 @@ function SupportersPage() {
             <div>
               <h2 id="helpers-title">{ar ? "كل المتواطئين." : "EVERY ENABLER."}</h2>
             </div>
-            <span className="handwriting">{ar ? "من غير مبالغ." : "no amounts down here."}</span>
+            <span className="handwriting">{ar ? "ناس كويسة." : "good people."}</span>
           </div>
           <ul className="helpers-grid">
             {helpers.map((helper, index) => (
@@ -155,8 +155,8 @@ function SupportersPage() {
           <ul>
             <li>
               {ar
-                ? "المبالغ هي أسعار الهدوم في الطلبات المؤكدة، من غير مصاريف التوصيل."
-                : "Amounts are clothing prices in confirmed orders, without delivery fees."}
+                ? "الترتيب حسب المساعدة في الطلبات المؤكدة، والمبالغ نفسها مش بتظهر لحد."
+                : "The ranking follows how much people helped in confirmed orders. The amounts themselves stay private."}
             </li>
             <li>
               {ar
@@ -220,8 +220,7 @@ function LiveFeed() {
                 className="helper-avatar"
               />
               <p>
-                <strong>{entry.displayName}</strong> {ar ? "اتبرع بـ" : "donated "}
-                <strong className="feed-amount">{formatMoney(entry.amountCents, ar)}</strong>
+                <strong>{entry.displayName}</strong> {ar ? "ساعد سنوبي." : "helped Snobi."}
               </p>
               <time>{hydrated ? relativeTime(entry.at, Math.max(now, Date.now()), ar) : ""}</time>
             </li>

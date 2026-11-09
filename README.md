@@ -72,9 +72,11 @@ its sizes and photos for good (past orders still keep their details).
 
 ## Donations and supporters
 
-- The homepage total adds up the clothing price of confirmed, shipped and delivered orders. Delivery
-  fees never count, and cancelling a confirmed order takes it back out. The Phase 1 goal is set in
-  `src/lib/phase.ts`.
+- No money figures are shown to the public: no donations total, no progress bar, no amounts per
+  person. Admin still sees everything.
+- Rankings and each customer's own private total (on their account page) count the clothing price of
+  confirmed, shipped and delivered orders. Delivery fees never count, and cancelled or returned
+  orders drop out. The Phase 1 goal used on account pages is set in `src/lib/phase.ts`.
 
 ## Customer Snobis
 
@@ -90,8 +92,8 @@ its sizes and photos for good (past orders still keep their details).
   password. The temporary password shows once; send it to them.
 - **Rude names or removal requests:** on the customer's page, choose Hide from public lists. They
   can't undo that themselves.
-- `/supporters` shows the top 5 with amounts, a live feed of recent donations with amounts (refreshes
-  every 20 seconds while open) and everyone else without amounts. Only public accounts appear, and
+- `/supporters` shows the top 5 (ranked, no amounts), a live feed of who just helped (refreshes every
+  20 seconds while open, no amounts) and everyone else. Only public accounts appear, and
   orders placed before an account existed don't link to it.
 
 ## Scripts

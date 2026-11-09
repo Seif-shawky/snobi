@@ -102,10 +102,10 @@ function PrivacyPage() {
                 IP ونوع المتصفح لما تفتح الصفحات.
               </li>
               <li>
-                <strong>الجمهور:</strong> لو حسابك عام، الاسم واللقب والسنوبي بتوعك ومبالغ تبرعاتك
-                ووقتها بيظهروا للكل في لوحة الأوائل والتبرعات الحالية وقائمة المساعدين. تقدر تخفي
-                نفسك في أي وقت من صفحة حسابك. رقم موبايلك وعنوانك واسمك الحقيقي مش بيظهروا أبدًا. لو
-                اشتريت من غير حساب مش هتظهر في أي قائمة.
+                <strong>الجمهور:</strong> لو حسابك عام، الاسم واللقب والسنوبي بتوعك ووقت مساعدتك
+                بيظهروا للكل، من غير أي مبالغ، في لوحة الأوائل والتبرعات الحالية وقائمة المساعدين.
+                تقدر تخفي نفسك في أي وقت من صفحة حسابك. رقم موبايلك وعنوانك واسمك الحقيقي مش بيظهروا
+                أبدًا. لو اشتريت من غير حساب مش هتظهر في أي قائمة.
               </li>
               <li>الجهات الرسمية لو القانون ألزمنا بكده.</li>
               <li>مش بنبيع بياناتك لحد. أبدًا.</li>
@@ -240,8 +240,8 @@ function PrivacyPage() {
                 your IP address and browser details when pages load.
               </li>
               <li>
-                <strong>The public:</strong> if your account is public, your name, title, Snobi,
-                donation amounts and their timing appear to everyone on the leaderboard, the live
+                <strong>The public:</strong> if your account is public, your name, title, Snobi and
+                when you helped appear to everyone, never any amounts, on the leaderboard, the live
                 feed and the helpers list. You can hide yourself any time from your account page.
                 Your mobile number, address and real name are never shown. If you buy without an
                 account, you don’t appear on any list.
@@ -336,7 +336,7 @@ function PrivacyPage() {
           ? "سنوبي مش بيراقبك. مش قادر على تمنها."
           : "snobi isn’t tracking you. he can’t afford it."
       }
-      updated={ar ? "آخر تحديث: ٥ نوفمبر ٢٠٢٦" : "LAST UPDATED: 5 NOVEMBER 2026"}
+      updated={ar ? "آخر تحديث: ٩ نوفمبر ٢٠٢٦" : "LAST UPDATED: 9 NOVEMBER 2026"}
       sections={sections}
     />
   );

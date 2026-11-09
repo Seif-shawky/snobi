@@ -1,26 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { FEED_REFRESH_MS } from "@/lib/community-rules";
-import {
-  loadDonationFeed,
-  loadDonationTotalCents,
-  loadHelpers,
-  loadLeaderboard,
-} from "@/server/community";
+import { loadDonationFeed, loadHelpers, loadLeaderboard } from "@/server/community";
 
-export const getDonationTotal = createServerFn({ method: "GET" }).handler(() =>
-  loadDonationTotalCents(),
-);
 export const getLeaderboard = createServerFn({ method: "GET" }).handler(() => loadLeaderboard());
 export const getHelpers = createServerFn({ method: "GET" }).handler(() => loadHelpers());
 export const getDonationFeed = createServerFn({ method: "GET" }).handler(() => loadDonationFeed());
-
-export const donationTotalQuery = queryOptions({
-  queryKey: ["snobi", "donation-total"],
-  queryFn: () => getDonationTotal(),
-  staleTime: 60_000,
-  retry: 1,
-});
 
 export const leaderboardQuery = queryOptions({
   queryKey: ["snobi", "leaderboard"],

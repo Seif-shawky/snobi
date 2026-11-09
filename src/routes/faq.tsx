@@ -87,7 +87,7 @@ function FaqPage() {
         },
         {
           q: "لازم أظهر في صفحة الداعمين؟",
-          a: "لأ. تقدر تشتري من غير حساب خالص، ومش هتظهر في أي حتة. لو عملت حساب، إنت اللي بتختار تظهر ولا لأ: اسمك ولقبك وسنوبي بتاعك والمبالغ. تقدر تخفي نفسك أو تمسح حسابك في أي وقت. رقم موبايلك عمره ما بيظهر.",
+          a: "لأ. تقدر تشتري من غير حساب خالص، ومش هتظهر في أي حتة. لو عملت حساب، إنت اللي بتختار تظهر ولا لأ: اسمك ولقبك وسنوبي بتاعك، من غير أي مبالغ. تقدر تخفي نفسك أو تمسح حسابك في أي وقت. رقم موبايلك عمره ما بيظهر.",
           link: { to: "/supporters", label: "صفحة الداعمين" },
         },
         {
@@ -148,7 +148,7 @@ function FaqPage() {
         },
         {
           q: "Do I have to show up on the supporters page?",
-          a: "No. You can buy without an account and you won’t appear anywhere. With an account, you choose whether you’re public: your name, title, Snobi and amounts. You can hide yourself or delete your account any time. Your mobile number is never shown.",
+          a: "No. You can buy without an account and you won’t appear anywhere. With an account, you choose whether you’re public: your name, title and Snobi, never any amounts. You can hide yourself or delete your account any time. Your mobile number is never shown.",
           link: { to: "/supporters", label: "VISIT THE SUPPORTERS PAGE" },
         },
         {

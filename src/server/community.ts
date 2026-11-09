@@ -6,14 +6,6 @@ import { orderItems, orders, products, snobiOptions, userWornItems, users } from
 
 const counted = inArray(orders.status, [...DONATION_STATUSES]);
 
-export async function loadDonationTotalCents() {
-  const [row] = await getDb()
-    .select({ total: sql<number>`coalesce(sum(${orders.subtotalCents}), 0)` })
-    .from(orders)
-    .where(counted);
-  return row?.total ?? 0;
-}
-
 // Layers for what each user chose to wear, limited to items delivered to them and not returned.
 export async function loadWornUrls(userIds: string[]) {
   const worn = new Map<string, string[]>();
@@ -62,21 +54,20 @@ function toPublicSnobi(row: SnobiRow, worn: Map<string, string[]>): PublicSnobi 
   };
 }
 
-export interface LeaderboardEntry extends PublicSnobi {
-  totalCents: number;
-}
+// Ranked by how much each person helped, but amounts never leave the server: the owner decided
+// money stays private.
+export type LeaderboardEntry = PublicSnobi;
 
 export interface FeedEntry extends PublicSnobi {
-  amountCents: number;
   at: number;
 }
 
 // Every public account with a counted order, biggest helper first. Ties go to whoever got there
-// first. The page shows amounts only for the top LEADERBOARD_SIZE.
+// first.
 async function loadRanked(limit: number): Promise<LeaderboardEntry[]> {
   const total = sql<number>`sum(${orders.subtotalCents})`;
   const rows = await getDb()
-    .select({ ...snobiColumns, totalCents: total })
+    .select(snobiColumns)
     .from(orders)
     .innerJoin(users, eq(users.id, orders.userId))
     .innerJoin(snobiOptions, eq(snobiOptions.id, users.snobiOptionId))
@@ -85,21 +76,17 @@ async function loadRanked(limit: number): Promise<LeaderboardEntry[]> {
     .orderBy(desc(total), sql`min(coalesce(${orders.confirmedAt}, ${orders.createdAt}))`)
     .limit(limit);
   const worn = await loadWornUrls(rows.map((r) => r.userId));
-  return rows.map((row) => ({ ...toPublicSnobi(row, worn), totalCents: row.totalCents }));
+  return rows.map((row) => toPublicSnobi(row, worn));
 }
 
 export const loadLeaderboard = () => loadRanked(LEADERBOARD_SIZE);
 
-// The rest of the helpers, without amounts: only the top of the board shows money.
-export async function loadHelpers(): Promise<PublicSnobi[]> {
-  const ranked = await loadRanked(500);
-  return ranked.map(({ totalCents: _total, ...snobi }) => snobi);
-}
+export const loadHelpers = () => loadRanked(500);
 
 export async function loadDonationFeed(): Promise<FeedEntry[]> {
   const at = sql<number>`coalesce(${orders.confirmedAt}, ${orders.createdAt})`;
   const rows = await getDb()
-    .select({ ...snobiColumns, amountCents: orders.subtotalCents, at })
+    .select({ ...snobiColumns, at })
     .from(orders)
     .innerJoin(users, eq(users.id, orders.userId))
     .innerJoin(snobiOptions, eq(snobiOptions.id, users.snobiOptionId))
@@ -109,7 +96,6 @@ export async function loadDonationFeed(): Promise<FeedEntry[]> {
   const worn = await loadWornUrls([...new Set(rows.map((r) => r.userId))]);
   return rows.map((row) => ({
     ...toPublicSnobi(row, worn),
-    amountCents: row.amountCents,
     at: row.at,
   }));
 }

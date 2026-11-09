@@ -384,8 +384,8 @@ function CreateForm({
         <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
         <span>
           {ar
-            ? "اعرض سنوبي بتاعي واسمي ولقبي والمبلغ اللي اتبرعت بيه في الترتيب العام. رقم موبايلي عمره ما يظهر."
-            : "Show my Snobi, name, title and how much I’ve donated on the public leaderboard. My mobile number is never shown."}
+            ? "اعرض سنوبي بتاعي واسمي ولقبي في الترتيب العام. المبالغ ورقم موبايلي عمرهم ما يظهروا."
+            : "Show my Snobi, name and title on the public leaderboard. Amounts and my mobile number are never shown."}
         </span>
       </label>
       <FormProblem ar={ar} code={errors.form} />

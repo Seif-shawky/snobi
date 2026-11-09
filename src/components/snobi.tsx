@@ -374,7 +374,6 @@ export function Leaderboard({ entries }: { entries: LeaderboardEntry[] }) {
             <strong>{entry.displayName}</strong>
             {entry.title && <span className="handwriting">{entry.title}</span>}
           </div>
-          <span className="leaderboard-amount">{formatMoney(entry.totalCents, ar)}</span>
         </li>
       ))}
     </ol>
