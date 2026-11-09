@@ -378,6 +378,7 @@ h3 {
 .hero-bottom {
   border-top: 1px dashed var(--paper-line);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -3716,6 +3717,13 @@ h2 {
   border: 1px solid var(--ink);
   background: var(--paper);
 }
+/* The home bar spans the whole row above the message and the scroll hint. */
+.phase-progress-wide {
+  flex: 1 1 100%;
+  max-width: none;
+  height: 12px;
+  margin-block: 0 4px;
+}
 .phase-progress span {
   display: block;
   height: 100%;
@@ -4471,10 +4479,6 @@ p.checkout-account a {
 }
 
 /* ---- Donations (points) ---- */
-.checkout-donations dd span {
-  color: var(--pencil);
-  font-weight: 400;
-}
 .leaderboard-amount {
   font-family: var(--font-heading);
   font-weight: 800;

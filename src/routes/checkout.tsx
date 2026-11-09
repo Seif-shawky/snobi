@@ -1,9 +1,3 @@
-import {
-  MAX_MULTIPLIER,
-  donationMultiplier,
-  donationsForOrder,
-  formatDonations,
-} from "@/lib/donations";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -611,23 +605,7 @@ function CheckoutPage() {
                 <dt>{ar ? "الدفع" : "Payment"}</dt>
                 <dd>{ar ? "كاش عند الاستلام" : "Cash on delivery"}</dd>
               </div>
-              {quote.itemCount > 0 && !updating && (
-                <div className="checkout-donations">
-                  <dt>{ar ? "تبرعات لسنوبي" : "Donations for Snobi"}</dt>
-                  <dd>
-                    {formatDonations(donationsForOrder(quote.subtotalCents, quote.itemCount), ar)}{" "}
-                    <span>×{donationMultiplier(quote.itemCount)}</span>
-                  </dd>
-                </div>
-              )}
             </dl>
-            {quote.itemCount > 0 && donationMultiplier(quote.itemCount) < MAX_MULTIPLIER && (
-              <p className="checkout-summary-note">
-                {ar
-                  ? `كل قطعة زيادة في نفس الطلب بتعلّي المضاعف لـ×${donationMultiplier(quote.itemCount + 1)}.`
-                  : `One more item in this order raises the multiplier to ×${donationMultiplier(quote.itemCount + 1)}.`}
-              </p>
-            )}
             <p className="checkout-summary-note">
               {ar
                 ? "مصاريف التوصيل مش بترجع لو رجّعت حاجة. "

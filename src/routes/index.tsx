@@ -126,21 +126,21 @@ function Index() {
           </figure>
         </div>
         <div className="hero-bottom">
+          <div
+            className="phase-progress phase-progress-wide"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progress.percent}
+            aria-label={ar ? `التقدم ناحية ${nextPhase}` : `Progress towards ${nextPhase}`}
+          >
+            <span style={{ width: `${progress.percent}%` }} />
+          </div>
           <div className="support-counter">
             <div className="counter-message">
               <span className="handwriting">
                 {ar ? "وضعه المالي محرج." : "his financial situation is embarrassing."}
               </span>
-              <div
-                className="phase-progress"
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={progress.percent}
-                aria-label={ar ? `التقدم ناحية ${nextPhase}` : `Progress towards ${nextPhase}`}
-              >
-                <span style={{ width: `${progress.percent}%` }} />
-              </div>
               <p>
                 {progress.percent >= 100
                   ? ar
